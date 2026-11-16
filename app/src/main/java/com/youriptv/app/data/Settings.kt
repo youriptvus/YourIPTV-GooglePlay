@@ -1,0 +1,236 @@
+package com.youriptv.app.data
+
+import android.content.Context
+
+/** All user settings. Every option is available to every user; there are no gated features. */
+class Settings(context: Context) {
+    private val sp = context.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+    init {
+        // Capture provenance before any initialization writes. Customer builds always persisted
+        // settings on startup; absent local lock provenance must never unlock such an upgrade.
+        synchronized(SettingsLockPolicy) {
+            if (!sp.getBoolean(SettingsLockPolicy.PLAY_INITIALIZED_KEY, false)) {
+                val existingInstallation = sp.all.isNotEmpty()
+                val saved = if (sp.contains(SettingsLockPolicy.LOCAL_KEY)) sp.getBoolean(SettingsLockPolicy.LOCAL_KEY, true) else null
+                check(sp.edit()
+                    .putBoolean(SettingsLockPolicy.LOCAL_KEY, SettingsLockPolicy.initial(saved, existingInstallation))
+                    .putString(PinVault.LEGACY_ADMIN_KEY, existingInstallation.toString())
+                    .putBoolean(SettingsLockPolicy.PLAY_INITIALIZED_KEY, true)
+                    .commit()) { "Could not persist local security policy" }
+            }
+        }
+        // Apply the approved seven-day minimum once; later explicit shorter choices remain valid.
+        synchronized(EpgRetentionPolicy.preferenceLock) {
+            if (!sp.getBoolean("epg_window_v7_migrated", false)) {
+                sp.edit()
+                    .putInt("epg_past_h", EpgRetentionPolicy.migratedPastHours(sp.getInt("epg_past_h", EpgRetentionPolicy.DEFAULT_PAST_HOURS)))
+                    .putInt("epg_future_d", EpgRetentionPolicy.migratedFutureDays(sp.getInt("epg_future_d", EpgRetentionPolicy.DEFAULT_FUTURE_DAYS)))
+                    .putBoolean("epg_window_v7_migrated", true).commit()
+            }
+        }
+    }
+
+    var activePlaylistId: Long
+        get() = sp.getLong("active_playlist", 0)
+        set(v) = sp.edit().putLong("active_playlist", v).apply()
+
+    var lastChannelUrl: String
+        get() = sp.getString("last_channel", "").orEmpty()
+        set(v) = sp.edit().putString("last_channel", v).apply()
+
+    var resumeLastChannel: Boolean
+        get() = sp.getBoolean("resume_last", true)
+        set(v) = sp.edit().putBoolean("resume_last", v).apply()
+
+    var bufferMs: Int
+        get() = sp.getInt("buffer_ms", 3000)
+        set(v) = sp.edit().putInt("buffer_ms", v).apply()
+
+    /** 0 = fit, 1 = fill/zoom, 2 = stretch. */
+    var aspectMode: Int
+        get() = sp.getInt("aspect", 0)
+        set(v) = sp.edit().putInt("aspect", v).apply()
+
+    var skipSeconds: Int
+        get() = sp.getInt("skip_sec", 10)
+        set(v) = sp.edit().putInt("skip_sec", v).apply()
+
+    /** Audio offset in ms; positive plays audio later than video. */
+    var audioDelayMs: Int
+        get() = sp.getInt("audio_delay_ms", 0)
+        set(v) = sp.edit().putInt("audio_delay_ms", v).apply()
+
+    /** Switch the display refresh rate to match the video frame rate while playing. */
+    var autoFrameRate: Boolean
+        get() = sp.getBoolean("auto_frame_rate", false)
+        set(v) = sp.edit().putBoolean("auto_frame_rate", v).apply()
+
+    var liveFormat: String
+        get() = sp.getString("live_format", "ts").orEmpty()
+        set(v) = sp.edit().putString("live_format", v).apply()
+
+    var preferSoftwareDecoding: Boolean
+        get() = sp.getBoolean("sw_decode", false)
+        set(v) = sp.edit().putBoolean("sw_decode", v).apply()
+
+    var globalUserAgent: String
+        get() = sp.getString("user_agent", "").orEmpty()
+        set(v) = sp.edit().putString("user_agent", v).apply()
+
+    var epgPastHours: Int
+        get() = sp.getInt("epg_past_h", EpgRetentionPolicy.DEFAULT_PAST_HOURS).coerceIn(0, EpgRetentionPolicy.MAX_PAST_HOURS)
+        set(v) { synchronized(EpgRetentionPolicy.preferenceLock) {
+            sp.edit().putInt("epg_past_h", v.coerceIn(0, EpgRetentionPolicy.MAX_PAST_HOURS)).apply()
+        } }
+
+    var epgFutureDays: Int
+        get() = sp.getInt("epg_future_d", EpgRetentionPolicy.DEFAULT_FUTURE_DAYS).coerceIn(1, EpgRetentionPolicy.MAX_FUTURE_DAYS)
+        set(v) { synchronized(EpgRetentionPolicy.preferenceLock) {
+            sp.edit().putInt("epg_future_d", v.coerceIn(1, EpgRetentionPolicy.MAX_FUTURE_DAYS)).apply()
+        } }
+
+    /** A coherent snapshot for an import; callers must not mix values from two preference edits. */
+    fun epgWindow(): Pair<Int, Int> = synchronized(EpgRetentionPolicy.preferenceLock) { epgPastHours to epgFutureDays }
+
+    /** Shifts displayed guide times, in hours, for providers with wrong time zones. */
+    var epgShiftHours: Int
+        get() = sp.getInt("epg_shift_h", 0)
+        set(v) { synchronized(EpgRetentionPolicy.preferenceLock) {
+            sp.edit().putInt("epg_shift_h", v.coerceIn(-23, 23)).apply()
+        } }
+
+    var use24h: Boolean
+        get() = sp.getBoolean("clock_24h", false)
+        set(v) = sp.edit().putBoolean("clock_24h", v).apply()
+
+    var showChannelNumbers: Boolean
+        get() = sp.getBoolean("show_numbers", true)
+        set(v) = sp.edit().putBoolean("show_numbers", v).apply()
+
+    /** When true, UP selects the next (higher-numbered) channel instead of the previous one. */
+    var invertZap: Boolean
+        get() = sp.getBoolean("invert_zap", false)
+        set(v) = sp.edit().putBoolean("invert_zap", v).apply()
+
+    /** Refresh the active playlist and guide on start when older than this many hours (0 = never). */
+    var autoRefreshHours: Int
+        get() = sp.getInt("auto_refresh_h", 16)
+        set(v) = sp.edit().putInt("auto_refresh_h", v).apply()
+
+    val legacyAutoRefreshHours: Int?
+        get() = if (sp.contains("auto_refresh_h")) sp.getInt("auto_refresh_h", 16) else null
+
+    /** On by default and independent of every other setting; excluded from portable backup/restore settings. */
+    /** Effective values (defaults included) of every setting listed in [BackupKeys.SETTINGS]. */
+    fun backupValues(): Map<String, Any> = mapOf(
+        "resume_last" to resumeLastChannel, "last_channel" to lastChannelUrl, "buffer_ms" to bufferMs,
+        "aspect" to aspectMode, "skip_sec" to skipSeconds, "audio_delay_ms" to audioDelayMs,
+        "auto_frame_rate" to autoFrameRate, "live_format" to liveFormat, "sw_decode" to preferSoftwareDecoding,
+        "user_agent" to globalUserAgent, "epg_past_h" to epgPastHours, "epg_future_d" to epgFutureDays,
+        "epg_shift_h" to epgShiftHours, "clock_24h" to use24h, "show_numbers" to showChannelNumbers,
+        "invert_zap" to invertZap, "auto_refresh_h" to autoRefreshHours,
+    )
+
+    /** Writes only validated, non-secret settings; PINs and the Settings lock are never touched. */
+    fun restoreValues(values: Map<String, Any>) {
+        val e = sp.edit()
+        for ((k, v) in BackupKeys.sanitize(values)) {
+            if (BackupKeys.isSecret(k)) continue
+            when (v) {
+                is Boolean -> e.putBoolean(k, v)
+                is Int -> e.putInt(k, v)
+                is String -> e.putString(k, v)
+            }
+        }
+        synchronized(EpgRetentionPolicy.preferenceLock) { e.commit() }
+    }
+
+    var parentalRestrictions: BackupParental
+        get() = BackupParental(blockAdult, hideLockedGroups, lockPlaylists, lockedGroups)
+        set(v) {
+            sp.edit().putBoolean("block_adult", v.blockAdult).putBoolean("hide_locked", v.hideLockedGroups)
+                .putBoolean("lock_playlists", v.lockPlaylists).putStringSet("locked_groups", v.lockedGroups).commit()
+        }
+
+    fun epgUpdated(playlistId: Long): Long = sp.getLong("epg_updated_$playlistId", 0)
+    fun setEpgUpdated(playlistId: Long, time: Long) = sp.edit().putLong("epg_updated_$playlistId", time).apply()
+
+    /** Drops per-playlist state so a deleted provider leaves no stream URL (with credentials) behind. */
+    fun forgetPlaylist(playlistId: Long, ownsLastChannel: Boolean) {
+        val e = sp.edit().remove("epg_updated_$playlistId")
+        if (ownsLastChannel) e.remove("last_channel")
+        e.apply()
+    }
+
+    var hideLockedGroups: Boolean
+        get() = sp.getBoolean("hide_locked", false)
+        set(v) = sp.edit().putBoolean("hide_locked", v).apply()
+
+    var lockedGroups: Set<String>
+        get() = sp.getStringSet("locked_groups", emptySet()).orEmpty().toSet()
+        set(v) = sp.edit().putStringSet("locked_groups", v).apply()
+
+    /** Adult categories in every playlist (live, movies, series) are hidden and need the parental PIN. */
+    var blockAdult: Boolean
+        get() = sp.getBoolean("block_adult", false)
+        set(v) = sp.edit().putBoolean("block_adult", v).apply()
+
+    fun isAdultBlocked(group: String?) = ParentalRules.isAdultBlocked(hasPin(), group, blockAdult)
+
+    fun isGroupLocked(group: String) = ParentalRules.isLocked(hasPin(), group, lockedGroups, blockAdult)
+
+    /** Blocked adult groups are always hidden; other locked groups only when "Hide locked groups" is on. */
+    fun isGroupHidden(group: String) = ParentalRules.isHidden(hasPin(), group, lockedGroups, blockAdult, hideLockedGroups)
+
+    var lockPlaylists: Boolean
+        get() = sp.getBoolean("lock_playlists", false)
+        set(v) = sp.edit().putBoolean("lock_playlists", v).apply()
+
+    /** Parental locks only take effect while a parental PIN exists, so removing it can never lock the user out. */
+    fun isPlaylistsLocked() = hasPin() && lockPlaylists
+
+    /** Changes whenever a content restriction changes; screens compare it to notice new restrictions. */
+    fun restrictionStamp(): Int = listOf(sp.getString("pin_hash", null), lockedGroups.sorted(), blockAdult, hideLockedGroups).hashCode()
+
+    fun addListener(l: android.content.SharedPreferences.OnSharedPreferenceChangeListener) = sp.registerOnSharedPreferenceChangeListener(l)
+    fun removeListener(l: android.content.SharedPreferences.OnSharedPreferenceChangeListener) = sp.unregisterOnSharedPreferenceChangeListener(l)
+
+    // ---- PINs ----
+    // The parental PIN and the Settings PIN are independent and must differ (see PinVault).
+    // Fresh Play installations default off. Existing security choices are preserved.
+
+    val pins = PinVault(object : StringStore {
+        override fun get(key: String): String? = sp.getString(key, null)
+        override fun put(values: Map<String, String?>) {
+            val e = sp.edit()
+            for ((k, v) in values) if (v == null) e.remove(k) else e.putString(k, v)
+            e.commit()
+        }
+    })
+
+    fun hasPin() = pins.has(PinKind.PARENTAL)
+
+    /** Local security policy, deliberately excluded from portable backups and Intent extras. */
+    val settingsLockEnabled: Boolean
+        get() = SettingsLockPolicy.enabled(if (sp.contains(SettingsLockPolicy.LOCAL_KEY))
+            sp.getBoolean(SettingsLockPolicy.LOCAL_KEY, true) else null)
+
+    /** Trusted UI calls only after fresh Admin authentication and a current-visit check. */
+    internal fun setSettingsLockEnabled(enabled: Boolean) {
+        sp.edit().putBoolean(SettingsLockPolicy.LOCAL_KEY, enabled).commit()
+    }
+
+    fun isSettingsLocked() = settingsLockEnabled
+
+    /** True for an install upgraded from the build that locked Settings with the parental PIN; see [ParentalRules.legacySettingsLockPending]. */
+    fun isLegacySettingsLock(): Boolean {
+        val flag = sp.getBoolean("lock_settings", false)
+        if (!flag) return false
+        if (ParentalRules.legacySettingsLockPending(flag, pins.has(PinKind.SETTINGS), hasPin())) return true
+        clearLegacySettingsLock()
+        return false
+    }
+
+    fun clearLegacySettingsLock() = sp.edit().remove("lock_settings").apply()
+}

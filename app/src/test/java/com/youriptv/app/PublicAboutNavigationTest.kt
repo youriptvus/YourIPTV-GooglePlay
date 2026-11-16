@@ -1,0 +1,80 @@
+package com.youriptv.app
+
+import org.junit.Assert.*
+import org.junit.Test
+import java.io.File
+
+/** Navigation contracts whose Android activity launch wiring is not executable in the local JVM. */
+class PublicAboutNavigationTest {
+    private val source = listOf(
+        File("src/main/java/com/youriptv/app/ui/MainActivity.kt"),
+        File("app/src/main/java/com/youriptv/app/ui/MainActivity.kt"),
+    ).first { it.exists() }.readText()
+
+    @Test
+    fun aboutHasAnUnconditionalPublicRouteSeparateFromSettingsAndPlaylistGuards() {
+        val routes = source.substringAfter("private fun onNav(s: Section)")
+            .substringBefore("private fun unlockSettings()")
+        val about = Regex("(?m)^\\s*Section\\.ABOUT -> (.+)$").find(routes)?.groupValues?.get(1)
+        assertNotNull("About needs its own public main-navigation action", about)
+        assertEquals("startActivity(Intent(this, AboutActivity::class.java))", about?.trim())
+        assertFalse("Public About must not grant Settings authorization", about.orEmpty().contains("putExtra"))
+        assertTrue("Playlist navigation remains separate from public About", routes.contains("Section.PLAYLISTS -> startActivity(Intent(this, PlaylistsActivity::class.java))"))
+        val manager = listOf(
+            File("src/main/java/com/youriptv/app/ui/PlaylistsActivity.kt"),
+            File("app/src/main/java/com/youriptv/app/ui/PlaylistsActivity.kt"),
+        ).first { it.exists() }.readText()
+        val resume = manager.substringAfter("override fun onResume()").substringBefore("override fun onPause()")
+        assertTrue("The playlist destination owns the parental gate on initial entry and resume", resume.contains("app.settings.isPlaylistsLocked() && !flow.hasParentalPermission(this)"))
+        assertTrue("Settings authorization alone cannot bypass parental approval", resume.contains("Dialogs.requirePin(this, \"manage playlists\""))
+        assertTrue("Playlist content stays hidden until its current visit is permitted", resume.indexOf("visit.authorize(token)") in 0 until resume.indexOf("list.visibility = View.VISIBLE"))
+    }
+
+    @Test
+    fun aboutIsIncludedInTheSharedPhoneAndTvNavigationRail() {
+        val sections = source.substringAfter("enum class Section(val label: String)").substringBefore("private data class GroupEntry")
+        assertTrue(sections.contains("ABOUT(\"About\")"))
+        val rail = source.substringAfter("private fun buildNav(").substringBefore("private fun onNav(")
+        assertTrue("Both layouts must build every declared navigation entry", rail.contains("for (s in Section.entries)"))
+        assertTrue(rail.contains("setOnClickListener { onNav(s) }"))
+        assertFalse("About must not be hidden for either phone or TV", rail.contains("Section.ABOUT"))
+    }
+
+    @Test
+    fun enteringSettingsDoesNotIssueAnIntentAuthorizationGrant() {
+        val settings = source.substringAfter("private fun unlockSettings()").substringBefore("private fun updateSettingsLabel()")
+        assertTrue(settings.contains("startActivity(Intent(this, SettingsActivity::class.java))"))
+        assertFalse(settings.contains("putExtra") || settings.contains("EXTRA_UNLOCKED"))
+        assertFalse("Settings must authenticate inside the target activity", settings.contains("Dialogs."))
+        assertFalse("The legacy disable-lock migration must be gone", source.contains("Turn off Settings lock"))
+        assertTrue(source.contains("navViews[Section.SETTINGS]?.text = \"Settings\""))
+        assertTrue(source.contains("navViews[Section.ADMIN]?.text = \"Unlock Settings\""))
+        val routes = source.substringAfter("private fun onNav(s: Section)").substringBefore("private fun unlockSettings()")
+        assertTrue("The approved public Settings route stays in Main without acquiring an Admin grant",
+            routes.contains("Section.SETTINGS -> if (app.settings.isSettingsLocked()) CustomerSettingsPanel.show(this,") &&
+                routes.contains("else unlockSettings()"))
+        assertTrue("Only explicit off policy hides the separate Unlock Settings entry",
+            source.contains("navViews[Section.ADMIN]?.visibility = if (app.settings.isSettingsLocked()) View.VISIBLE else View.GONE"))
+        assertTrue("Admin still enters the original authenticated Settings activity",
+            routes.contains("Section.ADMIN -> unlockSettings()"))
+        val target = listOf(File("src/main/java/com/youriptv/app/ui/SettingsActivity.kt"),
+            File("app/src/main/java/com/youriptv/app/ui/SettingsActivity.kt")).first { it.exists() }.readText()
+        val gate = target.substringAfter("private fun authenticateSettings()").substringBefore("override fun onResume()")
+        assertTrue("Admin must retain the existing Settings PIN checker", gate.contains("Dialogs.requireSettingsPin(this, \"unlock Settings\""))
+        assertTrue("Admin authority follows only a completed current visit", gate.indexOf("!visit.authorize(token)") in 0 until gate.indexOf("flow.authenticate(this, settingsRoute)"))
+    }
+
+    @Test
+    fun aboutActivityHasNoPinGateAndExplainsFreeFeaturesAndSettingsProtection() {
+        fun ui(name: String) = listOf(File("src/main/java/com/youriptv/app/ui/$name"), File("app/src/main/java/com/youriptv/app/ui/$name"))
+            .first { it.exists() }.readText()
+        val about = ui("AboutActivity.kt")
+        assertFalse(about.contains("requireSettings") || about.contains("requirePin") || about.contains("isSettingsLocked"))
+        assertTrue(about.contains("Branding.aboutBody(this)"))
+        val body = ui("Branding.kt").substringAfter("fun aboutBody(")
+        assertFalse(body.contains("no premium screens, locked settings", ignoreCase = true))
+        assertTrue(body.contains("no paid feature locks"))
+        assertTrue(body.contains("About is available without a PIN from the main menu."))
+        assertTrue(body.contains("OPEN-SOURCE LIBRARIES"))
+    }
+}

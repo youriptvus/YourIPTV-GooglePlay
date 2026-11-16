@@ -1,0 +1,1181 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://github.com/youriptvus/YourIPTV",
+  "source_commit": "0612c0acb500f096da5cfb766f6e7f0a012c4ba8",
+  "source_version_name": "1.0.9",
+  "source_version_code": 44,
+  "provenance": "Read-only git archive of the exact pinned commit; paths, sizes and digests only. No source bodies, credentials or Git metadata copied.",
+  "file_count": 234,
+  "files": {
+    ".gitignore": {
+      "size_bytes": 611,
+      "sha256": "c89df62a3ed6e88acd182d05e93accbbde2c38f52081c1ba9bb16aa9200b2959",
+      "normalized_sha256": "c89df62a3ed6e88acd182d05e93accbbde2c38f52081c1ba9bb16aa9200b2959"
+    },
+    "CHANGELOG.md": {
+      "size_bytes": 39347,
+      "sha256": "55ee0f4a9a3601c07fb3500f664abe6d62425e0edd6f1d02d96a80415f25f3c2",
+      "normalized_sha256": "ea231aa85aa58ccb24878df3de5b8b80b83e30eb6808fc76aaaa948535dee19d"
+    },
+    "README.md": {
+      "size_bytes": 55739,
+      "sha256": "0017c0146ffc1662a6bdcf270dcb7c7a72d732afd458a77ad8fccdde2412909a",
+      "normalized_sha256": "36218946ef1870c4ee5b8540c4fc8e3e90220a56077556e4da9001c02d9a71be"
+    },
+    "app/build.gradle.kts": {
+      "size_bytes": 3730,
+      "sha256": "d9c965becaf4a447621bdff727428271cf1380580213c304115eb0931df98a17",
+      "normalized_sha256": "826c391c4170e5661f8753534aa12af44f6f6a98b8402d1037854363255b0249"
+    },
+    "app/proguard-rules.pro": {
+      "size_bytes": 861,
+      "sha256": "35e1595edfdea34228f4ba33380b219b92700211c4af492237ebbd8b367e82fc",
+      "normalized_sha256": "0367444ec09a60289e48b050ef8ab18b3893395148fdbec9448f3425ac6ad9c9"
+    },
+    "app/src/main/AndroidManifest.xml": {
+      "size_bytes": 5014,
+      "sha256": "f80ca9d38dab60097db457234ac3e21896e1e901cc13e71a9f8138b37d7730de",
+      "normalized_sha256": "cab0af76df935e00d76177c6752e031be5563902fa594c2414d54fb288b6be08"
+    },
+    "app/src/main/java/com/youriptv/app/BrandIntegrity.kt": {
+      "size_bytes": 4473,
+      "sha256": "8e4a3266843caf0f7a28eabbb43c4eebdb52c32a6739844ee8be1cd1871d5e8a",
+      "normalized_sha256": "d2f20bdf877274dc740dacf67d27802473be2b660be6c53d7950f15a784a0bc3"
+    },
+    "app/src/main/java/com/youriptv/app/OfficialSigning.kt": {
+      "size_bytes": 2076,
+      "sha256": "50413246488717db2016122333a7594813b9f5f1b39079747e331d80f2d5d3cd",
+      "normalized_sha256": "87c1c4a58315cfde50f6f32ca5f01dfc83665bbfa0c967fd86248b8cb1242343"
+    },
+    "app/src/main/java/com/youriptv/app/YourIptvApp.kt": {
+      "size_bytes": 3568,
+      "sha256": "c038e77291c08276b7847cd63906f2dc38317f9a40b7104639027feaa5b40aca",
+      "normalized_sha256": "a7d04339b910d31a7e4f166c5039b72b693a284f527c64679192191955937a2d"
+    },
+    "app/src/main/java/com/youriptv/app/data/AdultGroups.kt": {
+      "size_bytes": 661,
+      "sha256": "df9f86eb841e9d58f520f3e5d716e3d3cfb3415323db0e79bfac8b5f8103ce2e",
+      "normalized_sha256": "3ee3c579a11cb4ba131e655f444fe3e1bbe5408336a1b3dd670febca2caa72f4"
+    },
+    "app/src/main/java/com/youriptv/app/data/Backup.kt": {
+      "size_bytes": 10303,
+      "sha256": "7e96cb008e478f2e478a496a5393b7997a6d0ce277e354c4d6426acf332a697d",
+      "normalized_sha256": "d304262bb62acd7fc5e3591a0bc0c722398ecea7496092510604890327bf36bd"
+    },
+    "app/src/main/java/com/youriptv/app/data/BackupFiles.kt": {
+      "size_bytes": 4814,
+      "sha256": "b503f0b07e1b4d9dbc36edc798599d5e752d62691988a262382b3850f4ea4efd",
+      "normalized_sha256": "bc9016bb2b8b89d5d167f83ef388b8b7014631dedfbd54e91c0b4b7ef72d6a2c"
+    },
+    "app/src/main/java/com/youriptv/app/data/Catchup.kt": {
+      "size_bytes": 7206,
+      "sha256": "c93247655152ab8e2ab3335b13fc2656874bded9fa31ded434f84c2d2bf78314",
+      "normalized_sha256": "8070160210dcd3b476c335420b62f6b0c127054fc3e269d77e95b875b92a3d92"
+    },
+    "app/src/main/java/com/youriptv/app/data/ConnectionLimit.kt": {
+      "size_bytes": 2076,
+      "sha256": "8f3d32c428389e8222b9e91f7ba4a0ed36a2d396f647ac5b2de2c8afd6c66cf5",
+      "normalized_sha256": "f9ffda8017d73c58c6af2a0a0ae60bbd2b904832f1bdd90aa4d4eb680e6ceb5d"
+    },
+    "app/src/main/java/com/youriptv/app/data/Db.kt": {
+      "size_bytes": 12651,
+      "sha256": "32fa48af3626bb40662069bb0f3f38787785501d1fd9134da7bfd2cc4935aadf",
+      "normalized_sha256": "a6e78ecd9a087e55a33894a732ef5fb14dab6bf2a1ec1012e2a5fd72db4bbf30"
+    },
+    "app/src/main/java/com/youriptv/app/data/EpgRetentionPolicy.kt": {
+      "size_bytes": 655,
+      "sha256": "6a764ced096fe505f4d031968f24b22a15e91f4cc479ebad4e61a5f385cc6d02",
+      "normalized_sha256": "c17a73053c69b5cb3d0e564b34d4c0ef06b30050771b6326e7bbacb3229e5d33"
+    },
+    "app/src/main/java/com/youriptv/app/data/Http.kt": {
+      "size_bytes": 3145,
+      "sha256": "7e34c8ea45540322eee86e1f4aada3bac28452a1eb7d5681ecccfef12522cd06",
+      "normalized_sha256": "6e4c6552facb07f895008508d718efe0eee47f3e0f2b654070efe346956e9577"
+    },
+    "app/src/main/java/com/youriptv/app/data/M3uParser.kt": {
+      "size_bytes": 5761,
+      "sha256": "2a07f0fbfda442b176e5d034cbd131ea3cd0e4b4b6d06202fa8903884b8295d9",
+      "normalized_sha256": "028f68dc4e9776526bdd13d8266b1baeeccfc11aa4dfeb59bd399626a9c0f992"
+    },
+    "app/src/main/java/com/youriptv/app/data/Models.kt": {
+      "size_bytes": 3768,
+      "sha256": "f1ea4269f8f7d8f4bea43f870a51a71b5569180b653433ad0437279309004768",
+      "normalized_sha256": "828d94e29191c27d6045ba45c63eabcd6e1f5807fb1c6e97b4eb18df269e1717"
+    },
+    "app/src/main/java/com/youriptv/app/data/Parental.kt": {
+      "size_bytes": 8102,
+      "sha256": "e075a3c8a7b60d0d9925d4163086888d0c80da2dc5fdf4dfaeaeb3bf97ef4945",
+      "normalized_sha256": "7a6d591a83f849957269f66d3d1021f0182a8642b4457bc0d9d2d76cc71b1689"
+    },
+    "app/src/main/java/com/youriptv/app/data/Recorder.kt": {
+      "size_bytes": 8094,
+      "sha256": "a538142a53c39447a948ff91268b0ec9ee72cc808ee0ea37e49efb543d3c2d40",
+      "normalized_sha256": "99ac4d35534131ee1be99c34c4193bc7accd81af2bc4511c8ac7359e3c913736"
+    },
+    "app/src/main/java/com/youriptv/app/data/RefreshPolicy.kt": {
+      "size_bytes": 1598,
+      "sha256": "69d11a40d293c645d6f51cb9c0a03ed33391a027dac1a35280d1ebe335ddab7c",
+      "normalized_sha256": "31c71cd50d8d5fd6ac761f60b78e1cfbe82240be41ac4f6fe41a2868b400771d"
+    },
+    "app/src/main/java/com/youriptv/app/data/RefreshStage.kt": {
+      "size_bytes": 2256,
+      "sha256": "281caee455a6f2454b31bd41743b13db1178c75857b37a0b53be43c649d6c526",
+      "normalized_sha256": "31203b497c617c3f0bff10c78d7f0ec927d3eee2e6a4246890a86f19a2e44dd2"
+    },
+    "app/src/main/java/com/youriptv/app/data/Repository.kt": {
+      "size_bytes": 50824,
+      "sha256": "46ebbefb27b657c28a5ec2fb6e9f9e062160c1564e0173d60156ac1a4c3d5f25",
+      "normalized_sha256": "fddfc236a8872557b7aa34b0e36d6f631dd1839f7c1fe87f463ba405c672e3dc"
+    },
+    "app/src/main/java/com/youriptv/app/data/SeriesNames.kt": {
+      "size_bytes": 1533,
+      "sha256": "a7cecf3d1afec908619b5122ae0090179d1e7c5688ada34627ca1c36efff6c17",
+      "normalized_sha256": "d85adffa7d1e2412783f0434cc2b5f04dbc674c2e3e83347f279bf975794d63d"
+    },
+    "app/src/main/java/com/youriptv/app/data/Settings.kt": {
+      "size_bytes": 12017,
+      "sha256": "822e95eeedce793808133d7c78eb15b4b734a5cfd302c5a5fc554091a4a99404",
+      "normalized_sha256": "0b577e6d4cb84ddfb605211ae9aa4cb12de9fad8a63a17e4f1c0e8995a18d5ce"
+    },
+    "app/src/main/java/com/youriptv/app/data/SettingsLockPolicy.kt": {
+      "size_bytes": 279,
+      "sha256": "6ddcfc396b94f40c72adece046045de10ac550cecd4b3563e2fc65664fca61f2",
+      "normalized_sha256": "dcd7ca75a57f45e29d0766c78aa7393907b21b8b57d01bdaeeb0df6be1a7de9c"
+    },
+    "app/src/main/java/com/youriptv/app/data/StreamDiagnosis.kt": {
+      "size_bytes": 9559,
+      "sha256": "72a547da0940ee531468b0d81e8fa9bdc9e60a140fff06ce4be6dd3e63f96dd9",
+      "normalized_sha256": "8f9cbaa55e3e716b0cb1bb558215f64c5a3893725960629cdc392898b31cfe82"
+    },
+    "app/src/main/java/com/youriptv/app/data/VodMetadata.kt": {
+      "size_bytes": 4883,
+      "sha256": "045ef31b18220d99d4174a978bf03e6abbcd188ea7fcb5d4e93fd8274f38ca2f",
+      "normalized_sha256": "58831bfac65bdf0a3f4467cb64c0b821ddf533ad21c61181a53cecd0082b2bfc"
+    },
+    "app/src/main/java/com/youriptv/app/data/XmltvParser.kt": {
+      "size_bytes": 6845,
+      "sha256": "e5c5875cbe705dce01a166cd2caa0affa982539346617ea101ac48f10ac191b4",
+      "normalized_sha256": "20706cfe49b6f041ca164e854c82d1da8bd504b7e53c9a40f8d68748dcdeda96"
+    },
+    "app/src/main/java/com/youriptv/app/data/XtreamUrls.kt": {
+      "size_bytes": 4890,
+      "sha256": "1e10ea2ce582eda01526dd548584f6c6f3f90278369890fd0bf4febfeb77d45c",
+      "normalized_sha256": "6c96d5ec2be37181cbb6f170b395768503c9eaab383c320584af82c22d9a3f3b"
+    },
+    "app/src/main/java/com/youriptv/app/refresh/RefreshCoordinator.kt": {
+      "size_bytes": 10985,
+      "sha256": "5b7c613c4cf108f62271c93a41f01688bf1891fd00582d731a51e33052b593b4",
+      "normalized_sha256": "808fffaa903ff71d671682d662fafadd4a2e5d2ba762e2dbfb76c72d12232f12"
+    },
+    "app/src/main/java/com/youriptv/app/refresh/RefreshJobScheduler.kt": {
+      "size_bytes": 2807,
+      "sha256": "ca16a5703ed32757416ef689752c9a885b512e677d7085bccef631ac3e8909ff",
+      "normalized_sha256": "b33009aab0232c8ecc71a2cafd0c93b9d60831a0d916ea0199bbe3dec3006909"
+    },
+    "app/src/main/java/com/youriptv/app/refresh/RefreshJobService.kt": {
+      "size_bytes": 2509,
+      "sha256": "72f3fe6e68892e15f584309cf163246e64c8be1872f5fc5352cfd3ae30ddb484",
+      "normalized_sha256": "3d0744e8d981c65151e6d8f458e8b432b47617a756a5e2eec1e064b4866a4d99"
+    },
+    "app/src/main/java/com/youriptv/app/refresh/RefreshPolicy.kt": {
+      "size_bytes": 1447,
+      "sha256": "8f7751c114b90dcecf2243a7640c21436d6a0704ff31e73b678ab2fb24ed200a",
+      "normalized_sha256": "c2a198654d6a024a4162d44dde836cc12da98df62dd72504b766b737b756a154"
+    },
+    "app/src/main/java/com/youriptv/app/refresh/RefreshQueue.kt": {
+      "size_bytes": 7833,
+      "sha256": "6b22814ab333d17f13eb6b2b061305864da2e32e4eda424cfc61276d7da5cb86",
+      "normalized_sha256": "bb2adfbf2570ee764b20c9e92b647d0a0ad9183df3e76da2f7bdf16b1054f65d"
+    },
+    "app/src/main/java/com/youriptv/app/refresh/SharedEpgFiles.kt": {
+      "size_bytes": 2274,
+      "sha256": "703c569d2a4f6cc6de4f696c54fd287cee6d1601268970768623ab967518a776",
+      "normalized_sha256": "03308526deb35df544b07eede0210bfaaea75802dcf4bddc824755ed3bdaef16"
+    },
+    "app/src/main/java/com/youriptv/app/ui/AboutActivity.kt": {
+      "size_bytes": 1314,
+      "sha256": "5527c7d1e21332990589583817b036c0cd2ab1b3a1ac896e768542bf3e547c11",
+      "normalized_sha256": "75497c4c1a652d647e7c193dbf066ac247e06636b5eb3b97533776da31638560"
+    },
+    "app/src/main/java/com/youriptv/app/ui/Adapters.kt": {
+      "size_bytes": 10193,
+      "sha256": "43f9323c1bc18edc9614f950aa5a79cbd6b8dd72524d801213791346e7c85917",
+      "normalized_sha256": "a4935398327968920802101e5e82c04057d46b0d258b2081ce6c609e6ed1afc8"
+    },
+    "app/src/main/java/com/youriptv/app/ui/AppUpdateActivity.kt": {
+      "size_bytes": 9826,
+      "sha256": "4f24b1ac96a1900726659aae85a8c11a8fb45e9175a7eeed1cddebc87f18bc45",
+      "normalized_sha256": "028f5dc9bcc28bd9c8ce491b5c5f87cce190bc6573210e8ce26a97eb9f136704"
+    },
+    "app/src/main/java/com/youriptv/app/ui/ArtworkPolicy.kt": {
+      "size_bytes": 3371,
+      "sha256": "0ebbe3465023c39afd206e6cfb32363ccbb0efc970b0e9e98c34c05cf2413dab",
+      "normalized_sha256": "e2e32170c12c7ced6e1fb87eeaf1be1d703cc14116d7d5cbeb8ca409ac60d7d1"
+    },
+    "app/src/main/java/com/youriptv/app/ui/AudioDelayProcessor.kt": {
+      "size_bytes": 2379,
+      "sha256": "9bc0cc8a5813ebeecccdc98ee10e1895e223fd08b7ea6447a4fa9c13a0a6a786",
+      "normalized_sha256": "12e22ad6734e52767f9e269d0ccd4a6216b02d54760c8a2a30dd14fe25a28ebd"
+    },
+    "app/src/main/java/com/youriptv/app/ui/BackHoldGesture.kt": {
+      "size_bytes": 1424,
+      "sha256": "e276e7e627c1cba5ca27a8e1101e3015624d48bd6772c617b158e4769326fc70",
+      "normalized_sha256": "9de9c17db1955380bdfec95777ae3a1980cd30c04c58c5c1426519a1abce3700"
+    },
+    "app/src/main/java/com/youriptv/app/ui/BrandAssets.kt": {
+      "size_bytes": 3231,
+      "sha256": "88b02cdb1cc9f305c9b8a0f8ba4d745b9c8721506b081266d6e3a2e287bd8069",
+      "normalized_sha256": "110ac5b61773618b7862ed825c18858b4f53cd9f198bba9010025a5aad7ddc4c"
+    },
+    "app/src/main/java/com/youriptv/app/ui/Branding.kt": {
+      "size_bytes": 5695,
+      "sha256": "fa3447ecafa5c4f49526494e3ff641c2637196c864d4fb9dfdd50120b9be7fde",
+      "normalized_sha256": "a0e84b75ace6a36b1e6754ee916188e063b78f35ad0d1dab0e65b268353f67c8"
+    },
+    "app/src/main/java/com/youriptv/app/ui/CurrentStreamReturn.kt": {
+      "size_bytes": 879,
+      "sha256": "257d5d13699057c683dce871fbcbbdef0012091757bdd969d342671050552645",
+      "normalized_sha256": "694083303b6c195a37a4e058b9cecb2b1077e152d849a51c58dc0c4148b86963"
+    },
+    "app/src/main/java/com/youriptv/app/ui/CustomerRefreshPresentation.kt": {
+      "size_bytes": 2767,
+      "sha256": "7f5b2a69fb5eede951ba7ab084d4f796f20dfd78799982e9fbbc92f597cf7bfd",
+      "normalized_sha256": "6ce640c49212085a0bcc5c18cc2804d04a7d90a29110c856589dafbe0389482e"
+    },
+    "app/src/main/java/com/youriptv/app/ui/CustomerSettingsPanel.kt": {
+      "size_bytes": 7935,
+      "sha256": "6e294714714dfd15f619081ec305893b12e9608731cc46cff9685384086fc5c3",
+      "normalized_sha256": "592768f804345c10a65b024436ea9ff9ba6bbf755ddf91ddcf60a0b57c2a32f3"
+    },
+    "app/src/main/java/com/youriptv/app/ui/EpgSettingsPanel.kt": {
+      "size_bytes": 10255,
+      "sha256": "ee7a5913179e7f9e11b8a61bd951837c1cd63be973f6b2fa1b3ccbb0a2985e53",
+      "normalized_sha256": "b34731f128cd4c5a4c4ef69c9a3f5180c425d97bf820727ba6baa1220b522eda"
+    },
+    "app/src/main/java/com/youriptv/app/ui/EpgSettingsPresentation.kt": {
+      "size_bytes": 812,
+      "sha256": "2048a46a20def14512a2e520d99e596366eb7f1ab64fcd8f03f82abb3f8458a2",
+      "normalized_sha256": "b4a4178284193a663ae835061ce324369d63e0835b31c60f4f8a988338ed544d"
+    },
+    "app/src/main/java/com/youriptv/app/ui/FrameRateMatcher.kt": {
+      "size_bytes": 2621,
+      "sha256": "10938dfee9dd5621f6cd1c58494d4b2847917a029a6b5dc4610ab87aff6b44fe",
+      "normalized_sha256": "8063af32a9ebdfdffa4a929064f16141bc16cf4981533a4dd9ca53f3e6f9bc00"
+    },
+    "app/src/main/java/com/youriptv/app/ui/GuideData.kt": {
+      "size_bytes": 7563,
+      "sha256": "92ebf9d147280074769261f7d38b638a714f46f5644f02bebebf7660be43c982",
+      "normalized_sha256": "f790b59e5ba86ef18803193691a9c8c900e880ebdae3e4834836309016566aee"
+    },
+    "app/src/main/java/com/youriptv/app/ui/GuideViews.kt": {
+      "size_bytes": 9349,
+      "sha256": "245fd855975ba8492b843f7a224c968fb672f6c5657199a5a9321cf85139eaf6",
+      "normalized_sha256": "327551a831c648d3c7e457c7506b0d9811e6a185efacf134db377ca24c6931d0"
+    },
+    "app/src/main/java/com/youriptv/app/ui/ImageLoader.kt": {
+      "size_bytes": 7076,
+      "sha256": "246bf9e839caf9e25208e888eec28774dac03951634908d03522e1076d31d1a4",
+      "normalized_sha256": "bc403ba2c2d309c588ebf06f75cfd3072015e5466efa21428f41769238f7f2e4"
+    },
+    "app/src/main/java/com/youriptv/app/ui/ListActivity.kt": {
+      "size_bytes": 2343,
+      "sha256": "fe4c95b6d48c1130b34d80ade53381fce842b9059aa3eb9cadb2c5219013b6e9",
+      "normalized_sha256": "6b76dac31f961d5d0d1cbbe8f1e9809a4d5bdcd39b7bee9331f258eeeec8444c"
+    },
+    "app/src/main/java/com/youriptv/app/ui/LiveBufferingRecovery.kt": {
+      "size_bytes": 4320,
+      "sha256": "a6bcaf652e0bf2eb02bbbd9d9323e24fa0f91ef1f6214893c6064705f211b686",
+      "normalized_sha256": "a178ddabe5534587b2a08b3a80b5f7f39db5fe907791c3dfe8882d63faa264c5"
+    },
+    "app/src/main/java/com/youriptv/app/ui/LiveCleanEndRecovery.kt": {
+      "size_bytes": 1127,
+      "sha256": "81d52b5f722bbcac9a9630502e67a68902bae8333e8485ae64b1021b9b876ac6",
+      "normalized_sha256": "3982814ea0c120bc9c8670b9b5ad2d6cff1c5af59e87e61f6278a28b18257aad"
+    },
+    "app/src/main/java/com/youriptv/app/ui/LiveGuideGrid.kt": {
+      "size_bytes": 24350,
+      "sha256": "226c8fd7fc1d393d3dccfbe9efea8c2f7e77b50718079955c44d4dd11945f074",
+      "normalized_sha256": "193756efdd4d7b39d004071d3440383eb8604fb408b5349130ccc683795a901b"
+    },
+    "app/src/main/java/com/youriptv/app/ui/LivePlaybackSession.kt": {
+      "size_bytes": 20657,
+      "sha256": "c82a3f3caec33a7b3900770534b4eb3e15cd170f2bc15319b4ce10a276e2e2c6",
+      "normalized_sha256": "adeb5726ab814eb0420360772c0856f60ddcf8728da311632b22e8275939cdfd"
+    },
+    "app/src/main/java/com/youriptv/app/ui/LiveRecovery.kt": {
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "app/src/main/java/com/youriptv/app/ui/LiveStreamMemory.kt": {
+      "size_bytes": 2355,
+      "sha256": "509237a1a280e7f019fdca003038405bed06eac615cfeaaaedde6768aa1ba3a0",
+      "normalized_sha256": "40f0860a1eeca71941a95dd368aa9f29ad8a6b2334cd1ed70133c7f0c680cbaa"
+    },
+    "app/src/main/java/com/youriptv/app/ui/LiveTsExtractors.kt": {
+      "size_bytes": 6783,
+      "sha256": "b4cb266556f57e499680d92215cc702e57cfdcdd6650aedddcfffa79a75fde0d",
+      "normalized_sha256": "9007a5450fca4fed6edaf29ae9444a73f0b5015b9b307e13ed5dd01e20987763"
+    },
+    "app/src/main/java/com/youriptv/app/ui/MainActivity.kt": {
+      "size_bytes": 83019,
+      "sha256": "ac964f5b2204a237bcb039732190803aaadd235a5ee502b9b6831caca7f15dd6",
+      "normalized_sha256": "3eec89d04302ce7cdf1b310372f2ff7d543a94b3e0d5216456b4389bbd089885"
+    },
+    "app/src/main/java/com/youriptv/app/ui/MovieDetailsActivity.kt": {
+      "size_bytes": 9530,
+      "sha256": "b442e340610fcf0c9c883c8f8f8180dc0983ca01284ad946698fe348ecf9b979",
+      "normalized_sha256": "7b75064ff21687096d37a52cd08dd42716e6597d04a7dc26c48e5ef56b05bf05"
+    },
+    "app/src/main/java/com/youriptv/app/ui/Nav.kt": {
+      "size_bytes": 9917,
+      "sha256": "50f9a25b78e2a7e57ea1b924b874b38f823d77e21cd269f8fc635329ff378890",
+      "normalized_sha256": "d33d35ea5f014d4b1bd9c60cd4fb53849a7fb16142850269d9cce62458426eab"
+    },
+    "app/src/main/java/com/youriptv/app/ui/ParentalControlsActivity.kt": {
+      "size_bytes": 8192,
+      "sha256": "b4cd5503cd7ee5f64f1b2d8358a3feef1133dda9b655ff04ec6a76536cfe1a6c",
+      "normalized_sha256": "495e0bbbc760886f1b0b6e27851715809b660853e7c16f3f5947d7f4c6516a74"
+    },
+    "app/src/main/java/com/youriptv/app/ui/PlaybackFactory.kt": {
+      "size_bytes": 4806,
+      "sha256": "fe4a7b036e3d19a644503e2e7e79f5912030840cc77f9283f27ebe50354c573c",
+      "normalized_sha256": "b0c25eda29051f38e82b5c5884b1c86caf4821b00ddf85bb1be43511c7941886"
+    },
+    "app/src/main/java/com/youriptv/app/ui/PlayerActivity.kt": {
+      "size_bytes": 64126,
+      "sha256": "0bc57a150110424cb9e15d9605da3032c60ccee596606a2d55f76b503caa6841",
+      "normalized_sha256": "00e9eca140ead16469c371dde64bc71c0e365ff3d7c059686aa5c4ee0ad29624"
+    },
+    "app/src/main/java/com/youriptv/app/ui/PlaylistDeletion.kt": {
+      "size_bytes": 566,
+      "sha256": "38268eb600ae938aee6d0ba3f6b65010cf7a7984aa2a0e5c8d1d444f46d645a5",
+      "normalized_sha256": "b6bbfd9f41558c24a5f3cbf5696f6673b7f31eb220770017d41ce0b090e6b65b"
+    },
+    "app/src/main/java/com/youriptv/app/ui/PlaylistEditActivity.kt": {
+      "size_bytes": 16576,
+      "sha256": "1d4ae6df6e1b0a2af751d396120e356c4415bec31391915871bd405aefe7f936",
+      "normalized_sha256": "df60f36f30ac3352936c2add4a21a8c8f5f52f679786fbec140b724c652cf718"
+    },
+    "app/src/main/java/com/youriptv/app/ui/PlaylistEditAuthorization.kt": {
+      "size_bytes": 1170,
+      "sha256": "f7c81452001808085fd1e04cac49bad58b8b95096250a9187f759462be1d1850",
+      "normalized_sha256": "179d16770d87d21d6f6b366570f43fa4cee139d469a75152b554280c00251873"
+    },
+    "app/src/main/java/com/youriptv/app/ui/PlaylistsActivity.kt": {
+      "size_bytes": 11947,
+      "sha256": "bf029a20a2b4754c15e3d971e17408fa6b555bb0eb92b58b581cc9bb995cfb7a",
+      "normalized_sha256": "230918d1655a320161b2744b0c977946c42a6273ea48bfdf95a5fd7b83bb4898"
+    },
+    "app/src/main/java/com/youriptv/app/ui/PosterImageView.kt": {
+      "size_bytes": 1186,
+      "sha256": "46a3619cfbea2a2cccc4594343b72fbada4490b433f8e29d5ce3b392629df2e4",
+      "normalized_sha256": "95dd5c8db8d28aa8b0b9310de1bcf263895caa148dc3126e119648fe64c664e0"
+    },
+    "app/src/main/java/com/youriptv/app/ui/PreviewLoadingHint.kt": {
+      "size_bytes": 844,
+      "sha256": "301aec90acca2a18af8c84c31d111f2452c1048624d65f36b176ec1bf88cea42",
+      "normalized_sha256": "4f904a79750c30d7099bf7d7903d068709492a3fd9c7972c306d54356df6b0db"
+    },
+    "app/src/main/java/com/youriptv/app/ui/PreviewPanel.kt": {
+      "size_bytes": 1363,
+      "sha256": "78d523c3d5353130c872595b2fede7a8546f0c0e20d075572113eee4c396d9e2",
+      "normalized_sha256": "0cd799b0f9cbe23f641fc283c38a17f8c68de602f09b2152944979eed8ec9f11"
+    },
+    "app/src/main/java/com/youriptv/app/ui/PreviewSelection.kt": {
+      "size_bytes": 518,
+      "sha256": "4eab348cfed360ab94e031bfab8ddbb254d85afc893cb93249722793d6c0feea",
+      "normalized_sha256": "f21cd1e344fb65d0741eea123e3a2cecb1cbb3cba88412c1e61770b144e0da78"
+    },
+    "app/src/main/java/com/youriptv/app/ui/RemoteActivity.kt": {
+      "size_bytes": 1072,
+      "sha256": "e0a96877cdc40df100f597d2ed3deb02bf7a6b97743c65d832214ff85a162141",
+      "normalized_sha256": "0e87b47fd54b4925e9df3c1726babd1b9a66cb8c0a41b79019decf8c81a2afec"
+    },
+    "app/src/main/java/com/youriptv/app/ui/RemoteBack.kt": {
+      "size_bytes": 5073,
+      "sha256": "c5930c934aacb4fe4ee58af9fc2510ccfa732d0b666f689ab483ab267e32a169",
+      "normalized_sha256": "620f65e5cb94d108347a5501bb2e6441eb5ad94c25b56b26c17611d2fbdc834a"
+    },
+    "app/src/main/java/com/youriptv/app/ui/Scheduler.kt": {
+      "size_bytes": 10629,
+      "sha256": "73e9ba9c58989b54c6e28843ac86189d257abc8294bbf7e12fc6ff1c7d6c1d0f",
+      "normalized_sha256": "7510fdb5edd1a6684a80264e5d8784b1e6d24650ae0af1bab5fa84286f083111"
+    },
+    "app/src/main/java/com/youriptv/app/ui/SeriesActivity.kt": {
+      "size_bytes": 23315,
+      "sha256": "a5633ef3a67f6a639d64f869edfa53d6e8064cf7218cae29a5b39e74fe4f2293",
+      "normalized_sha256": "232b9542e872e649d78aa640955e51f500c1298a787b82757ee6a19b87871733"
+    },
+    "app/src/main/java/com/youriptv/app/ui/SeriesBrowseState.kt": {
+      "size_bytes": 6096,
+      "sha256": "0c161bcf97b2d89d085baebbba3c9c91bbebefe8cd59541b29e34754a7eaa6a0",
+      "normalized_sha256": "6b61f0291eb17f98dc141649245257550453ae8ca9ca16d455b41d6f456e150a"
+    },
+    "app/src/main/java/com/youriptv/app/ui/SeriesEpisodeAdapters.kt": {
+      "size_bytes": 7371,
+      "sha256": "b22bf1cca7822368f0cdfc93f7b180b5128f37a92528d5fd6033317fea1f5215",
+      "normalized_sha256": "abd2af639e861e794e01125ca6f7c8e182d58014ca73f9a9dde422ded8266340"
+    },
+    "app/src/main/java/com/youriptv/app/ui/SettingsActivity.kt": {
+      "size_bytes": 32324,
+      "sha256": "c9284f2cfddbd233d2426328342de59fbbd8d8cff3c35eca4c6910676113c74c",
+      "normalized_sha256": "d1f8bde903bc42aca721cfb4bd9eeb2fa1adf13bcaf339e997ec80d4a6c05e36"
+    },
+    "app/src/main/java/com/youriptv/app/ui/SettingsFlow.kt": {
+      "size_bytes": 5017,
+      "sha256": "81e27c1e348118667b0df7f956d27c15f338f3a7e6f309b1fa4b1f545dad91ee",
+      "normalized_sha256": "7cc58ffb6974cc68e31cf5de2f55bc83010e46da480a2bd319b8499a9d294270"
+    },
+    "app/src/main/java/com/youriptv/app/ui/SettingsFlowAuthorization.kt": {
+      "size_bytes": 4701,
+      "sha256": "c9bdb8b12c017072219e6623ff4a3b9d5eb29642a088e954b08f95bdf1182619",
+      "normalized_sha256": "857e7df125a929628e1d1e331cf09b17d4a1c72cdc926a4803b654949b9ffd9a"
+    },
+    "app/src/main/java/com/youriptv/app/ui/SettingsVisitAuthorization.kt": {
+      "size_bytes": 1026,
+      "sha256": "15571df83f01f0385d57727a45a0e281fc2ddd8a2d48ae7e974849210bad420e",
+      "normalized_sha256": "72b8c63c8f8d5c8e903fb7da9c4deb31808086b25ef98362f19525df439058ff"
+    },
+    "app/src/main/java/com/youriptv/app/ui/StreamFault.kt": {
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "app/src/main/java/com/youriptv/app/ui/UiUtil.kt": {
+      "size_bytes": 8341,
+      "sha256": "7060c66e3eadc743facd9fe0ea19820a755e1b722a1c3dc8e4a440768cd5d8ef",
+      "normalized_sha256": "021a36aba236acc62c64d4b02c69666cb843ea990758fe8292bbd0c5bb8a1d75"
+    },
+    "app/src/main/java/com/youriptv/app/ui/VodGridPolicy.kt": {
+      "size_bytes": 4527,
+      "sha256": "b2200f417211c5471aa28ee4a1a72a8f1530f159130247a092a6421f53c6e5a6",
+      "normalized_sha256": "8e00316cf3ad4df4274b8ac7481a63053100fe7385befa9f38bd9d4a18d2ca63"
+    },
+    "app/src/main/java/com/youriptv/app/ui/WorkQueueSnapshot.kt": {
+      "size_bytes": 486,
+      "sha256": "134d3382848539496669c9278cdc5dda77465e93eec50bf5fe2ca2dd8ad6a2f0",
+      "normalized_sha256": "7bddb4b9a7884233fd410da7a3ac390da7b54886bfe3749304a27a0ca42b982e"
+    },
+    "app/src/main/java/com/youriptv/app/ui/YourIptvLogin.kt": {
+      "size_bytes": 825,
+      "sha256": "153da76b38ff36c60e0f5d936f777460f01314de7e5e763fe1eff0d7d12ad2be",
+      "normalized_sha256": "b5fcd9dd4a30f9e15cfc4e8481cfe55ce8114d1d8dddc9555d3bd017e5d269ec"
+    },
+    "app/src/main/java/com/youriptv/app/updates/AppUpdateChecks.kt": {
+      "size_bytes": 7765,
+      "sha256": "0008730dfae6ca3e36a5e102e3dc9df4c9b0cd2278451ff567d91be1be69747d",
+      "normalized_sha256": "819db4b304090eb6830c3b9e87d802c958b96b3d666c7089c8be2130ff5b9195"
+    },
+    "app/src/main/java/com/youriptv/app/updates/AppUpdates.kt": {
+      "size_bytes": 7302,
+      "sha256": "6826c4b104b2864b34c0181ed1e537eeb0a01502c13c71d6d8e43c2f6ddb9dd4",
+      "normalized_sha256": "f87a696ac2220edb636fa1fc0847e5c7e37ec7b3d5386ea22f771206c480f8ed"
+    },
+    "app/src/main/java/com/youriptv/app/updates/InstalledChangelog.kt": {
+      "size_bytes": 7137,
+      "sha256": "1f75aa5bd9dbcf487d7440855c65f2b98f9e859d8d4cbbecd1291fb82778ed27",
+      "normalized_sha256": "b52908ed479c6a4af6f61f0b980be9a2c2fd0b185f7cd1ccf2829481412fbd32"
+    },
+    "app/src/main/java/com/youriptv/app/updates/UpdateReceipt.kt": {
+      "size_bytes": 1524,
+      "sha256": "9efe0dedeb3758e19f5ecf607764c5496c0951ff6696fcbcdd8a5e5753c615ac",
+      "normalized_sha256": "4546ccb425145915bca13e1cb698b7bbbc6d34e13ef46e8a63533cd63ccf9fb3"
+    },
+    "app/src/main/java/com/youriptv/app/updates/UpdateRelease.kt": {
+      "size_bytes": 8459,
+      "sha256": "6b62253213475ed444522613fa0816c9e0003fd850a3033df78cc35800c71710",
+      "normalized_sha256": "9cc49455b7ed569d9f1ee413233309701b8e951e26eb1138a8cfc1424031f792"
+    },
+    "app/src/main/java/com/youriptv/app/updates/UpdateTransport.kt": {
+      "size_bytes": 5408,
+      "sha256": "524b4483399708784fb789296465ee67c3d38762e47fd7d93c4f3c04a6c10641",
+      "normalized_sha256": "db986a7f5cd57b3c45b4ede439871aaa89aa306c0cb48f82e0407010bd5f0953"
+    },
+    "app/src/main/res/drawable-xhdpi/banner.png": {
+      "size_bytes": 158016,
+      "sha256": "06a4c8a030f1a20e0feba3ff4255b7f52fe9b999689a34af41944eb7dea4a24d",
+      "normalized_sha256": "06a4c8a030f1a20e0feba3ff4255b7f52fe9b999689a34af41944eb7dea4a24d"
+    },
+    "app/src/main/res/drawable-xxxhdpi/banner.png": {
+      "size_bytes": 564701,
+      "sha256": "d4ae72411a5630cb6e47eb1b308543e104ed1e8d91be80887db34fb3703860b1",
+      "normalized_sha256": "d4ae72411a5630cb6e47eb1b308543e104ed1e8d91be80887db34fb3703860b1"
+    },
+    "app/src/main/res/drawable/bg_button.xml": {
+      "size_bytes": 1113,
+      "sha256": "d6524029444cbfb53fc38f9511e01f288efc1a989e404d2d415fa40926683970",
+      "normalized_sha256": "c31db0c17ed2a38ab38dda7dd1a9b33d4df60972aa8a4d0243e3c8bae746b497"
+    },
+    "app/src/main/res/drawable/bg_dialog.xml": {
+      "size_bytes": 282,
+      "sha256": "3b95f82a30666bf3e9d7c7bcf36e2ae5b02bab34bea072f4853bbc6ef5b9e8f4",
+      "normalized_sha256": "1f161b30802a2ab42fa850a8fe90779f0396396f3c5ea0c0a8e51cc55e9ccc3a"
+    },
+    "app/src/main/res/drawable/bg_focusable.xml": {
+      "size_bytes": 1272,
+      "sha256": "1f887be20303a4bee33f14f8460d96fb01c0c632b118ea2655b696fbb1a570b7",
+      "normalized_sha256": "179ff9db5b1a1f9b3dce673816cdefd5421dcefadaffefe628a96a8632b4865e"
+    },
+    "app/src/main/res/drawable/bg_input.xml": {
+      "size_bytes": 675,
+      "sha256": "629e1c2af5d42637b1de893f7b0b2408ff188193efa340d59d7697f2609da138",
+      "normalized_sha256": "bfedc308cf97f2a6a7e5f09356878d4b272d388ed64a28b9790479f0759ff835"
+    },
+    "app/src/main/res/drawable/ic_channel.xml": {
+      "size_bytes": 520,
+      "sha256": "d52d487483ec21e2be45f7b38c234260569b3c24bb5359b2e05378534f685a4f",
+      "normalized_sha256": "05df90a5320f88fa2ab5ee07f7e79170efc777d681e28642a53b5cde4d0264bd"
+    },
+    "app/src/main/res/drawable/ic_lock.xml": {
+      "size_bytes": 459,
+      "sha256": "b942e58c9a8f8e5d0dc54b3fbfe7be1e213c06eca9bbbff0a31d5f4a12dcfa23",
+      "normalized_sha256": "dcc171842783c25f14dd5b1f7d8d5f088f543509ab3c6aeb6c6ff62c159dcd50"
+    },
+    "app/src/main/res/drawable/ic_star.xml": {
+      "size_bytes": 375,
+      "sha256": "588a26a28109bfb96b879fc0c7e9c1083a2ed564c785a01a757c63fe04ab51a7",
+      "normalized_sha256": "925062041708a77dc3845bcb6a946bc015c147afc2418c495dd93f7576c3c414"
+    },
+    "app/src/main/res/drawable/movie_placeholder.xml": {
+      "size_bytes": 515,
+      "sha256": "fc94a22573abe9276fef9efcb15054d11d4d98b9036c3ec688897a4b0fa46473",
+      "normalized_sha256": "9fd1bf4ff55fca572c1eb43f03a4a4b1b476ef2aed9bbd9ff1a7c39114901788"
+    },
+    "app/src/main/res/drawable/series_episode_placeholder.xml": {
+      "size_bytes": 389,
+      "sha256": "6745497ce3253a1184cb681309d2ed017431efdc58c5af33ad925e6c8ad95e87",
+      "normalized_sha256": "6962cec1ad7eb373286c337140652a8eeac5ba199fcaecde97a02b2ba3ffcdb0"
+    },
+    "app/src/main/res/drawable/vod_poster_background.xml": {
+      "size_bytes": 494,
+      "sha256": "965d6738d3faf2222c359dc21556ff99a7fdf10697c2adaab520ef5dd46ce21f",
+      "normalized_sha256": "d40d2a0ca89a45fe035d4f30363ff4719be3d6240074d397bdc0a286b688a381"
+    },
+    "app/src/main/res/layout-port/activity_main.xml": {
+      "size_bytes": 4366,
+      "sha256": "34dd0c8fb00866f5008d3e5ae0b36303acdddd5ace7952e80beb61f7a4d89ebd",
+      "normalized_sha256": "f4da9a0c5e50cfe1d6f153ef52941985dbbb6a3508a6b85a3e3f57da7b287d4c"
+    },
+    "app/src/main/res/layout/activity_about.xml": {
+      "size_bytes": 1254,
+      "sha256": "239c329db1b68c768dc06dbeb6000546baa1287a0343551404c983c441113517",
+      "normalized_sha256": "db6b278e3f5e74b928231ff8aed4996a00381361462a2d43f777b58517a5e377"
+    },
+    "app/src/main/res/layout/activity_list.xml": {
+      "size_bytes": 2220,
+      "sha256": "fe1ae32bad632c661d58e789361511d184021e2d5368eb55a31954547a4ee49a",
+      "normalized_sha256": "1183d9e74bcf3e82de6c738bad6164a6d48bff462c7e5d037aac88beee3d5828"
+    },
+    "app/src/main/res/layout/activity_main.xml": {
+      "size_bytes": 5183,
+      "sha256": "49fc457a84df3177a3f233009cd0c5b25a61f24a3147cd9f353a3e88045d7ad0",
+      "normalized_sha256": "ff5277c7462fd9a0174db14307217561c56db884e2863e89bbfaee36b1ce583d"
+    },
+    "app/src/main/res/layout/activity_movie_details.xml": {
+      "size_bytes": 4183,
+      "sha256": "5e4c8d52bfb61158797d8e951fd6f1e9e6462030255df39513a6fb45a3c2b11e",
+      "normalized_sha256": "af0687f08f62820212310b80988889b01fd7b423af9e740a56ef38e249009c0f"
+    },
+    "app/src/main/res/layout/activity_player.xml": {
+      "size_bytes": 6331,
+      "sha256": "d37518643c3ba2613fd54972a5be04e18c20e90a6f4505651a447a1f8dc67890",
+      "normalized_sha256": "40f9e4ba2bc6d7e8d57c9e1458661867cbe6cdbdd6713b2c6a2fe22b9e37568d"
+    },
+    "app/src/main/res/layout/activity_playlist_edit.xml": {
+      "size_bytes": 5722,
+      "sha256": "7a5ec932e5d6f2f480d235db60d60f64451b4a0e5069cc5c8f0af762ea368d82",
+      "normalized_sha256": "32738706cb93fa37033fc063ba6adb412fb0bdbb37d0778a5200476461cd4669"
+    },
+    "app/src/main/res/layout/activity_untrusted_signer.xml": {
+      "size_bytes": 1105,
+      "sha256": "d0b8dcbb7f02f9c0164b18b9dbc1560c850e92408344983f2d38e92b099e25b4",
+      "normalized_sha256": "60fd2221b6c38c978a96e6409d49b925676e00c51d498736fe53faa7cd0ca1e7"
+    },
+    "app/src/main/res/layout/content_header.xml": {
+      "size_bytes": 1165,
+      "sha256": "a9e7a6bcb5c48e3312120705b09621c57bab465e6a0428d797e2b05222cb5523",
+      "normalized_sha256": "c9dbb9a309c4b120e1cc04a9c3687e966395f46d9031cf9ceae404190862f74e"
+    },
+    "app/src/main/res/layout/content_state.xml": {
+      "size_bytes": 886,
+      "sha256": "620c6b9a915c26720d1fe067e8f6f1003d37f19520bf633b87a625b2abb47ccf",
+      "normalized_sha256": "3ac2e06d23f0ed0bb6486e2fd7d26b89632bd5f0daae7b61f60530e5b2d0791f"
+    },
+    "app/src/main/res/layout/live_preview.xml": {
+      "size_bytes": 1412,
+      "sha256": "f9d05157bb9e0b492b1574292bc2314e94e6f833fdf96137a57e452d89f66284",
+      "normalized_sha256": "920691223ae5c1c3132d46c3ae2e7fd8001df3f16a99bf55bdd12c221c433080"
+    },
+    "app/src/main/res/layout/row_group.xml": {
+      "size_bytes": 1229,
+      "sha256": "9e9f59f8abc3ea97259cc858cbd44f7919e0c09ef47561d1b807630ccb2b38a6",
+      "normalized_sha256": "520bd397bcc08b7baa0f70f083c67c950bcb51bb2dd80f7ce6eee97af7be477d"
+    },
+    "app/src/main/res/layout/row_item.xml": {
+      "size_bytes": 2075,
+      "sha256": "09f2ca6ad1df50dd81810afb3efd632363be6cbec1b0a53cd7a21b02dfbae6c9",
+      "normalized_sha256": "2b9c7630890dcad12f63c8bf5dae6802b0acdfb13dd6a957bc26f64ddd7ee5f5"
+    },
+    "app/src/main/res/layout/series_activity.xml": {
+      "size_bytes": 4557,
+      "sha256": "c466ee58f0edcca8850157503b06099b704d073d4ab1ab97c2f8b86d4bae3aa6",
+      "normalized_sha256": "265d306a9ecfce1ec40a9bcfce0d45a655b09b2660a7fb10a9b59b8c6d3760c9"
+    },
+    "app/src/main/res/layout/series_episode_card.xml": {
+      "size_bytes": 894,
+      "sha256": "901bf98eea2ba300c41ce07c6bfa7d5ab321711e45d29d79aa8562643b75a2ea",
+      "normalized_sha256": "a80f9b6adc1b4088370df25c4d196db7d42e536309c384f214244e33e1b06df5"
+    },
+    "app/src/main/res/layout/series_season_row.xml": {
+      "size_bytes": 868,
+      "sha256": "1dda6d1350293a3b0025b1c55725750e90c16f9c85a1c154787df4f3b1db41fe",
+      "normalized_sha256": "3b28af0071456dda1512ab6c7b338ce93698cc52f17a3ab6bdd288dfad72eb73"
+    },
+    "app/src/main/res/layout/vod_header.xml": {
+      "size_bytes": 1624,
+      "sha256": "889b57abff42b3a7d00551b80e28531aaee11f271f46ce0db599b35c11d8678d",
+      "normalized_sha256": "cadee73c29019f3a82d5d32664a644e83fe0c782ed935742be8b39d7459f8ccc"
+    },
+    "app/src/main/res/layout/vod_poster_item.xml": {
+      "size_bytes": 1812,
+      "sha256": "f31cd0f97355018e5f3b437666d026b392f4f948c2964e5913e6e497aeba907f",
+      "normalized_sha256": "3b23332dbfa6573d63931490c9722c06523f773ad3f88a5dfa6e54216cc7f2d8"
+    },
+    "app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml": {
+      "size_bytes": 259,
+      "sha256": "4a34c540905383faf7c6b0e818e3e9362172cd390735c8f483bd3c6748e969ae",
+      "normalized_sha256": "885aedd9f3d3c0a22b90e5b67f991464f3b26dced29a2f34fa132c37909706c9"
+    },
+    "app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml": {
+      "size_bytes": 259,
+      "sha256": "4a34c540905383faf7c6b0e818e3e9362172cd390735c8f483bd3c6748e969ae",
+      "normalized_sha256": "885aedd9f3d3c0a22b90e5b67f991464f3b26dced29a2f34fa132c37909706c9"
+    },
+    "app/src/main/res/mipmap-hdpi/ic_launcher.png": {
+      "size_bytes": 16992,
+      "sha256": "cdc68586905edebad3438d7f7284d707640ad58fa32e8bfae2a37548d556eb93",
+      "normalized_sha256": "cdc68586905edebad3438d7f7284d707640ad58fa32e8bfae2a37548d556eb93"
+    },
+    "app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png": {
+      "size_bytes": 80244,
+      "sha256": "fc22100370dd5cb51a86d4aaeb3bcc4adc3d0d5cf9fb49e7a72692bd620356de",
+      "normalized_sha256": "fc22100370dd5cb51a86d4aaeb3bcc4adc3d0d5cf9fb49e7a72692bd620356de"
+    },
+    "app/src/main/res/mipmap-hdpi/ic_launcher_round.png": {
+      "size_bytes": 16992,
+      "sha256": "cdc68586905edebad3438d7f7284d707640ad58fa32e8bfae2a37548d556eb93",
+      "normalized_sha256": "cdc68586905edebad3438d7f7284d707640ad58fa32e8bfae2a37548d556eb93"
+    },
+    "app/src/main/res/mipmap-mdpi/ic_launcher.png": {
+      "size_bytes": 7881,
+      "sha256": "05a8f99e01073ee741f7ad90663a26ef70ad75916d53422e2683b12e79788f7f",
+      "normalized_sha256": "05a8f99e01073ee741f7ad90663a26ef70ad75916d53422e2683b12e79788f7f"
+    },
+    "app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png": {
+      "size_bytes": 36963,
+      "sha256": "c07311c7fe8bd09e6dee08de8348f8c90f007961d7daa1dc600137e2b3dba6ad",
+      "normalized_sha256": "c07311c7fe8bd09e6dee08de8348f8c90f007961d7daa1dc600137e2b3dba6ad"
+    },
+    "app/src/main/res/mipmap-mdpi/ic_launcher_round.png": {
+      "size_bytes": 7881,
+      "sha256": "05a8f99e01073ee741f7ad90663a26ef70ad75916d53422e2683b12e79788f7f",
+      "normalized_sha256": "05a8f99e01073ee741f7ad90663a26ef70ad75916d53422e2683b12e79788f7f"
+    },
+    "app/src/main/res/mipmap-xhdpi/ic_launcher.png": {
+      "size_bytes": 29510,
+      "sha256": "5e9ebb0f6cb1686d16edb3bd68c624391321e1f252118411b4cdaa3d46e14ef9",
+      "normalized_sha256": "5e9ebb0f6cb1686d16edb3bd68c624391321e1f252118411b4cdaa3d46e14ef9"
+    },
+    "app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png": {
+      "size_bytes": 138686,
+      "sha256": "26d947a3a9444f5697db7f9a572da4215286ea95318069f9496fceb857105514",
+      "normalized_sha256": "26d947a3a9444f5697db7f9a572da4215286ea95318069f9496fceb857105514"
+    },
+    "app/src/main/res/mipmap-xhdpi/ic_launcher_round.png": {
+      "size_bytes": 29510,
+      "sha256": "5e9ebb0f6cb1686d16edb3bd68c624391321e1f252118411b4cdaa3d46e14ef9",
+      "normalized_sha256": "5e9ebb0f6cb1686d16edb3bd68c624391321e1f252118411b4cdaa3d46e14ef9"
+    },
+    "app/src/main/res/mipmap-xxhdpi/ic_launcher.png": {
+      "size_bytes": 64145,
+      "sha256": "05d812ae2052c45a33677b1131c8da217b83ff7540341bb5337e22aab63d9708",
+      "normalized_sha256": "05d812ae2052c45a33677b1131c8da217b83ff7540341bb5337e22aab63d9708"
+    },
+    "app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png": {
+      "size_bytes": 299322,
+      "sha256": "d5237472d30fa17e578dce4da811311609df1cc33b24503b9463ddbd76ed9a0c",
+      "normalized_sha256": "d5237472d30fa17e578dce4da811311609df1cc33b24503b9463ddbd76ed9a0c"
+    },
+    "app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png": {
+      "size_bytes": 64145,
+      "sha256": "05d812ae2052c45a33677b1131c8da217b83ff7540341bb5337e22aab63d9708",
+      "normalized_sha256": "05d812ae2052c45a33677b1131c8da217b83ff7540341bb5337e22aab63d9708"
+    },
+    "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png": {
+      "size_bytes": 110943,
+      "sha256": "e6ed2d535ca97ed9641963e0d381ee90b71af4a7e823731456dfd0dc52575f48",
+      "normalized_sha256": "e6ed2d535ca97ed9641963e0d381ee90b71af4a7e823731456dfd0dc52575f48"
+    },
+    "app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png": {
+      "size_bytes": 513474,
+      "sha256": "c6d81d190457d2e42b5ad7defb8cf9e0c29e8ce217329bbe116968416a20f11c",
+      "normalized_sha256": "c6d81d190457d2e42b5ad7defb8cf9e0c29e8ce217329bbe116968416a20f11c"
+    },
+    "app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png": {
+      "size_bytes": 110943,
+      "sha256": "e6ed2d535ca97ed9641963e0d381ee90b71af4a7e823731456dfd0dc52575f48",
+      "normalized_sha256": "e6ed2d535ca97ed9641963e0d381ee90b71af4a7e823731456dfd0dc52575f48"
+    },
+    "app/src/main/res/values-port/bools.xml": {
+      "size_bytes": 112,
+      "sha256": "e949d7835b259740e49867f6e043a12fb7a56c6de3c9a1e225da869675fbf7e3",
+      "normalized_sha256": "6700620cb8b26fe4823dd41f28aafba067412ad35e54b8759890d43ffd830ab1"
+    },
+    "app/src/main/res/values-port/series_dimensions.xml": {
+      "size_bytes": 345,
+      "sha256": "80c61fc7792e502f7498b7ee4f12ce770945a9625dbbaae2bf7345f4cdf7a6e1",
+      "normalized_sha256": "f611c7b32ab20c3952bfa7954fb201f89c1a6d7601332d9875876f3077367d74"
+    },
+    "app/src/main/res/values/bools.xml": {
+      "size_bytes": 113,
+      "sha256": "59d2783d8f31c1eb933a536b9b757b338dbeb5099559245bbf96821bce8453a2",
+      "normalized_sha256": "ce3733bb09f34934de2b3932d8522516cefb13e1cefe86c570e4f30b50415693"
+    },
+    "app/src/main/res/values/branding.xml": {
+      "size_bytes": 1957,
+      "sha256": "61da0e23a388433018c40470f9561323d2b90ef8a3c2aae04752d645ef3f3c44",
+      "normalized_sha256": "481ef31848b7173c164a3a29749728c456e7730ae3c84284d5ebbc825f078a10"
+    },
+    "app/src/main/res/values/colors.xml": {
+      "size_bytes": 557,
+      "sha256": "2861a630831ee2ef90ba542551c849890f45f36746fc6aaf9311d5a3b602fc7c",
+      "normalized_sha256": "4d7330efbefefaf03dd78c1d9cd4c320fbf96b7d1320ef70e57dc6bac3b09a35"
+    },
+    "app/src/main/res/values/series_dimensions.xml": {
+      "size_bytes": 345,
+      "sha256": "0eff8f2e97dd94e881d5e67fc113cd66107b2d294b34d95e8bfe68b330898e05",
+      "normalized_sha256": "92b9c2c8e8370e067abee2c5cdb4d6de443552e5944388c177a84d1073c0cfd9"
+    },
+    "app/src/main/res/values/strings.xml": {
+      "size_bytes": 1411,
+      "sha256": "983974a6ac3aca4a204d8248b306552be1224338215fefecaa54ba89197b1b3d",
+      "normalized_sha256": "e9d0b3fb309c19c758bfd1d7a44b300b74413f0474a46824cf16f9b661f7bf54"
+    },
+    "app/src/main/res/values/themes.xml": {
+      "size_bytes": 3541,
+      "sha256": "62a7d5ee70635202d66fccfc0740568d9c05b9c0fd6a2bcbff4cc3b18482e37c",
+      "normalized_sha256": "81365ba22c4d1a31af89259171ddef31611da606623be2e492f5ee5ac270e0a8"
+    },
+    "app/src/main/res/xml/network_security_config.xml": {
+      "size_bytes": 235,
+      "sha256": "14076d24abcf9b5cfba781d78192277bd0858fb32ff7d180cd51264d00c4ab67",
+      "normalized_sha256": "2cca23f321ee20a6d896cca0d410bbd2f2598f7ceae692c209778455a2ba43a8"
+    },
+    "app/src/test/java/com/youriptv/app/AdultGroupsTest.kt": {
+      "size_bytes": 867,
+      "sha256": "35176975059abdd457c061d6c9dde03ae4de9b43aba3c1c16e804285246d0b0e",
+      "normalized_sha256": "296a5d191f4cf316471e3ac47903e52ef93eb4d790604956a188b193424a681c"
+    },
+    "app/src/test/java/com/youriptv/app/AppUpdatesTest.kt": {
+      "size_bytes": 12517,
+      "sha256": "2d4e5d023c480d9bfab833f60951d80cfed67424a4a93721650915f7e643d43e",
+      "normalized_sha256": "a024f1552102b6e4416120b7d23d6a68e03e9abf4569055d2276dbddbbf849fb"
+    },
+    "app/src/test/java/com/youriptv/app/ArtworkPolicyTest.kt": {
+      "size_bytes": 3266,
+      "sha256": "f6626ecccdd757b6f1ebdc5c0371513de8e5420667dc27d8ad4231b30e7a1a31",
+      "normalized_sha256": "bb43ea5db08cfd91aa90d99708403e342a2ca49e6af13dc58f8504fee6f3196b"
+    },
+    "app/src/test/java/com/youriptv/app/AudioDelayProcessorTest.kt": {
+      "size_bytes": 1837,
+      "sha256": "783ecf6da07caa57e61306c67adb8359b9e0aa3a52f253d5c9050328bc620fe7",
+      "normalized_sha256": "a4c08bfd4c0e180c1dd53868edbe92c7989d8b98d37e9077732da2afabc42036"
+    },
+    "app/src/test/java/com/youriptv/app/BackHoldGestureTest.kt": {
+      "size_bytes": 6608,
+      "sha256": "3a1ef141be2bd931a8b73b4f68b3b74bdc8c175f7e0f985316f553be78fb101d",
+      "normalized_sha256": "636e11d27a06ff4894eca63da8712b8d5f46a878c2e1540e1cc969d00d90db94"
+    },
+    "app/src/test/java/com/youriptv/app/BackupTest.kt": {
+      "size_bytes": 10389,
+      "sha256": "efb40c60eb80963fe882b273b7370281feec1609c06bdb59824c957eb29cfea7",
+      "normalized_sha256": "d1bb5f26247e8b1003689a25b895297ab19ecb453e7ba0e937ce5f57cb96b437"
+    },
+    "app/src/test/java/com/youriptv/app/BrandIntegrityTest.kt": {
+      "size_bytes": 1485,
+      "sha256": "8a76b8566644b79c779b76e3ef587f1fb0e6afc6c8d590bed58fca635f7b76d9",
+      "normalized_sha256": "c2ed0330f4b88dbd896939485ae647b55eba969e3d3669b6fdfc33f676adde71"
+    },
+    "app/src/test/java/com/youriptv/app/BrandingCentralizationTest.kt": {
+      "size_bytes": 3019,
+      "sha256": "230d885426ec23bd2f42085b45fa7473d06516c0345eaed22a9f6f88dbbe9706",
+      "normalized_sha256": "1dde7d12825917924a0a8ac602a9eb774413444737436f964457048992eea072"
+    },
+    "app/src/test/java/com/youriptv/app/CatchupNetworkTest.kt": {
+      "size_bytes": 5170,
+      "sha256": "20f558f033dbecaeb13c1ef4b71593b922864f208851055f36b8f5d535bf3286",
+      "normalized_sha256": "e57e3069841496b6c62bd2cbc6cb30556ffa481ecd71109ee2598948281d1083"
+    },
+    "app/src/test/java/com/youriptv/app/CatchupTest.kt": {
+      "size_bytes": 1581,
+      "sha256": "01ca06d73d49aaa14291be0d82f29059d46a622537e8013cd283916bc5618a5d",
+      "normalized_sha256": "1ef973c9aef0a7702d03d700298311d083b1cbcdcee8dac929faf60a6e0f48af"
+    },
+    "app/src/test/java/com/youriptv/app/ConnectionLimitTest.kt": {
+      "size_bytes": 2372,
+      "sha256": "c1aa1fd055eec662def0cf99efcc502ec2d34b64af1804d149b3ab00d1a6a13a",
+      "normalized_sha256": "8d4c5d830cdf0b603d47396e803f70b0bc75f34d47d26f24643fbc4a814d637b"
+    },
+    "app/src/test/java/com/youriptv/app/CurrentStreamReturnTest.kt": {
+      "size_bytes": 1975,
+      "sha256": "36d6dfce133fe251187724e46eb079873269070180895daa025736518ca8b016",
+      "normalized_sha256": "a4a8ce1485bae92c7bf71afa755c9b11c764a495b6deaec06378e1300047977d"
+    },
+    "app/src/test/java/com/youriptv/app/CustomerRefreshPresentationTest.kt": {
+      "size_bytes": 3560,
+      "sha256": "1a5724eb1619766f5f9711f7d4ee1fa5366f4462de5f7802d71ec286875d0fb5",
+      "normalized_sha256": "9d9ec31c408708e56ea9d5e7f6ede57ae1db50a8f83b25d38d4c9142c99b6429"
+    },
+    "app/src/test/java/com/youriptv/app/CustomerSettingsSecurityTest.kt": {
+      "size_bytes": 7385,
+      "sha256": "ff0748cfe20d00eb20c498033745773b7db93b6506f163a1da21f94b3a57843e",
+      "normalized_sha256": "544a3203dfbf0002ede3632d562617575dadd2e8d2bb7b60bc5463bd7e169037"
+    },
+    "app/src/test/java/com/youriptv/app/DataLogicTest.kt": {
+      "size_bytes": 4036,
+      "sha256": "76b13e77b8cdef2a36cc731b4c231b0de202e3f9197636f2fa5ec35e6698ff97",
+      "normalized_sha256": "159125d879c52fc70bf0247d5369d515f57a6f1242be2eedbdfd84a0a6f09fea"
+    },
+    "app/src/test/java/com/youriptv/app/EpgSettingsPresentationTest.kt": {
+      "size_bytes": 2242,
+      "sha256": "c538ae9edaa0de826fcabf01ff83d6596d6d063b5fa781912e462b691fac3240",
+      "normalized_sha256": "f22e4547c94ef1cd26346f2b81c978b9a3fb327caa5226fffe5586c27d59f12a"
+    },
+    "app/src/test/java/com/youriptv/app/GuideCommittedRefreshTest.kt": {
+      "size_bytes": 2286,
+      "sha256": "99d80d187c07ad96a62dd9f7eae1f7c47d432208f2e2c150171f42352d2c8ded",
+      "normalized_sha256": "7a86587ca35c3fbaf2738c195697fa708d10fd9c2eea21fc69402a9cf829e1e2"
+    },
+    "app/src/test/java/com/youriptv/app/GuideNavigationTest.kt": {
+      "size_bytes": 1289,
+      "sha256": "c2fa7d6f204ee85e5957de0f280bf88ce2fc729cbbd92007019ba0f2a682b00b",
+      "normalized_sha256": "46ded1dbed17ee2dee215ff29ec49abd2810925a60ca55c40c8d0e25b50d613e"
+    },
+    "app/src/test/java/com/youriptv/app/GuideWindowCacheTest.kt": {
+      "size_bytes": 5576,
+      "sha256": "2b1b0a323bcbb30280235d61bccb96b066af860bb6f376fca76f6caf34eb7d38",
+      "normalized_sha256": "ad76daefe1374da3e2b9516b1bfbca8a9f2ed78c85e7dbb8b59a7f4a952fcb60"
+    },
+    "app/src/test/java/com/youriptv/app/LiveBufferingRecoveryTest.kt": {
+      "size_bytes": 9719,
+      "sha256": "eb77347d1692c28fad43461bda8716708f7f526aa096c87c062b905223017c9b",
+      "normalized_sha256": "1181aec426d85515855159d7e5f59224a939da8891120699e42f14c5932ebcc6"
+    },
+    "app/src/test/java/com/youriptv/app/LiveCleanEndRecoveryTest.kt": {
+      "size_bytes": 8731,
+      "sha256": "1315fd3f0b4158816db499c24c51bdae2915c7902db3e7c0ef234c7c024498fa",
+      "normalized_sha256": "4acab4e098963c1dc13ac92673347f48e410a5995afb7e13281abb3729e503fd"
+    },
+    "app/src/test/java/com/youriptv/app/LiveRecoveryTest.kt": {
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "app/src/test/java/com/youriptv/app/LiveStreamMemoryTest.kt": {
+      "size_bytes": 3092,
+      "sha256": "83012cfc14468d00de1de9af52a2572e5b6491ce49f3afe84e7745088c40670c",
+      "normalized_sha256": "0bd29a5d85558edb1b48715b64a739619aa4c045dff26ef0f085f0d93f04f850"
+    },
+    "app/src/test/java/com/youriptv/app/LiveTsExtractionTest.kt": {
+      "size_bytes": 2401,
+      "sha256": "22ce0cd15f83cb0cf0c9c707aaf8917e1a2d9772af78457b14a1454f7c1f62ef",
+      "normalized_sha256": "ec9b8faf1fda2e0e1f2a2d2a408c73e6c7c972ead9651bce9737f4d44726784d"
+    },
+    "app/src/test/java/com/youriptv/app/M3uCatchupTest.kt": {
+      "size_bytes": 9422,
+      "sha256": "9b666dfafb14ea0504046f63b9e0b5836ed1c5d9115df30c998f4e1b93cb67ad",
+      "normalized_sha256": "25d64294b517b1beaa3bdb41cda4d6e4f4d71a9d5ed9f71a12e410d73a3c986e"
+    },
+    "app/src/test/java/com/youriptv/app/M3uParserTest.kt": {
+      "size_bytes": 2582,
+      "sha256": "3cd200289338897bb64261948d73c5a3bbee35b6bad27cf9a054c0e7aec257fb",
+      "normalized_sha256": "e7debcf4990f135768ff7076831ce3d66351ae017d417bea658bb57537174e78"
+    },
+    "app/src/test/java/com/youriptv/app/MainRefreshPublicationTest.kt": {
+      "size_bytes": 4005,
+      "sha256": "f8a7585a5a7d45b592394d2e58fd00a8811703f49492ea6208d0b6c55d4eb655",
+      "normalized_sha256": "9fc0abeeba24a39938f1a8f14d5965359360d6f2df60641d1982ad8fc800aca5"
+    },
+    "app/src/test/java/com/youriptv/app/NoPremiumAuditTest.kt": {
+      "size_bytes": 4398,
+      "sha256": "88a93c6fc1d4789e37ba5ce165dd3484a90ea0c7391b7eaadd5f4739e4cafa27",
+      "normalized_sha256": "81fcd40a16756d28fae42a3875dbe6705aad65743a14e73bc7b0314e92ffebb9"
+    },
+    "app/src/test/java/com/youriptv/app/OfficialSigningTest.kt": {
+      "size_bytes": 1269,
+      "sha256": "90a17e992c364668936f03ef268e25a2d6d330424d75859447b5cd42ca92974e",
+      "normalized_sha256": "62d51c7d9cedd8c3581444114ac78be54dc1764db20c4bbe068ac74e49191930"
+    },
+    "app/src/test/java/com/youriptv/app/ParentalControlTest.kt": {
+      "size_bytes": 10299,
+      "sha256": "d9f0c4124e2cb5d803f4d15c2afe7972ad9f27bcfb9973861cbaa102a5b0a486",
+      "normalized_sha256": "10ab1d91f5b489330dfcec3dd375a3f5cc05cdc2a63b3c9198c8d201e7032b5e"
+    },
+    "app/src/test/java/com/youriptv/app/PlaylistDeletionTest.kt": {
+      "size_bytes": 1842,
+      "sha256": "b852d1ef8102911b049f9590a6089606675d79654a11efd84e6c20b985b2ccf1",
+      "normalized_sha256": "817ecaed35d0b6ad8b769013798947cb6abdf500adb2d0192637dbdc1585950d"
+    },
+    "app/src/test/java/com/youriptv/app/PlaylistEditAuthorizationTest.kt": {
+      "size_bytes": 2418,
+      "sha256": "088e14299b7877986c85ed88c02da91304ccf4c80c399fccd8d23a69c3809e5c",
+      "normalized_sha256": "a453125887d8d95c6ee4b1f599cb663c3af703bfdeecfb93220ba6a20132f780"
+    },
+    "app/src/test/java/com/youriptv/app/PlaylistEditingTest.kt": {
+      "size_bytes": 10177,
+      "sha256": "0b00d471f98d00a5cbe643e0ed0f28c1f68ac7a19b6b4c50a25bb9b3950d9be2",
+      "normalized_sha256": "122738055f8283d85e060725c93fd55f28c3ea8693a5f810e80843916efe1df8"
+    },
+    "app/src/test/java/com/youriptv/app/PlaylistManagementNavigationTest.kt": {
+      "size_bytes": 6454,
+      "sha256": "2cb4c381cdb242b317d8707d7d75b282cc330bda44b188a5d49bc114bcc62e34",
+      "normalized_sha256": "7c48c10b9b3e40c22d4d3fd4d545f5975eb83fb858290b093a8b3c0c764b513e"
+    },
+    "app/src/test/java/com/youriptv/app/PreviewLoadingHintTest.kt": {
+      "size_bytes": 1941,
+      "sha256": "7f75cb08ed4c6a201a1883e63eb56e165e19cfd3191944d18691276fd45c9d76",
+      "normalized_sha256": "3c5a381558639aea133c4f560cefb3eacb61a9e8ea3e82c0827f707d93028eec"
+    },
+    "app/src/test/java/com/youriptv/app/PreviewSelectionTest.kt": {
+      "size_bytes": 1796,
+      "sha256": "84aef1430aaa51d6882dc140c319ff86d610d674782200a802b70f0491ad4211",
+      "normalized_sha256": "c3ce46aefcbd7e5bbf78432ddb93704554ed46917ba3b90544bcb92bf14360ab"
+    },
+    "app/src/test/java/com/youriptv/app/PublicAboutNavigationTest.kt": {
+      "size_bytes": 5992,
+      "sha256": "de2716cc6e72b17819f3f36ff3e9096eb891ee57212f5d0b6e2aebc3219c0768",
+      "normalized_sha256": "41ca396b4e1d8ee8621f1a220eb9932a6e0432986f5c38703dc68d733e109ea7"
+    },
+    "app/src/test/java/com/youriptv/app/QaRegressionTest.kt": {
+      "size_bytes": 22096,
+      "sha256": "c600f69dcf84a0025660235b4a270eda3797b06fbe1364b923806a49c7740402",
+      "normalized_sha256": "bb0e258a8e01e2f0717c669bdefd5bbbf26861d1d5582e5955df3039bd5f067a"
+    },
+    "app/src/test/java/com/youriptv/app/RefreshDataTest.kt": {
+      "size_bytes": 7191,
+      "sha256": "e3a41eba3fd8548a4ed14a15d2ad266beeafe35ee944ee58f91acc3fe8e74245",
+      "normalized_sha256": "be474e83ba023122826fe07bcc76dc77aaf7a1442f5bc16cd8e805599ff4f38e"
+    },
+    "app/src/test/java/com/youriptv/app/SeriesBrowseStateTest.kt": {
+      "size_bytes": 10335,
+      "sha256": "0192c7f79c11dd1a23c5f25a338d0626ab8372c71cf4bd7f10ab934db3d45e80",
+      "normalized_sha256": "899ee385e89057b2ec8fd922fb3b2725c6b72c39c3155ca35bf8c658e11ca55f"
+    },
+    "app/src/test/java/com/youriptv/app/SettingsFlowAuthorizationTest.kt": {
+      "size_bytes": 11771,
+      "sha256": "6cde56e2a7bf841a07561bcf3606d51afd360ad5ca2fc012402ace9f80a006fb",
+      "normalized_sha256": "941e217bda0b133b5b9140c290bb5bf4d38016612c2a503abf3d71a92edc84f6"
+    },
+    "app/src/test/java/com/youriptv/app/SettingsLockPolicyTest.kt": {
+      "size_bytes": 1078,
+      "sha256": "8446d9b57526171a7795accb17e80ddb8706cf34a8d6d5c0950ef68adfdc495d",
+      "normalized_sha256": "ffbdba7b0ee336acdec3e807a0564e9a01d75af9e9283277d8473ba3a785716e"
+    },
+    "app/src/test/java/com/youriptv/app/SettingsNavigationTest.kt": {
+      "size_bytes": 6613,
+      "sha256": "53d1b8076c92497d93a8955736440509bae3dc14420a7fd42b2462adc5fe7044",
+      "normalized_sha256": "d9bb2595555058b3cc130c0871bf0aad87f8f7e8e9e3c9cca160eb16742912a5"
+    },
+    "app/src/test/java/com/youriptv/app/SettingsPinPolicyTest.kt": {
+      "size_bytes": 9007,
+      "sha256": "9f5d157101fcde57cc1655ca23221bcc3c635bbd6ae64f408713454afe4e43c3",
+      "normalized_sha256": "f0267112bc08332ad56f85d9b44a14c714a7ff0582516090a4f89a29ea79c12f"
+    },
+    "app/src/test/java/com/youriptv/app/SettingsVisitAuthorizationTest.kt": {
+      "size_bytes": 2993,
+      "sha256": "564996c9ce60329806bb46c092fad06c9ee22bf3516ff861a7d7d74b81ccf007",
+      "normalized_sha256": "f3dbd2c95568f0efea8b68d86e691d3882e90c27e80aa04722bffacc6fc79d4f"
+    },
+    "app/src/test/java/com/youriptv/app/StandaloneAppAuditTest.kt": {
+      "size_bytes": 4183,
+      "sha256": "73e814713048a87b095fd0095cb47967731e246d03b843c8dc62d7d8ed8ac24a",
+      "normalized_sha256": "57cbfa4c9c90f7c4e8c5105641db83da8db20ae41ea6fc4292ffa4b4cdf0bcc2"
+    },
+    "app/src/test/java/com/youriptv/app/UpdateReceiptTest.kt": {
+      "size_bytes": 11421,
+      "sha256": "e401431d49b9f4228a8c5463e54b49b9a49506e3299fa161ad6101d9e88af1e2",
+      "normalized_sha256": "16321b45079d036ca3fe303db92ead3f9066b16efba8ac5a3b2c6844f31b0ba4"
+    },
+    "app/src/test/java/com/youriptv/app/UpdateTransportTest.kt": {
+      "size_bytes": 9820,
+      "sha256": "8145a6cd1391ea6dbfe1537b206fad5aba5a3e6f17043f1b654cb79fce5465b7",
+      "normalized_sha256": "b87c6d1291633dd6df6c3a9f6de82d49e16021f19cebc193115a5c98e7261fbe"
+    },
+    "app/src/test/java/com/youriptv/app/UserAgentTest.kt": {
+      "size_bytes": 706,
+      "sha256": "f8a3a97f94fa7e3cd1a360cd80ecadc55d0c45dd647a6cc57cbfd607216a0b35",
+      "normalized_sha256": "cd1a67b99d2444d5bc7d58255110a49e6ad98a7aa83017a4af3be5c62a03124f"
+    },
+    "app/src/test/java/com/youriptv/app/VodMetadataTest.kt": {
+      "size_bytes": 5947,
+      "sha256": "b44b5aa17a4f03e0bf8edeadceb1c64aa20912ecc0e0eceff74e1279c130a961",
+      "normalized_sha256": "b9d388d65bd450f1249fc5d6d788a36de07c8e63da8a96fd6bb84b13a713f1bc"
+    },
+    "app/src/test/java/com/youriptv/app/XmltvParserTest.kt": {
+      "size_bytes": 2185,
+      "sha256": "7653e184597085a82a01d9a710f3c32d6c963f0890713a772041c893f2fa4356",
+      "normalized_sha256": "4536ac0b57433aabb2f17499dbf6a50b4685422df774f0e5a4fdc137d6e81aa1"
+    },
+    "app/src/test/java/com/youriptv/app/YourIptvLoginTest.kt": {
+      "size_bytes": 4062,
+      "sha256": "828730d92e90ed6cb327840c8edcd22a8b7bd10c9c674e95dafda2ae0a9a7288",
+      "normalized_sha256": "e09d6202d2ea0d982fceaa1ac6463c84cc64659795cd25483d066779ce81a416"
+    },
+    "app/src/test/java/com/youriptv/app/refresh/RefreshQueueTest.kt": {
+      "size_bytes": 5649,
+      "sha256": "07e3d34486db4bb89988d93971026dd86458fc9bb75777c9b348424b1dec7561",
+      "normalized_sha256": "299c24cebb386f6a573d017fae4cdb0431cf42c77ec95a30c9119457bec19123"
+    },
+    "app/src/test/java/com/youriptv/app/refresh/RefreshSchedulingTest.kt": {
+      "size_bytes": 2792,
+      "sha256": "ad1c01efdf93eb14ddd7c1c9903fa75445e8ffd70aa4b451ce9e09709154a31c",
+      "normalized_sha256": "693c65c4a2839b86e7d1b26738c62422559463231c8bed17d06d317e6be5bc30"
+    },
+    "app/src/test/java/com/youriptv/app/refresh/SharedEpgFilesTest.kt": {
+      "size_bytes": 4262,
+      "sha256": "7caaa666dc35df2ae2e85438028f60f4521258fc5e40cc18b8029a0822a323d4",
+      "normalized_sha256": "5cc6909b8bdb4e011a1161808b2f8693c61ba2a6004be3f83ad4f2c312d361bd"
+    },
+    "app/src/test/java/com/youriptv/app/ui/VodGridPolicyTest.kt": {
+      "size_bytes": 6916,
+      "sha256": "593775c6ccddbbf7a24093ef51a37143456787f09096ac3c0f59050af4a5e4e0",
+      "normalized_sha256": "87f6b6551bae41c48296ebe0ebd59da57b57c3232b18550366f57ae0765cd0a0"
+    },
+    "app/src/test/java/com/youriptv/app/ui/WorkQueueSnapshotTest.kt": {
+      "size_bytes": 3580,
+      "sha256": "951087e718fd47058059250462a405f108e72c530edbecdb5b52272948e25e46",
+      "normalized_sha256": "89d4ff5cc384c9013c981c10baae440d6e7c3b91ddee1ceecf1cde8663df8235"
+    },
+    "build.gradle.kts": {
+      "size_bytes": 77,
+      "sha256": "07795ee9587698d192911d17a86991b7b16f209d1e961e656e31847b84bf61e4",
+      "normalized_sha256": "32aa71b7aab1524d39bef7ac0d6416063cfdf2d6c9c13d4d66bfca4f4e05b33b"
+    },
+    "docs/BRANDING.md": {
+      "size_bytes": 2136,
+      "sha256": "07d2d6e113737887b852de4037af5e7516f496227244bd6027c6a0e5a476011b",
+      "normalized_sha256": "dd886437cba81d8868a3cd4b30deb07d71f4a3ce1244801337e025285a3d53f7"
+    },
+    "docs/EPG_SETTINGS.md": {
+      "size_bytes": 4913,
+      "sha256": "715be0e63d1390a706c8c9fe23e38c2c539c61cf05fc0b85574d30f9d3b165d0",
+      "normalized_sha256": "cf5577c0a790b5b751a8c252b24e1e51b93bc43f36d4cb4c5ba77b52d2777a2b"
+    },
+    "docs/KNOWN_ISSUES.md": {
+      "size_bytes": 8072,
+      "sha256": "e0372a01c28acd1ba3dccdbf8495ce5df7c50eed7249cbbe348f6339a35c9879",
+      "normalized_sha256": "20436b49c3067ab67ea520eedb3c329f6dab820c177655798af7a1ce699f2082"
+    },
+    "docs/LIVE_PREVIEW_REFERENCE.md": {
+      "size_bytes": 3058,
+      "sha256": "e1abf68c25de162846b1e18441c76605ea2b7037ac053ab5d35e4980c931bc90",
+      "normalized_sha256": "5c498822f58fdfe40e9923521e6240e9607110b2e3e3c578043f4996f8eec3f7"
+    },
+    "docs/QA_CHECKLIST.md": {
+      "size_bytes": 83366,
+      "sha256": "14c0bd66df91406bb9ca6135555ff776a8aa0941bfd73950e9efe0293a53b1c7",
+      "normalized_sha256": "27b7fd57481cd58ecdc0825f7ed7937621f74400b3749bc9b3d9a476d1f58175"
+    },
+    "docs/RELEASE_NOTES.md": {
+      "size_bytes": 39177,
+      "sha256": "5a347bc27aaec0b67465b1292a0b06033128c201d80f56e7356ae1f0b13bd261",
+      "normalized_sha256": "cbbd320bcc304913cf9733879a5672d81dec6b97b37866b1ead5e30463aceaa3"
+    },
+    "docs/REMOTE_CONTROLS.md": {
+      "size_bytes": 6093,
+      "sha256": "78b808ec8ca6a66ba451009ee9f15fdcbcf67e87263b76fd4ece1875e8e7bdc2",
+      "normalized_sha256": "df87519156155f693eddcace22afc5dcaf9fac495b0f0614ef54392f93d809cf"
+    },
+    "docs/REQUIREMENTS_CHECKLIST.md": {
+      "size_bytes": 21372,
+      "sha256": "a2a80ffae128914962846e02ecbeda0ce72ca9f6588892b1466250a23fd697f0",
+      "normalized_sha256": "691e99f1e3479fa0044acb53ffc36691128d76e4791ddb5d64da157685c03c39"
+    },
+    "docs/SETTINGS_SECURITY.md": {
+      "size_bytes": 12799,
+      "sha256": "52ac7585f95c79a13b6197b65cbaaa3d0dc9b3ae98f3def583d7020c047a65a2",
+      "normalized_sha256": "be6a17af4b62665cc3f4aa31897858ff575a63771702073248370c7fbc0f9058"
+    },
+    "docs/TIVIMATE_OBSERVATIONS.md": {
+      "size_bytes": 8714,
+      "sha256": "aa5dd402f0837de98de991a2b16a3c64e755adf1a1b654b8cdb0470405b85158",
+      "normalized_sha256": "ded7dd4f8282bd679b5477284fcde2797439aa52d305f50f8712d9b5665700c3"
+    },
+    "docs/UPDATE_SERVER.md": {
+      "size_bytes": 5819,
+      "sha256": "81a4204ba2a149c58a572275933c005f334568b3a79e447cf73db57f059e6e9a",
+      "normalized_sha256": "7c6a599e3a8b87426b0709690d9f1ac58ba3c5a864b5b42c7d3d4a5b59d1c233"
+    },
+    "docs/UPGRADING_TO_1_0.md": {
+      "size_bytes": 6686,
+      "sha256": "a1823e3862a1f34cb738959bb794df9bfb861e13cd28f52fe6106400ccbc6b00",
+      "normalized_sha256": "2ec4fb77ed5e34e124cf5917a8a53580e69dcdea27685a108cbf1affd691e32a"
+    },
+    "docs/VOD_NAVIGATION.md": {
+      "size_bytes": 9272,
+      "sha256": "e72529cebac293aa2a470937f95b6a837b03f70b7678326bd86571873f21c707",
+      "normalized_sha256": "8bf1115eff871190cfe6a9f2b9af18eb1d874508293b47104b6c1af1b4248534"
+    },
+    "docs/branding/youriptv_icon_source.jpg": {
+      "size_bytes": 166699,
+      "sha256": "89e9006f0624a936b04c524e47aa44cd25b6c595e75ee78f5adff9466e9356b4",
+      "normalized_sha256": "89e9006f0624a936b04c524e47aa44cd25b6c595e75ee78f5adff9466e9356b4"
+    },
+    "gradle.properties": {
+      "size_bytes": 109,
+      "sha256": "3fd48a425e623d8305f9fbdaacf31a42513c0c936eb1df2176f8cdc0b7d71242",
+      "normalized_sha256": "c3154e3d5f1a042cf9c144e754b436fd100b11dfa2a71a9a4fc5772f8f5c5661"
+    },
+    "gradle/wrapper/gradle-wrapper.jar": {
+      "size_bytes": 48749,
+      "sha256": "3b8a25775a69158b5ad2b1d17a80a88dc7b40a352a73eb27d06c612a7ce68e98",
+      "normalized_sha256": "3b8a25775a69158b5ad2b1d17a80a88dc7b40a352a73eb27d06c612a7ce68e98"
+    },
+    "gradle/wrapper/gradle-wrapper.properties": {
+      "size_bytes": 290,
+      "sha256": "52d6d9b23142f45a521d362aa521d93d26f812f0fe7c28f17bccc46b9fe32adf",
+      "normalized_sha256": "3cbe35d0020d8393c73f4cc2572838d1db338dd27885dd4d88c46b4d28f762e0"
+    },
+    "gradlew": {
+      "size_bytes": 8904,
+      "sha256": "0367e8c7d789376a26af723e17b3f05cb09f07361da0ac0aef75d4693c42b001",
+      "normalized_sha256": "0367e8c7d789376a26af723e17b3f05cb09f07361da0ac0aef75d4693c42b001"
+    },
+    "gradlew.bat": {
+      "size_bytes": 4888,
+      "sha256": "f17917f8dbe61182b149273ee78090fec1197442c3f38276af907bfa5190db16",
+      "normalized_sha256": "f17917f8dbe61182b149273ee78090fec1197442c3f38276af907bfa5190db16"
+    },
+    "keystore.properties.example": {
+      "size_bytes": 434,
+      "sha256": "5f3937188448b426424a2682fd1c5b4a7383e2a1e6d1701e8bfa906ddfda9ea3",
+      "normalized_sha256": "5f3937188448b426424a2682fd1c5b4a7383e2a1e6d1701e8bfa906ddfda9ea3"
+    },
+    "scripts/make_update_json.py": {
+      "size_bytes": 2493,
+      "sha256": "268b47be5a5e9ca4acbbe271b241ba37ba5eee894bbe5606dc02db13c12f7e2d",
+      "normalized_sha256": "b39eedca50e6b7cabb78870bb9089d41bcfef75f386570309a7aea0792bcd920"
+    },
+    "settings.gradle.kts": {
+      "size_bytes": 342,
+      "sha256": "a3ee550054d0ee6115734f75a15e8a03f71ee6c7b8221e77b1b49a68005069ee",
+      "normalized_sha256": "dc79aefb2ce9df734166bdabc12741be29e0a256a27b86e803fc8489162364ae"
+    },
+    "test-config.local.properties.example": {
+      "size_bytes": 738,
+      "sha256": "ad54cd2f00aac67a13b2513d4587bfe08b6559a4cd2593fb0867cda249875a60",
+      "normalized_sha256": "ad54cd2f00aac67a13b2513d4587bfe08b6559a4cd2593fb0867cda249875a60"
+    }
+  }
+}
