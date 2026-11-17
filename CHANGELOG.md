@@ -3,9 +3,10 @@
 November 17, 2026. Owner-approved independent Play preparation; code 48 remains subject to Console upload-history verification. [Current source/release status](GooglePlay-v1.0.9/CURRENT_STATUS.md).
 
 - Reject an HTTP catalog response that ends before its advertised Content-Length, even when its last delivered text is a complete M3U entry. Count raw encoded response bytes before gzip decoding and require complete gzip EOF validation.
+- Require HTTPS for provider, playlist, guide, media and artwork connections; block HTTP source input, cleartext traffic and HTTPS-to-HTTP redirects. Existing HTTP-only sources need provider-supplied HTTPS addresses. Final secure-candidate verification is in progress.
 - Preserve the shared player, Settings Lock defaults, provider limits and parental protections; no decoder change is included.
 - This is a local source-integrity correction with release verification in progress. It does not establish or fix the historical TV full-catalog EOF cause or the first private subset-stream stall. No new device pass is claimed.
-- The separate Series/AVI decoder issue remains held and unfixed; the independent Play preparation does not depend on that separate fix.
+- The owner reports the separate encoder/playback issue was server-side and has asked this Play work to disregard it. No encoder/decoder change is included; the separate historical investigation records remain outside Play scope.
 
 ## Historical Play 1.0.9 / code 45 preparation
 

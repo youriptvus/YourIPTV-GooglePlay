@@ -131,6 +131,10 @@ object Nav {
     }
 
     fun externalPlayer(a: Activity, url: String, title: String) {
+        if (!com.youriptv.app.data.SecureTransport.canHandOffMedia(url)) {
+            Dialogs.toast(a, com.youriptv.app.data.SecureTransport.HTTPS_REQUIRED)
+            return
+        }
         val intent = Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse(url), "video/*").putExtra("title", title)
         // The chooser never throws when nothing can play the stream, and Android TV adds a framework stub that only
         // says "You don't have an app that can do this". Ignore stubs and check first (needs <queries> in the manifest).

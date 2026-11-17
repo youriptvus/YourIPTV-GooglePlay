@@ -33,6 +33,8 @@ object StreamDiagnosis {
         PROVIDER_ERROR,
         /** The server accepted the connection, then closed or reset it without an HTTP answer. */
         CONNECTION_DROPPED,
+        /** The configured source or a redirect violates the Play HTTPS requirement. */
+        SECURE_TRANSPORT_REQUIRED,
     }
 
     data class Result(val kind: Kind, val host: String, val httpCode: Int = 0, val detail: String = "")
@@ -44,6 +46,9 @@ object StreamDiagnosis {
     fun classify(httpCode: Int, contentType: String?, head: ByteArray, error: Throwable?, host: String): Result {
         if (error != null) {
             when (error) {
+                is InsecureTransportException -> return Result(Kind.SECURE_TRANSPORT_REQUIRED, host, 0,
+                    if (error.message == SecureTransport.SECURE_REDIRECT_REQUIRED) SecureTransport.SECURE_REDIRECT_REQUIRED
+                    else SecureTransport.HTTPS_REQUIRED)
                 is EOFException -> return Result(Kind.CONNECTION_DROPPED, host, 0, "the server closed the connection without answering")
                 is ProtocolException -> return Result(Kind.CONNECTION_DROPPED, host, 0, "the server sent an invalid answer")
                 is SocketException -> if (error !is ConnectException && error !is NoRouteToHostException)
@@ -100,6 +105,7 @@ object StreamDiagnosis {
         var current = url
         var host = hostOf(url)
         try {
+            SecureTransport.requireHttps(url)
             repeat(6) {
                 host = hostOf(current)
                 val conn = URL(current).openConnection() as HttpURLConnection
@@ -111,7 +117,7 @@ object StreamDiagnosis {
                     val code = conn.responseCode
                     if (code in 300..399) {
                         val loc = conn.getHeaderField("Location") ?: return classify(code, null, ByteArray(0), null, host)
-                        current = URL(URL(current), loc).toString()
+                        current = SecureTransport.redirect(current, loc)
                         return@repeat
                     }
                     if (code !in 200..299) return classify(code, conn.contentType, ByteArray(0), null, host)
@@ -147,6 +153,8 @@ object StreamDiagnosis {
         val server = if (isArchive) "the provider's archive server" else "the stream server"
         val where = if (r.host.isNotBlank()) " (${r.host})" else ""
         return when (r.kind) {
+            Kind.SECURE_TRANSPORT_REQUIRED -> if (r.detail == SecureTransport.SECURE_REDIRECT_REQUIRED)
+                SecureTransport.SECURE_REDIRECT_REQUIRED else SecureTransport.HTTPS_REQUIRED
             Kind.NETWORK_FILTER ->
                 "Your network blocked $server$where: a web page" +
                     (if (r.detail.isNotBlank()) " (\"${r.detail}\")" else "") +

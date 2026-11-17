@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- IPTV providers commonly serve playlists and streams over plain HTTP. -->
-    <base-config cleartextTrafficPermitted="true" />
+    <!-- Provider credentials and media requests require encrypted transport. -->
+    <base-config cleartextTrafficPermitted="false" />
 </network-security-config>

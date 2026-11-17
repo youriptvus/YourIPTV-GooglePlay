@@ -179,6 +179,8 @@ def inspect_manifest(root: ET.Element, args: argparse.Namespace) -> dict:
         "target_sdk": integer(sdk.get(ANDROID + "targetSdkVersion")) == args.target_sdk,
         "not_debuggable": not truth(app.get(ANDROID + "debuggable")),
         "android_backup_disabled": app.get(ANDROID + "allowBackup", "true").lower() == "false",
+        "android_cleartext_traffic_disabled": app.get(ANDROID + "usesCleartextTraffic", "true").lower() == "false",
+        "network_security_config_present": bool(app.get(ANDROID + "networkSecurityConfig", "").startswith("@")),
         "explicit_legacy_backup_rules_present": bool(app.get(ANDROID + "fullBackupContent", "").startswith("@")),
         "explicit_device_transfer_rules_present": bool(app.get(ANDROID + "dataExtractionRules", "").startswith("@")),
         "only_approved_permissions": set(permissions) <= allowed,
@@ -198,7 +200,8 @@ def inspect_manifest(root: ET.Element, args: argparse.Namespace) -> dict:
             "target_sdk": integer(sdk.get(ANDROID + "targetSdkVersion")), "permissions": permissions,
             "features_required": features, "launchers": launchers, "exported_components": exported,
             "unexpected_exported_components": unexpected_exported,
-            "backup_rule_references": {key: app.get(ANDROID + key) for key in ("fullBackupContent", "dataExtractionRules")}}
+            "backup_rule_references": {key: app.get(ANDROID + key) for key in ("fullBackupContent", "dataExtractionRules")},
+            "network_security_reference": app.get(ANDROID + "networkSecurityConfig")}
 
 
 BACKUP_DOMAINS = {"root", "file", "database", "sharedpref", "external"}
@@ -294,6 +297,58 @@ def backup_resources(args: argparse.Namespace, evidence: dict) -> None:
         apk["checks"][check] = reference == "@xml/" + name or (reference.startswith("@0x") and
             integer(reference[1:]) == integer(resources.get(name, {}).get("id")))
     evidence["apk"]["backup"] = apk
+
+
+def inspect_network_security_xml(documents: dict[str, ET.Element]) -> dict:
+    return {"checks": {
+        "network_security_roots": bool(documents) and all(root.tag == "network-security-config" for root in documents.values()),
+        "all_base_configs_explicitly_forbid_cleartext": bool(documents) and all(
+            len(root.findall("base-config")) == 1 and root.find("base-config").get("cleartextTrafficPermitted") == "false"
+            for root in documents.values()),
+        "no_production_domain_exceptions": all(not root.findall(".//domain-config") for root in documents.values()),
+        "no_production_debug_overrides": all(not root.findall(".//debug-overrides") for root in documents.values()),
+    }}
+
+
+def network_security_resources(args: argparse.Namespace, evidence: dict) -> None:
+    with zipfile.ZipFile(args.aab) as archive:
+        entries = sorted(name for name in archive.namelist() if re.fullmatch(
+            r"base/res/xml(?:-[A-Za-z0-9_-]+)?/network_security_config\.xml", name))
+    if not entries:
+        raise ValueError("Packaged AAB network security configuration missing")
+    documents = {}
+    for entry in entries:
+        result = run([str(args.java), "--class-path", str(args.bundletool), str(args.repo_root / "scripts/DumpBundleXml.java"), str(args.aab), entry])
+        evidence["commands"].append(result)
+        if result["exit_code"] != 0:
+            raise ValueError("Cannot decode packaged AAB network security configuration")
+        documents[entry] = ET.fromstring(result["stdout"])
+    aab = inspect_network_security_xml(documents)
+    aab["resource_entries"] = entries
+    aab["checks"]["manifest_network_security_reference_matches"] = evidence["aab"]["manifest"]["network_security_reference"] == "@xml/network_security_config"
+    evidence["aab"]["network_security"] = aab
+
+    table = run([str(args.aapt2), "dump", "resources", str(args.apk)])
+    evidence["commands"].append(table)
+    if table["exit_code"] != 0:
+        raise ValueError("Cannot resolve packaged APK network security resource ID")
+    resource = apk_xml_resource_table(table["stdout"]).get("network_security_config", {})
+    variants = resource.get("configurations", [])
+    if not variants or not any(variant["qualifier"] == "" for variant in variants):
+        raise ValueError("Packaged APK default network security configuration missing")
+    documents = {}
+    for variant in variants:
+        result = run([str(args.aapt2), "dump", "xmltree", str(args.apk), "--file", variant["path"]])
+        evidence["commands"].append(result)
+        if result["exit_code"] != 0:
+            raise ValueError("Cannot decode packaged APK network security configuration")
+        documents[variant["qualifier"] or "default"] = parse_aapt_xml(result["stdout"])
+    apk = inspect_network_security_xml(documents)
+    apk["resource_entries"] = variants
+    reference = evidence["apk"]["manifest"]["network_security_reference"] or ""
+    apk["checks"]["manifest_network_security_reference_matches"] = reference == "@xml/network_security_config" or (
+        reference.startswith("@0x") and integer(reference[1:]) == integer(resource.get("id")))
+    evidence["apk"]["network_security"] = apk
 
 
 def inspect_archive(path: Path, external_tokens: list[bytes]) -> dict:
@@ -448,6 +503,10 @@ def main() -> int:
         backup_resources(args, evidence)
     except (OSError, ValueError, KeyError, ET.ParseError, zipfile.BadZipFile) as error:
         evidence["errors"].append("packaged backup rules: " + str(error))
+    try:
+        network_security_resources(args, evidence)
+    except (OSError, ValueError, KeyError, ET.ParseError, zipfile.BadZipFile) as error:
+        evidence["errors"].append("packaged network security: " + str(error))
     if args.apksigner:
         signed = run([str(args.apksigner), "verify", "--verbose", "--print-certs", str(args.apk)])
         evidence["commands"].append(signed)
@@ -475,7 +534,7 @@ def main() -> int:
     all_checks = {"bundletool_valid": evidence["bundletool_valid"]}
     for label in ("aab", "apk"):
         item = evidence.get(label, {})
-        for section in ("archive", "manifest", "backup"):
+        for section in ("archive", "manifest", "backup", "network_security"):
             for name, passed in item.get(section, {}).get("checks", {}).items():
                 all_checks[f"{label}.{section}.{name}"] = passed
         if args.require_signed:

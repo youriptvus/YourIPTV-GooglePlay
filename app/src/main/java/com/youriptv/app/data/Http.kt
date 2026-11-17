@@ -29,9 +29,12 @@ object Http {
             conn.setRequestProperty("Accept-Encoding", "gzip")
             val code = conn.responseCode
             if (code in 300..399) {
-                val loc = conn.getHeaderField("Location") ?: throw HttpException(code, "Redirect without location")
-                current = URL(URL(current), loc).toString()
-                conn.disconnect()
+                try {
+                    val loc = conn.getHeaderField("Location") ?: throw HttpException(code, "Redirect without location")
+                    current = SecureTransport.redirect(current, loc)
+                } finally {
+                    conn.disconnect()
+                }
                 return@repeat
             }
             if (code !in 200..299) {

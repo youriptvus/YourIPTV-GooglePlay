@@ -34,13 +34,14 @@ class PublicProviderTest {
         assertTrue(BackupKeys.sanitize(attempted).isEmpty())
     }
 
-    @Test fun productionEditorContainsNoBundledProviderShortcutAndWarnsBeforeHttp() {
+    @Test fun productionEditorContainsNoBundledProviderShortcutOrHttpBypass() {
         val main = listOf(File("src/main"), File("app/src/main")).first { it.exists() }
         val editor = File(main, "java/com/youriptv/app/ui/PlaylistEditActivity.kt").readText()
         assertFalse(File(main, "java/com/youriptv/app/ui/YourIptvLogin.kt").exists())
         assertFalse(editor.contains("yourIptvMode"))
-        assertTrue(editor.contains("Unencrypted provider connection"))
-        assertTrue(editor.contains("insecureConfirmedFor = null"))
-        assertTrue(editor.contains("authorization.isCurrent(visit) && authorization.isAuthorized"))
+        assertFalse(editor.contains("insecureConfirmedFor"))
+        assertFalse(editor.contains("Continue with HTTP"))
+        assertTrue(editor.contains("!SecureTransport.isHttpsUrl(p.url)"))
+        assertTrue(editor.contains("p.epgUrl.isNotBlank() && !SecureTransport.isHttpsUrl(p.epgUrl)"))
     }
 }

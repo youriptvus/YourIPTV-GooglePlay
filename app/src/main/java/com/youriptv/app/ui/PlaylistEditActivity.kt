@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.youriptv.app.R
 import com.youriptv.app.YourIptvApp
 import com.youriptv.app.data.Playlist
+import com.youriptv.app.data.SecureTransport
 import com.youriptv.app.data.SourceType
 import com.youriptv.app.data.XtreamUrls
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +37,6 @@ class PlaylistEditActivity : RemoteActivity() {
     private var passwordVisible = false
     /** Set once the user has chosen to keep a get.php link with embedded login as a plain M3U playlist. */
     private var keepAsM3u = false
-    private var insecureConfirmedFor: String? = null
 
     private lateinit var name: EditText
     private lateinit var url: EditText
@@ -146,7 +146,6 @@ class PlaylistEditActivity : RemoteActivity() {
 
     override fun onPause() {
         setPasswordVisible(false)
-        insecureConfirmedFor = null
         flow.paused(this)
         authorization.endVisit()
         if (::editor.isInitialized) {
@@ -245,16 +244,14 @@ class PlaylistEditActivity : RemoteActivity() {
     private fun savePlaylist(p: Playlist) {
         if (busy || isFinishing || !authorization.isAuthorized || !flow.isCurrentPolicy(visitPolicy)) return
         if (inheritedSettings && !flow.isAuthorized(this)) return
-        if (p.url.startsWith("http://", true) && insecureConfirmedFor != p.url) {
-            val visit = editorVisit
-            Dialogs.confirm(this, "Unencrypted provider connection",
-                "This provider uses HTTP. Provider credentials and viewing requests may be visible to others on the network. Use an HTTPS URL when your provider supports it. Continue with HTTP?") {
-                if (authorization.isCurrent(visit) && authorization.isAuthorized && flow.isCurrentPolicy(visitPolicy) && !isFinishing &&
-                    (!inheritedSettings || flow.isAuthorized(this))) {
-                    insecureConfirmedFor = p.url
-                    savePlaylist(p)
-                }
-            }
+        if (!SecureTransport.isHttpsUrl(p.url)) {
+            status.text = SecureTransport.HTTPS_REQUIRED
+            url.requestFocus()
+            return
+        }
+        if (p.epgUrl.isNotBlank() && !SecureTransport.isHttpsUrl(p.epgUrl)) {
+            status.text = "The guide URL must use HTTPS. Ask your provider for a secure guide address."
+            epg.requestFocus()
             return
         }
         val base = editing
