@@ -10,8 +10,8 @@ android {
         applicationId = "com.youriptv.app"
         minSdk = 23
         targetSdk = 36
-        // Proposed code: verify Play Console history before first upload.
-        versionCode = 45
+        // Proposed above customer diagnostic 47; verify Play Console history before upload.
+        versionCode = 48
         versionName = "1.0.9"
         testInstrumentationRunner = "com.youriptv.app.PlaySmokeInstrumentation"
     }

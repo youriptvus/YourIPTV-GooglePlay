@@ -1,8 +1,17 @@
-# Google Play candidate1.0.9 (proposed code45)
+# Google Play 1.0.9 (proposed code 48)
+
+November 17, 2026. Owner-approved independent Play preparation; code 48 remains subject to Console upload-history verification. [Current source/release status](../GooglePlay-v1.0.9/CURRENT_STATUS.md).
+
+- Reject an HTTP catalog response that ends before its advertised Content-Length, even when its last delivered text is a complete M3U entry. Count raw encoded response bytes before gzip decoding and require complete gzip EOF validation.
+- Preserve the shared player, Settings Lock defaults, provider limits and parental protections; no decoder change is included.
+- This is a local source-integrity correction with release verification in progress. It does not establish or fix the historical TV full-catalog EOF cause or the first private subset-stream stall. No new device pass is claimed.
+- The separate Series/AVI decoder issue remains held and unfixed; the independent Play preparation does not depend on that separate fix.
+
+## Historical Play 1.0.9 / code 45 preparation
 
 Independent import from official v1.0.9/code44, commit0612c0acb500f096da5cfb766f6e7f0a012c4ba8. Fresh Settings Lock defaults OFF; saved/ambiguous upgraded security remains protected. Local salted Admin enrollment replaces universal embedded master for fresh state. Direct APK updating and preset customer-provider setup are removed. One package/player/AAB serves phone/tablet/TV. Parental restrictions, provider limits, live TS recovery, Right previous channel and refresh defaults retained.
 
-Code45 pending Console unused-code verification. No Play approval/publication or compatible enrollment claimed. Current evidence/owner gates in GooglePlay-v1.0.9.
+The old code 45 artifacts/source archive and measured test records remain historical and unchanged. They predate the source-integrity guard and cannot validate it. See the current-status link above for the active code 48 preparation and remaining owner gates. No Play approval/publication or compatible enrollment is claimed.
 
 ---
 

@@ -30,7 +30,7 @@ class PlayDistributionAuditTest {
         val build = File(module, "build.gradle.kts").readText()
         assertEquals(1, Regex("applicationId = ").findAll(build).count())
         assertTrue(build.contains("applicationId = \"com.youriptv.app\""))
-        assertTrue(build.contains("versionCode = 45"))
+        assertTrue(build.contains("versionCode = 48"))
         assertTrue(build.contains("versionName = \"1.0.9\""))
         assertTrue(build.contains("targetSdk = 36"))
         assertFalse(build.contains("productFlavors"))

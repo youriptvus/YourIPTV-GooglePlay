@@ -38,14 +38,31 @@ object Http {
                 conn.disconnect()
                 throw HttpException(code, describe(code))
             }
-            val raw = BufferedInputStream(conn.inputStream, 64 * 1024)
-            return maybeGunzip(raw, conn.contentEncoding)
+            val body = conn.inputStream
+            try {
+                val length = fixedContentLength(conn.getHeaderField("Content-Length"), conn.getHeaderField("Transfer-Encoding"))
+                val counted = length?.let { ContentLengthInputStream(body, it) }
+                val raw = BufferedInputStream(counted ?: body, 64 * 1024)
+                val decoded = maybeGunzip(raw, conn.contentEncoding)
+                return counted?.checkCompletion(decoded) ?: decoded
+            } catch (error: Throwable) {
+                runCatching { body.close() }.exceptionOrNull()?.let { if (it !== error) error.addSuppressed(it) }
+                runCatching { conn.disconnect() }.exceptionOrNull()?.let { if (it !== error) error.addSuppressed(it) }
+                throw error
+            }
         }
         throw IOException("Too many redirects")
     }
 
     fun readText(url: String, userAgent: String = ""): String =
         open(url, userAgent).use { it.readBytes().toString(Charsets.UTF_8) }
+
+    internal fun fixedContentLength(contentLength: String?, transferEncoding: String?): Long? {
+        if (transferEncoding != null) return null
+        val value = contentLength?.trim() ?: return null
+        if (value.isEmpty() || value.any { it !in '0'..'9' }) return null
+        return value.toLongOrNull()
+    }
 
     /** Transparently decompresses gzip content even when the server does not label it. */
     fun maybeGunzip(input: InputStream, encoding: String?): InputStream {

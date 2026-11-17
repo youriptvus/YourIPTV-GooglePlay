@@ -397,7 +397,7 @@ def main() -> int:
     parser.add_argument("--baseline-inventory", type=Path)
     parser.add_argument("--forbidden-plaintext-file", type=Path, help="Optional external UTF-8 token file. Values are never included in evidence.")
     parser.add_argument("--application-id", default="com.youriptv.app")
-    parser.add_argument("--version-code", type=int, default=45)
+    parser.add_argument("--version-code", type=int, default=48)
     parser.add_argument("--version-name", default="1.0.9")
     parser.add_argument("--min-sdk", type=int, default=23)
     parser.add_argument("--target-sdk", type=int, default=36)
