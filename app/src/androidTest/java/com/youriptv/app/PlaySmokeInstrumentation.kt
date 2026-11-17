@@ -73,6 +73,8 @@ class PlaySmokeInstrumentation : Instrumentation() {
             })
             return
         }
+        // Application.onCreate completes on the main looper after Instrumentation.onCreate.
+        waitForIdleSync()
         try {
             execute("actual isolated installation defaults Settings Lock OFF") {
                 check(!YourIptvApp.instance.settings.isSettingsLocked())
@@ -426,6 +428,27 @@ class PlaySmokeInstrumentation : Instrumentation() {
             await(5_000) { screen!!.findViewById<View>(R.id.channel_overlay).visibility == View.GONE }
             runOnMainSync { check(app.livePlayback.current?.url == channels[1].url) }
         }
+        execute("AndroidX Back dismisses the live channel overlay without exiting playback") {
+            sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_LEFT)
+            await(5_000) { screen!!.findViewById<View>(R.id.channel_overlay).visibility == View.VISIBLE }
+            runOnMainSync { (screen as PlayerActivity).onBackPressedDispatcher.onBackPressed() }
+            await(5_000) { screen!!.findViewById<View>(R.id.channel_overlay).visibility == View.GONE }
+            runOnMainSync { check(!screen!!.isFinishing && app.livePlayback.current?.url == channels[1].url) }
+        }
+        execute("AndroidX Back cancels numeric entry before it can change the channel") {
+            sendKeyDownUpSync(KeyEvent.KEYCODE_1)
+            await(5_000) { screen!!.findViewById<View>(R.id.number_entry).visibility == View.VISIBLE }
+            runOnMainSync { (screen as PlayerActivity).onBackPressedDispatcher.onBackPressed() }
+            await(5_000) { screen!!.findViewById<View>(R.id.number_entry).visibility == View.GONE }
+            runOnMainSync { check(!screen!!.isFinishing && app.livePlayback.current?.url == channels[1].url) }
+        }
+        execute("AndroidX Back hides Info before exiting fullscreen live playback") {
+            sendKeyDownUpSync(KeyEvent.KEYCODE_INFO)
+            await(5_000) { screen!!.findViewById<View>(R.id.banner).visibility == View.VISIBLE }
+            runOnMainSync { (screen as PlayerActivity).onBackPressedDispatcher.onBackPressed() }
+            await(5_000) { screen!!.findViewById<View>(R.id.banner).visibility == View.GONE }
+            runOnMainSync { check(!screen!!.isFinishing && app.livePlayback.current?.url == channels[1].url) }
+        }
         if (!isTelevision()) {
             execute("phone fullscreen rotation retains the playing Media3 instance") {
                 val player = app.livePlayback.player
@@ -540,10 +563,16 @@ class PlaySmokeInstrumentation : Instrumentation() {
     private fun capture(name: String) {
         waitForIdleSync()
         SystemClock.sleep(250)
+        check(uiAutomation.rootInActiveWindow?.packageName?.toString() == targetContext.packageName) {
+            "Refusing a screenshot outside the isolated app"
+        }
         val bitmap = uiAutomation.takeScreenshot() ?: error("Raw screenshot capture failed")
         val device = if (isTelevision()) "tv-onn" else "phone-samsung"
         val directory = targetContext.getExternalFilesDir(null)!!.resolve("screenshots").apply { mkdirs() }
         try {
+            check(uiAutomation.rootInActiveWindow?.packageName?.toString() == targetContext.packageName) {
+                "Discarding a screenshot after isolated app focus changed"
+            }
             directory.resolve("$device-playtest-$name.png").outputStream().use {
                 check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it))
             }

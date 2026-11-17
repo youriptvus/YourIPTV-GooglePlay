@@ -1,5 +1,6 @@
 package com.youriptv.app.ui
 
+import android.annotation.SuppressLint
 import android.app.PictureInPictureParams
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,6 +18,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.WindowCompat
@@ -157,6 +159,9 @@ class PlayerActivity : RemoteActivity() {
         active?.get()?.takeIf { it !== this }?.retire()
         active = java.lang.ref.WeakReference(this)
         loadIntent(intent)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() = handlePlayerBack()
+        })
         observeCommittedRefreshes()
     }
 
@@ -1113,6 +1118,28 @@ class PlayerActivity : RemoteActivity() {
 
     // ---------------- Keys ----------------
 
+    /** The AndroidX gesture/button route and a physical remote's short Back share this action. */
+    private fun handlePlayerBack() {
+        when {
+            overlay.visibility == View.VISIBLE -> hideOverlay()
+            numberEntry.visibility == View.VISIBLE -> {
+                handler.removeCallbacks(commitNumber)
+                digits.clear()
+                numberEntry.visibility = View.GONE
+            }
+            errorShown -> finish()
+            banner.visibility == View.VISIBLE && isLive && !intent.getBooleanExtra(EXTRA_FROM_PREVIEW, false) -> {
+                handler.removeCallbacks(hideBanner)
+                banner.visibility = View.GONE
+            }
+            !isLive && playerView.isControllerFullyVisible -> playerView.hideController()
+            else -> finish()
+        }
+    }
+
+    // Physical remote keys remain here for short/held Back and key-up semantics.
+    // Touch/predictive Back is registered with OnBackPressedDispatcher above.
+    @SuppressLint("GestureBackNavigation")
     protected override fun dispatchAppKeyEvent(event: KeyEvent): Boolean {
         val code = event.keyCode
         val down = event.action == KeyEvent.ACTION_DOWN
@@ -1153,17 +1180,7 @@ class PlayerActivity : RemoteActivity() {
         }
 
         if (code == KeyEvent.KEYCODE_BACK) {
-            if (up) {
-                when {
-                    numberEntry.visibility == View.VISIBLE -> { handler.removeCallbacks(commitNumber); digits.clear(); numberEntry.visibility = View.GONE }
-                    errorShown -> finish()
-                    banner.visibility == View.VISIBLE && isLive && !intent.getBooleanExtra(EXTRA_FROM_PREVIEW, false) -> {
-                        handler.removeCallbacks(hideBanner); banner.visibility = View.GONE
-                    }
-                    !isLive && playerView.isControllerFullyVisible -> playerView.hideController()
-                    else -> finish()
-                }
-            }
+            if (up) handlePlayerBack()
             return true
         }
 
