@@ -63,4 +63,10 @@ class PlayDistributionAuditTest {
         assertFalse(build.contains("rootProject.file(\"keystore.properties\")"))
         assertFalse(build.contains("UPDATE_MANIFEST_URL"))
     }
+
+    @Test fun updateNavigationDescribesThePlayChannel() {
+        val category = com.youriptv.app.ui.SettingsCategory.UPDATES
+        assertTrue(category.description.contains("Google Play"))
+        assertFalse(category.description.contains("GitHub"))
+    }
 }

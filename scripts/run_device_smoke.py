@@ -6,6 +6,8 @@ from pathlib import Path
 import re
 import secrets
 import subprocess
+import time
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = 'com.youriptv.app.playtest'
@@ -52,11 +54,59 @@ def main():
     identity = {'serial': args.serial, 'manufacturer': manufacturer,
                 'model': adb('shell', 'getprop', 'ro.product.model'),
                 'sdk': adb('shell', 'getprop', 'ro.build.version.sdk')}
+    reverse_created = False
+    if args.fixture_base:
+        routes = adb('reverse', '--list').splitlines()
+        if any('tcp:18765' in line.split() for line in routes):
+            raise RuntimeError('Refusing to replace an existing ADB reverse route on the fixture port')
 
     def customer_state():
         package = adb('shell', 'dumpsys', 'package', 'com.youriptv.app')
         return [line.strip() for line in package.splitlines()
                 if any(key in line for key in ['versionCode=', 'versionName=', 'lastUpdateTime=', 'firstInstallTime='])]
+
+    def isolated_pid():
+        rows = adb('shell', 'ps', '-A').splitlines()
+        matches = [line.split() for line in rows if line.split() and line.split()[-1] == PACKAGE]
+        return matches[0][1] if matches else None
+
+    def play_policy():
+        # Only the actual .playtest preferences are read; their contents are never printed.
+        xml = adb('shell', 'run-as', PACKAGE, 'cat', 'shared_prefs/settings.xml')
+        tree = ET.fromstring(xml)
+        lock = tree.find("boolean[@name='settings_lock_enabled']")
+        active = tree.find("long[@name='active_playlist']")
+        if lock is None:
+            raise RuntimeError('The test package did not persist its local Settings Lock choice')
+        return {'settings_lock_enabled': lock.get('value') == 'true',
+                'active_playlist_id': active.get('value') if active is not None else None}
+
+    def start_isolated():
+        output = adb('shell', 'am', 'start', '-W', '-n', f'{PACKAGE}/com.youriptv.app.ui.MainActivity')
+        deadline = time.monotonic() + 20
+        while time.monotonic() < deadline:
+            process = isolated_pid()
+            if process:
+                return {'pid': process, 'launch': output}
+            time.sleep(0.25)
+        raise RuntimeError('The isolated application did not start a process')
+
+    def raw_stage_capture(stage):
+        device = 'tv-onn' if manufacturer.casefold() == 'onn' else 'phone-samsung'
+        time.sleep(1)
+        def require_isolated_foreground():
+            activities = adb('shell', 'dumpsys', 'activity', 'activities')
+            resumed = [line for line in activities.splitlines()
+                       if 'mResumedActivity' in line or 'topResumedActivity' in line]
+            if not resumed or not all(re.search(r'(?<![\w.])' + re.escape(PACKAGE) + r'/', line)
+                                      for line in resumed):
+                raise RuntimeError('Refusing a screenshot when the isolated test app is not the resumed package')
+        require_isolated_foreground()
+        png = subprocess.check_output([str(args.adb), '-s', args.serial, 'exec-out', 'screencap', '-p'], timeout=30)
+        require_isolated_foreground()
+        if not png.startswith(b'\x89PNG\r\n\x1a\n'):
+            raise RuntimeError('ADB did not return a raw PNG screenshot')
+        (args.screenshots / f'{device}-playtest-{stage}.png').write_bytes(png)
 
     before = customer_state()
     timestamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
@@ -68,6 +118,7 @@ def main():
     adb('install', '-r', '-t', args.test_apk)
     if args.fixture_base:
         adb('reverse', 'tcp:18765', 'tcp:18765')
+        reverse_created = True
     try:
         run_id = secrets.token_hex(16)
         command = ['shell', 'am', 'instrument', '-w', '-e', 'runId', run_id,
@@ -88,6 +139,32 @@ def main():
             if not re.fullmatch(r'(tv-onn|phone-samsung)-playtest-[a-z-]+\.png', filename):
                 raise RuntimeError('Unexpected screenshot filename; refusing arbitrary file copy')
             adb('pull', f'{remote}/screenshots/{filename}', args.screenshots / filename)
+        if report['failures'] == 0:
+            print('Checking actual test-process restart and same-version package replacement', flush=True)
+            initial = play_policy()
+            if initial['settings_lock_enabled']:
+                raise RuntimeError('Actual test installation unexpectedly enabled Settings Lock')
+            prior_pid = isolated_pid()
+            adb('shell', 'am', 'force-stop', PACKAGE)
+            restarted = start_isolated()
+            restarted_policy = play_policy()
+            if restarted_policy != initial or (prior_pid is not None and restarted['pid'] == prior_pid):
+                raise RuntimeError('Actual process restart did not preserve the tested policy')
+            raw_stage_capture('post-restart')
+            adb('shell', 'am', 'force-stop', PACKAGE)
+            replacement_output = adb('install', '-r', '-t', args.apk)
+            replaced = start_isolated()
+            replaced_policy = play_policy()
+            if replaced_policy != initial or replaced['pid'] == restarted['pid']:
+                raise RuntimeError('Same-version package replacement did not preserve tested preferences')
+            raw_stage_capture('post-same-code-replacement')
+            preservation = {'status': 'passed', 'before': initial, 'after_process_restart': restarted_policy,
+                            'after_same_version_replacement': replaced_policy,
+                            'previous_pid': prior_pid, 'restarted_pid': restarted['pid'],
+                            'replacement_pid': replaced['pid'], 'package_replacement': replacement_output,
+                            'scope': 'Real process restart and exact same APK reinstall preserve actual OFF flag and active playlist ID. This is not a versionCode-increasing upgrade test or an exhaustive database migration test.'}
+            (evidence / 'restart-and-same-version-replacement.json').write_text(
+                json.dumps(preservation, indent=2), encoding='utf-8')
         after = customer_state()
         unchanged = before == after
         (evidence / 'customer-installation-preserved.json').write_text(
@@ -101,7 +178,9 @@ def main():
             print(json.dumps(failed, indent=2), flush=True)
             raise SystemExit(1)
     finally:
-        if args.fixture_base:
+        # Leave the clearly named temporary test app installed, with no test playback running.
+        adb('shell', 'am', 'force-stop', PACKAGE)
+        if reverse_created:
             adb('reverse', '--remove', 'tcp:18765')
 
 

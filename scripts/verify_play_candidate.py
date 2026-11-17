@@ -41,6 +41,7 @@ FORBIDDEN_DEX_TOKENS = (
     b"canRequestPackageInstalls",
     b"github.com/youriptvus/YourIPTV/releases/latest/download/update.json",
 )
+OFFICIAL_CERTIFICATE_SHA256 = "4aef8798d4038bb8b20486b96b50af0870bca9d9b244a541a8973f76cecd0539"
 
 
 def sha256(data: bytes) -> str:
@@ -123,6 +124,9 @@ def parse_aapt_manifest(dump: str) -> ET.Element:
             name = attribute.group(1)
             if name.startswith("android:"):
                 name = ANDROID + name.removeprefix("android:")
+            elif name.startswith("http://schemas.android.com/apk/res/android:"):
+                # Build Tools 36 xmltree emits the expanded namespace URI.
+                name = ANDROID + name.removeprefix("http://schemas.android.com/apk/res/android:")
             stack[-1][1].set(name, aapt_value(attribute.group(2)))
     if root is None or root.tag != "manifest":
         raise ValueError("aapt2 did not return an Android manifest tree")
@@ -292,11 +296,17 @@ def main() -> int:
     parser.add_argument("--min-sdk", type=int, default=23)
     parser.add_argument("--target-sdk", type=int, default=36)
     parser.add_argument("--require-signed", action="store_true", help="Fail unless both artifact signatures verify; otherwise unsigned is reported accurately.")
+    parser.add_argument("--expected-certificate-sha256", default=OFFICIAL_CERTIFICATE_SHA256,
+                        help="Expected current APK/AAB signer; change only for an authorized signing plan.")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    expected_certificate = args.expected_certificate_sha256.lower().replace(":", "")
+    if not re.fullmatch(r"[0-9a-f]{64}", expected_certificate):
+        parser.error("Expected certificate SHA-256 must contain exactly 64 hexadecimal digits")
     evidence = {"schema_version": 1, "generated_utc": datetime.now(timezone.utc).isoformat(),
                 "scope": "Static local candidate verification; no Play Console history, Play approval, device, playback or unknown-secret guarantee.",
                 "expected": {key: getattr(args, key) for key in ("application_id", "version_code", "version_name", "min_sdk", "target_sdk")},
+                "expected_certificate_sha256": expected_certificate,
                 "commands": [], "errors": []}
     tokens = []
     if args.forbidden_plaintext_file:
@@ -332,11 +342,22 @@ def main() -> int:
         signed = run([str(args.apksigner), "verify", "--verbose", "--print-certs", str(args.apk)])
         evidence["commands"].append(signed)
         evidence.setdefault("apk", {})["signature_verified"] = signed["exit_code"] == 0
+        certificates = re.findall(r"Signer #\d+ certificate SHA-256 digest:\s*([0-9a-fA-F]{64})", signed["stdout"])
+        evidence["apk"]["certificate_sha256"] = [certificate.lower() for certificate in certificates]
+        evidence["apk"]["expected_certificate_verified"] = len(certificates) == 1 and certificates[0].lower() == expected_certificate
     sibling = args.java.parent / ("jarsigner.exe" if os.name == "nt" else "jarsigner")
     if sibling.exists():
         signed = run([str(sibling), "-verify", "-certs", str(args.aab)])
         evidence["commands"].append(signed)
         evidence.setdefault("aab", {})["signature_verified"] = signed["exit_code"] == 0 and "jar verified." in signed["stdout"].lower()
+    keytool = args.java.parent / ("keytool.exe" if os.name == "nt" else "keytool")
+    if keytool.exists():
+        signed = run([str(keytool), "-printcert", "-jarfile", str(args.aab)])
+        evidence["commands"].append(signed)
+        certificates = re.findall(r"SHA256:\s*([0-9a-fA-F:]+)", signed["stdout"])
+        normalized = [certificate.lower().replace(":", "") for certificate in certificates]
+        evidence.setdefault("aab", {})["certificate_sha256"] = normalized
+        evidence["aab"]["expected_certificate_verified"] = signed["exit_code"] == 0 and normalized == [expected_certificate]
     try:
         evidence["source"] = inspect_source(args.repo_root.resolve(), args.baseline_inventory, tokens)
     except (OSError, ValueError, KeyError, json.JSONDecodeError) as error:
@@ -349,6 +370,7 @@ def main() -> int:
                 all_checks[f"{label}.{section}.{name}"] = passed
         if args.require_signed:
             all_checks[label + ".signature_verified"] = item.get("signature_verified", False)
+            all_checks[label + ".expected_certificate_verified"] = item.get("expected_certificate_verified", False)
     for name, passed in evidence.get("source", {}).get("checks", {}).items():
         all_checks["source." + name] = passed
     evidence["failed_checks"] = sorted(name for name, passed in all_checks.items() if not passed)

@@ -18,6 +18,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.InputDevice
 import android.view.LayoutInflater
+import android.view.accessibility.AccessibilityNodeInfo
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -36,6 +37,7 @@ import com.youriptv.app.ui.AboutActivity
 import com.youriptv.app.ui.MainActivity
 import com.youriptv.app.ui.PrivacyActivity
 import com.youriptv.app.ui.SettingsActivity
+import com.youriptv.app.ui.SettingsCategory
 import com.youriptv.app.ui.PlayerActivity
 import androidx.media3.common.Player
 import java.net.HttpURLConnection
@@ -200,6 +202,24 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 }
                 capture("settings")
             }
+            execute("Settings Lock enables and disables through authenticated Admin UI") {
+                val app = YourIptvApp.instance
+                check(!app.settings.isSettingsLocked())
+                val enroll = app.settings.pins.needsAdminSetup()
+                var screen = launch(SettingsActivity::class.java)
+                openLockPage(screen)
+                chooseLockToggle("Turn on Settings lock")
+                enterDialogPin("738164")
+                if (enroll) enterDialogPin("738164")
+                await(5_000) { app.settings.isSettingsLocked() && screen.isFinishing }
+                screen = launch(SettingsActivity::class.java)
+                enterDialogPin("738164")
+                await(5_000) { screen.findViewById<TextView>(R.id.list_title).text.toString() == "Unlock Settings" }
+                openLockPage(screen)
+                chooseLockToggle("Turn off Settings lock")
+                enterDialogPin("738164")
+                await(5_000) { !app.settings.isSettingsLocked() && screen.isFinishing }
+            }
             execute("About opens offline privacy policy inside the same app") {
                 val about = launch(AboutActivity::class.java)
                 waitForIdleSync()
@@ -253,6 +273,66 @@ class PlaySmokeInstrumentation : Instrumentation() {
         }
         results.put(record)
         sendStatus(0, Bundle().apply { putString("test", name); putString("status", record.getString("status")) })
+    }
+
+    private fun openLockPage(screen: Activity) {
+        val index = SettingsCategory.SETTINGS_LOCK.ordinal + if (YourIptvApp.instance.settings.isSettingsLocked()) 0 else 2
+        val list = screen.findViewById<RecyclerView>(R.id.list)
+        waitForIdleSync()
+        runOnMainSync { list.layoutManager!!.scrollToPosition(index) }
+        await(5_000) { list.findViewHolderForAdapterPosition(index) != null }
+        runOnMainSync { check(list.findViewHolderForAdapterPosition(index)!!.itemView.performClick()) }
+        await(5_000) { screen.findViewById<TextView>(R.id.list_title).text.toString() == "Settings Lock" }
+        waitForIdleSync()
+        runOnMainSync { list.layoutManager!!.scrollToPosition(0) }
+        waitForIdleSync()
+        await(5_000) { list.findViewHolderForAdapterPosition(0) != null }
+        runOnMainSync { check(list.findViewHolderForAdapterPosition(0)!!.itemView.performClick()) }
+    }
+
+    private fun activeNode(predicate: (AccessibilityNodeInfo) -> Boolean): AccessibilityNodeInfo? {
+        val root = uiAutomation.rootInActiveWindow ?: return null
+        check(root.packageName?.toString() == targetContext.packageName) { "Refusing dialog automation outside isolated app" }
+        fun search(node: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+            if (predicate(node)) return node
+            for (index in 0 until node.childCount) node.getChild(index)?.let { search(it)?.let { match -> return match } }
+            return null
+        }
+        return search(root)
+    }
+
+    private fun clickDialogText(text: String) {
+        val deadline = SystemClock.elapsedRealtime() + 5_000
+        while (SystemClock.elapsedRealtime() < deadline) {
+            var node = activeNode { it.text?.toString() == text }
+            while (node != null) {
+                if (node.isClickable && node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+                    waitForIdleSync()
+                    return
+                }
+                node = node.parent
+            }
+            SystemClock.sleep(100)
+        }
+        error("Isolated dialog action was not available: $text")
+    }
+
+    private fun chooseLockToggle(text: String) = clickDialogText(text)
+
+    private fun enterDialogPin(pin: String) {
+        val deadline = SystemClock.elapsedRealtime() + 5_000
+        while (SystemClock.elapsedRealtime() < deadline) {
+            val entry = activeNode { it.className?.toString() == "android.widget.EditText" }
+            if (entry != null) {
+                check(entry.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, Bundle().apply {
+                    putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, pin)
+                }))
+                clickDialogText("OK")
+                return
+            }
+            SystemClock.sleep(100)
+        }
+        error("Isolated Admin PIN dialog was not available")
     }
 
     /** Only named synthetic preferences inside .playtest are ever reset. */

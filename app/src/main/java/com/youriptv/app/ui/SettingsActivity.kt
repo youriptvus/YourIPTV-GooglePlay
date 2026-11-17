@@ -31,9 +31,9 @@ internal enum class SettingsCategory(val title: String, val description: String)
     PLAYBACK("Playback", "Buffer, video, audio, stream format, and user agent"),
     APPEARANCE("Appearance", "Channel numbers and clock format"),
     REMOTE("Remote Controls", "Channel up/down direction"),
-    SETTINGS_LOCK("Settings Lock", "Master-controlled Settings protection and optional custom PIN"),
+    SETTINGS_LOCK("Settings Lock", "Admin-controlled Settings protection and optional custom PIN"),
     BACKUP("Backup & Restore", "Save playlists, favorites, and settings to a local file, or restore them"),
-    UPDATES("App Updates", "Automatic GitHub update checks"),
+    UPDATES("App Updates", "Updates delivered by Google Play"),
 }
 
 /** Category pages and explicitly authorized playlist navigation share one in-memory Settings visit. */
