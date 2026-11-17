@@ -13,7 +13,7 @@ This independent project produces one application, `com.youriptv.app`, and one p
 | Android | Minimum API23; compile/target API36 |
 | Updates | Google Play; no app APK self-installer |
 | Fresh Settings Lock | OFF; Admin management and parental gates independent |
-| Repository | Intended PRIVATE youriptvus/YourIPTV-GooglePlay; actual remote status in separation record |
+| Repository | Local preparation only; the owner manually creates/verifies/pushes any PRIVATE youriptvus/YourIPTV-GooglePlay remote |
 
 See [source provenance](SOURCE_BASELINE.md), [build/testing](docs/PLAY_BUILD_AND_TEST.md), [submission package](GooglePlay-v1.0.9/PLAY_STORE_README.md) and [test report](GooglePlay-v1.0.9/PLAY_STORE_TEST_REPORT.md). Imported customer documents are historical reference; Play documents supersede customer-only installation, provider shortcut, lock-default and updater instructions.
 
@@ -25,17 +25,19 @@ Recording uses a provider connection. Reminders and scheduled recording retain t
 
 ## Setup and security
 
-Enter your own provider URL, username/password where needed, playlist name and guide URL. Prefer HTTPS where supported; explicit HTTP can expose credentials/content to the network. Keep playlists, credentials, private-account screenshots and backups private.
+Enter your own provider URL, username/password where needed, playlist name and guide URL. Prefer HTTPS where supported; HTTP sources or provider redirects can expose credentials/content to the network. Keep playlists, credentials, private-account screenshots and backups private.
 
 Fresh Play state opens normal Settings without a Settings PIN. Deliberate Settings Lock management remains Admin protected. Existing security state is preserved when freshness cannot be reliably established. Parental checks remain independent. See [security](docs/SETTINGS_SECURITY.md) for local Admin enrollment and legacy migration.
 
-Credentials use app-private local storage; this is not database encryption. Exported JSON backups contain credentials. Android automatic backup is disabled. The offline in-app privacy notice explains data flows; owner must publish the matching privacy webpage before submission.
+Credentials use app-private local storage; this is not database encryption. Exported JSON backups contain credentials. Automatic cloud backup is disabled, and explicit Android backup/device-transfer rules exclude the app's data. Manual export and compatible in-place updates retain their existing behavior. The offline in-app privacy notice explains data flows; owner must publish the matching privacy webpage before submission.
 
 ## Independent development
 
 Build here without the customer source directory. Manually review future ports using [maintenance](docs/PLAY_MAINTENANCE.md); no automatic synchronization. Customer and Play apps share a package and normally cannot coexist; updates also require compatible signing and a higher code. Do not overwrite customer installs for QA.
 
 Keys, passwords, SDK paths, test accounts and artifacts stay outside tracked source. Release signing reads external protected configuration via `YOURIPTV_UPLOAD_SIGNING_PROPERTIES`; no configuration means unsigned release output. Upload certificate and Play app-signing certificate have different roles. See [signing](GooglePlay-v1.0.9/PLAY_STORE_SIGNING.md).
+
+The owner's latest instruction restricts this work to local operations. No GitHub creation, remote verification, push or upload is performed by workspace tools. The configured origin is retained for the owner's manual use; it does not prove a private repository exists. No application publication is performed.
 
 ## License
 

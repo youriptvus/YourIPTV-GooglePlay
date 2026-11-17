@@ -6,7 +6,7 @@ Reuse owner-approved YourIPTV artwork only. No customer channel logos, paid-chan
 |---|---|
 | Store icon |512x512,32-bit PNG alpha, <=1024KB |
 | Feature graphic |1024x500 JPEG/24-bit PNG no alpha |
-| Phone/tablet screenshots |>=2 overall, JPEG/24-bit PNG no alpha,320..3840px, long side<=2?short |
+| Phone/tablet screenshots |At least 2 overall; JPEG or 24-bit PNG without alpha; 320–3840 px; long side at most twice the short side |
 | Promotion recommendation |>=4 actual screenshots, >=1080px,16:9(1920x1080) or9:16(1080x1920) |
 | TV screenshot |>=1 unaltered high-resolution current TV app |
 | TV STORE banner |1280x720 JPEG/24-bit PNG no alpha |
@@ -16,5 +16,7 @@ Reuse owner-approved YourIPTV artwork only. No customer channel logos, paid-chan
 Suggested actual captures: empty/masked generic setup; legal-demo guide; fullscreen demo controls; normal Settings; phone portrait and landscape; tablet; TV focus/previous-channel Info label. Verify production appearance before submission; temporary QA identities or old customer images are not automatically final store screenshots.
 
 Owner supplies/approves missing artwork, working legal demo and actual current phone/tablet/TV captures. Device connectivity, mocks or generated imagery are not app captures.
+
+Fourteen [actual isolated-device QA captures](screenshots/README.md) and their SHA-256 index are now prepared and visually reviewed. All show public UI or generated synthetic content; no private-trial pictures or bitmap editing. TV images are 1920x1080; phone images are 2340x1080, exceeding the long-side/twice-short-side condition above. QA/test labels and raw PNG format require owner production/store review; these are not automatically submission-ready. No actual tablet capture is claimed.
 
 Official: https://support.google.com/googleplay/android-developer/answer/9866151?hl=en and https://developer.android.com/develop/adaptive-apps/quality-guidelines/tv-app-quality

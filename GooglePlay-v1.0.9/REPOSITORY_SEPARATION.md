@@ -12,13 +12,17 @@
 
 Not a branch/worktree/fork/shared Git directory. Same Android package is intentional: normally no side-by-side install, and compatible certificates/higher code needed for updates. No automatic synchronization.
 
-## Remote setup pending authorized authentication
+## Current scope: local work only
 
-The independent root repository already has origin configured for the exact new URL above, for fetch and push. Do not add another origin. No usable authenticated youriptvus account was available initially; obsolete comp6062 must not be used. An intended origin is not evidence the server repository exists, is private, or has no history.
+The owner's latest explicit instruction restricts workspace tools to local work. Do not call GitHub, read remote state, create a repository, push or upload anything. No remote creation, private-visibility verification or push was performed by workspace agents. This is an instruction boundary, not an authentication task for the agent to finish later.
+
+The independent root repository already has origin configured locally for the exact new URL above, for fetch and push. It was configured before the local-only instruction and is retained for owner use. Do not add another origin. An intended origin does not prove the server repository exists, is private, or has no history. Obsolete comp6062 must not be used.
 
 A preexisting nested checkout at `YourIPTV-GooglePlay/` inside this source root was found, ignored and preserved without alteration. Its initial-history evidence does not prove who created the remote or its visibility. Do not treat that nested checkout as this project's source/Git root or upload it. An existing remote may already have commits that must be reconciled without force push.
 
-### Authenticate and inspect before creating or pushing
+### Owner-run authentication and inspection
+
+The commands below are documentation for the owner to run manually outside the workspace-agent workflow. They are not authorized workspace-tool actions under the current instruction. Missing authentication does not prevent completion of local builds, tests and release preparation.
 
 ```powershell
 gh auth login --hostname github.com --git-protocol https --web
@@ -26,7 +30,7 @@ gh auth status --hostname github.com
 gh api user --jq .login
 ```
 
-Require successful authentication as **youriptvus** before continuing. Do not print tokens. If login remains obsolete/invalid, stop the remote steps and finish local preparation. A 404 can also conceal a private repository that the current token cannot access; it is not proof that a repository name is available.
+The owner should require successful authentication as **youriptvus** before continuing. Do not print tokens. A 404 can conceal a private repository that the current token cannot access; it is not proof that a repository name is available.
 
 ```powershell
 cd D:\APK\Repository\YourIPTV-GooglePlay
@@ -56,13 +60,13 @@ git merge-base --is-ancestor origin/main main
 
 Do not run the last two commands for an empty remote without main. For unexpected/nonempty or unrelated remote history, preserve all commits and reconcile it deliberately in this independent project before the first push. Do not force push, reset the remote branch, replace the remote repository or assume its initial commit is disposable. Owner review is needed if the purpose/ownership of unexpected remote content remains unclear.
 
-When remote is verified PRIVATE/non-fork and main is either absent or a proven ancestor of local main, review tracked source for secrets and inspect `git status`/destination again. Only then perform the already-authorized new-repository push:
+When the owner has verified PRIVATE/non-fork and main is either absent or a proven ancestor of local main, they should review tracked source for secrets and inspect `git status`/destination again. Only the owner may then perform a manual new-repository push:
 
 ```powershell
 git push -u origin main
 ```
 
-No GitHub Release or Play submission. No customer configuration/source changes. Final handoff records independent initial/final commits, actual remote status/visibility, original before/after preservation and any unresolved authentication/history conflict. Do not claim private-remote success until verified.
+No GitHub Release or Play submission was performed. No customer configuration/source changes were made. Final handoff records independent commits, local-only scope, remote status left unverified and the original-preservation qualification. Do not claim private-remote success without actual owner-supplied evidence.
 
 CLI references: https://cli.github.com/manual/gh_repo_create and https://cli.github.com/manual/gh_auth_status
 

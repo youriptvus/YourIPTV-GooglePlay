@@ -1,0 +1,103 @@
+{
+  "scope": "Unedited synthetic/public isolated QA captures; no private trial screenshots; not an assertion of final store approval",
+  "captures": [
+    {
+      "file": "phone-samsung-playtest-about.png",
+      "width": 2340,
+      "height": 1080,
+      "bytes": 158708,
+      "sha256": "2b5a3138b56c4ede7e9a07d4dcee3523cf3b96a22594907ccbcf357d051ec0e3"
+    },
+    {
+      "file": "phone-samsung-playtest-post-restart.png",
+      "width": 2340,
+      "height": 1080,
+      "bytes": 102957,
+      "sha256": "0573cdf348ef9a88ed6eb36e39acba2c1203b7bfcec99eadb3a74a17e96e0dc1"
+    },
+    {
+      "file": "phone-samsung-playtest-post-same-code-replacement.png",
+      "width": 2340,
+      "height": 1080,
+      "bytes": 102959,
+      "sha256": "866f34775445cca5e80fa6a31e0c136da75e51037a594886b22bc1adfb04c637"
+    },
+    {
+      "file": "phone-samsung-playtest-privacy.png",
+      "width": 2340,
+      "height": 1080,
+      "bytes": 167060,
+      "sha256": "31f1ae92978dc6b7e725f5c6376c37844e51a65af49c802ec1ba12ce43d793b9"
+    },
+    {
+      "file": "phone-samsung-playtest-settings.png",
+      "width": 2340,
+      "height": 1080,
+      "bytes": 104795,
+      "sha256": "cdc9d658b732f7295a9799c65cf4ab06cd568a348019720f9d55fb0a4877aedf"
+    },
+    {
+      "file": "phone-samsung-playtest-synthetic-guide.png",
+      "width": 2340,
+      "height": 1080,
+      "bytes": 141636,
+      "sha256": "0741a6f6b2a70c2e3bee09bdb29687515639689df0d6839e59fa4dd6bf5fe519"
+    },
+    {
+      "file": "phone-samsung-playtest-synthetic-player.png",
+      "width": 2340,
+      "height": 1080,
+      "bytes": 316403,
+      "sha256": "904967b81320fe12dd5bd0d43656efca8a0708e1404a38e4f68de17208d92b65"
+    },
+    {
+      "file": "tv-onn-playtest-about.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 205148,
+      "sha256": "2b8721f2e9056d3607b66da0d267c7eb58a6d5e25e28263477eabb6bbe3cc493"
+    },
+    {
+      "file": "tv-onn-playtest-post-restart.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 57818,
+      "sha256": "4e359899d159d4e17943618a74a25d77089cf4c9e8007bc2e3dc9856219470e8"
+    },
+    {
+      "file": "tv-onn-playtest-post-same-code-replacement.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 57818,
+      "sha256": "4d56461d059c0fcdf864988b27c85d159548ec4a89846b2af6c8826edba49a79"
+    },
+    {
+      "file": "tv-onn-playtest-privacy.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 183507,
+      "sha256": "265f83bf32ba97af3b9b270926336efa958c181ca3a388f37e5184c9746ebcc4"
+    },
+    {
+      "file": "tv-onn-playtest-settings.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 93803,
+      "sha256": "a6471699920976cc991107671cbd5309a2b37a2ee8d19b06fda18466db5943ec"
+    },
+    {
+      "file": "tv-onn-playtest-synthetic-guide.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 85744,
+      "sha256": "bf89004ccfb91052bb6e407256408d453e742d45efe535146d57439c14d658ec"
+    },
+    {
+      "file": "tv-onn-playtest-synthetic-player.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 336771,
+      "sha256": "31b99468b310c67a5023b29c6b93125ba73ce26deab44e46a0995e29706ed972"
+    }
+  ]
+}

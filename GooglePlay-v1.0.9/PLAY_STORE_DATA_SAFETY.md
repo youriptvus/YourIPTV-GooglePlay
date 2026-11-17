@@ -18,7 +18,7 @@ Source inventory, not a submitted form. Owner is responsible for all active arti
 
 Declared runtime libraries: AndroidX core/appcompat/recyclerview/lifecycle, Kotlin coroutines, Media3 ExoPlayer/HLS/UI. No Firebase, ads, analytics or automatic crash SDK declared. Review resolved transitives/final AAB before final declaration. INTERNET/ACCESS_NETWORK_STATE allow configured requests. Final merged manifest controls actual permission assessment, not this draft.
 
-Automatic Android backup disabled. Broad storage/contact/location/microphone/camera/advertising-ID are not required player purposes. Update this record for new services/SDKs/permissions.
+Automatic cloud backup remains disabled. Explicit legacy backup rules and Android 12+cloud/device-transfer rules exclude all credential-protected and device-protected domains, preventing the framework's default D2D inclusion. Compatible in-place updates and explicit JSON export are separate and unchanged. These declarations have parsed-resource coverage; no physical OEM transfer test is claimed. Broad storage/contact/location/microphone/camera/advertising-ID are not required player purposes. Update this record for new services/SDKs/permissions.
 
 ## Console decisions
 

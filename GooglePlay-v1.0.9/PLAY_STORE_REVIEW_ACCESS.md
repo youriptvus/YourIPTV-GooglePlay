@@ -4,11 +4,19 @@ App starts without bundled content/subscription. Fresh normal Settings requires 
 
 Use a stable owner-controlled HTTPS directory hosting a small M3U/M3U Plus playlist and XMLTV guide with matching tvg-id. Supply at least two clearly named legal sample items. No customer credentials or preset subscription server.
 
-Authorized sample candidate: Blender Foundation Big Buck Bunny, CC BY3.0. Download from official sources, preserve attribution/license and host only as permitted. Suggested credit: Big Buck Bunny ?2008 Blender Foundation, licensed CC BY3.0; https://peach.blender.org/ . Verify modification credits if applicable.
+## Prepared synthetic demonstration
 
-License: https://peach.blender.org/about/ ; downloads: https://peach.blender.org/download/ . Reachability alone is never proof of rights.
+The ignored `artifacts/reviewer-demo/` folder contains two six-second synthetic MPEG-TS samples, an M3U playlist, matching XMLTV guide, checksums and hosting instructions. The video test pattern and sine audio were generated locally; there is no external television/movie media, subscription server or customer account. These files are outside application assets and are not bundled into the AAB.
 
-Repository templates/local synthetic fixtures are not proof of deployed reviewer access. Owner supplies a persistent public URL and checks it outside the home network. An MP4-only M3U does not demonstrate provider Xtream/catch-up/Series features; add authorized access for full review where needed.
+The initial export uses `http://127.0.0.1:18765/` and is **LOCAL DEVELOPMENT ONLY**. Loopback is not reachable to remote reviewers. The source script prepares a future approved HTTPS base and regenerates the guide without publishing anything:
+
+```powershell
+py scripts/export_review_demo.py --reuse-media --public-base https://YOUR-APPROVED-HOST.example/youriptv-review/
+```
+
+Replace the example hostname with an owner-controlled HTTPS directory before an authorized deployment. Host `playlist.m3u`, `epg.xml`, `channel1.ts` and `channel2.ts` together. Regenerate/deploy the guide daily during review and verify all files from outside the home network. Follow the exported README for exact commands, MIME/range behavior and rights record. No deployment or public-reachability pass is claimed.
+
+The synthetic fixture can demonstrate guide, live playback, reconnects and previous-channel switching. It does not demonstrate a real Xtream account, provider catch-up, Movies or Series; supply stable authorized full-feature access where review requires it. Local success is not proof of deployed reviewer access.
 
 ## Console App access draft
 

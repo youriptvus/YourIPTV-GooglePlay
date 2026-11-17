@@ -20,4 +20,6 @@ Preparation for ONE listing/application/AAB supporting phone, tablet, Android TV
 
 Owner inputs: authorized youriptvus GitHub login; Console package/upload-history access; compatible Play app-signing enrollment decision; legal publisher/contact/public privacy URL; actual organizational data practices; stable legal demo access; current actual screenshots and artwork; declarations/testing participants; explicit submission approval.
 
-Code45 is not verified unused without Console history. An unsigned verified bundle is not upload-ready. No private remote may be claimed without server evidence. Refer to final handoff for exact results/artifacts.
+Code45 is not verified unused without Console history. The local AAB is official-signed; compatible Play signing and Console prerequisites remain unverified. No private remote may be claimed without server evidence. The owner's latest instruction permits local work only; any GitHub creation, verification and push are owner-manual actions, not workspace tasks. Refer to final handoff for exact results/artifacts.
+
+Read the [full handoff](HANDOFF.md) for completed checks and remaining owner gates. An offline [privacy HTML draft](privacy-policy-draft.html) and ignored synthetic reviewer-demo files are prepared; neither is a deployed public service. The demo export tool supports owner-approved HTTPS URLs and daily guide regeneration without uploading.

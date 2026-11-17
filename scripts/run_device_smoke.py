@@ -32,6 +32,7 @@ def main():
     parser.add_argument('--screenshots', type=Path, default=ROOT / 'GooglePlay-v1.0.9/screenshots')
     parser.add_argument('--fixture-base', default='http://127.0.0.1:18765')
     parser.add_argument('--soak-seconds', type=int, default=0)
+    parser.add_argument('--scope', choices=['full', 'browser-only', 'browser-and-settings'], default='full')
     args = parser.parse_args()
     for apk, expected in [(args.apk, PACKAGE), (args.test_apk, TEST_PACKAGE)]:
         badging = run([args.aapt, 'dump', 'badging', apk])
@@ -122,7 +123,7 @@ def main():
     try:
         run_id = secrets.token_hex(16)
         command = ['shell', 'am', 'instrument', '-w', '-e', 'runId', run_id,
-                   '-e', 'soakSeconds', str(args.soak_seconds)]
+                   '-e', 'soakSeconds', str(args.soak_seconds), '-e', 'scope', args.scope]
         if args.fixture_base:
             command += ['-e', 'fixtureBase', args.fixture_base]
         command += [f'{TEST_PACKAGE}/com.youriptv.app.PlaySmokeInstrumentation']
@@ -134,7 +135,13 @@ def main():
         if report.get('runId') != run_id:
             raise RuntimeError('Instrumentation did not produce a fresh report for this run')
         args.screenshots.mkdir(parents=True, exist_ok=True)
-        screenshots = adb('shell', 'ls', f'{remote}/screenshots').splitlines()
+        # Focused reruns copy only screenshots that their successful cases recaptured.
+        screenshots = adb('shell', 'ls', f'{remote}/screenshots').splitlines() if args.scope == 'full' else []
+        if args.scope == 'browser-and-settings' and any(
+                row['name'] == 'normal Settings UI opens directly without a PIN' and row['status'] == 'passed'
+                for row in report['results']):
+            device_name = 'tv-onn' if manufacturer.casefold() == 'onn' else 'phone-samsung'
+            screenshots = [f'{device_name}-playtest-settings.png']
         for filename in screenshots:
             if not re.fullmatch(r'(tv-onn|phone-samsung)-playtest-[a-z-]+\.png', filename):
                 raise RuntimeError('Unexpected screenshot filename; refusing arbitrary file copy')
@@ -169,7 +176,8 @@ def main():
         unchanged = before == after
         (evidence / 'customer-installation-preserved.json').write_text(
             json.dumps({'before': before, 'after': after, 'unchanged': unchanged}, indent=2), encoding='utf-8')
-        print(json.dumps({'device': identity, 'tests': report['tests'], 'failures': report['failures'],
+        print(json.dumps({'device': identity, 'scope': report.get('scope', 'full'),
+                          'tests': report['tests'], 'failures': report['failures'],
                           'customer_installation_unchanged': unchanged, 'evidence': str(evidence)}, indent=2), flush=True)
         if not unchanged:
             raise RuntimeError('Customer package installation metadata changed unexpectedly')

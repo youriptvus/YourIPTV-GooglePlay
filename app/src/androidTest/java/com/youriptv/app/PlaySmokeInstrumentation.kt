@@ -58,12 +58,15 @@ class PlaySmokeInstrumentation : Instrumentation() {
     private var runId = ""
     private var soakSeconds = 0
     private var soakStats: JSONObject? = null
+    private var testScope = "full"
+    private var browserFocusStats: JSONObject? = null
 
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
         fixtureBase = arguments?.getString("fixtureBase").orEmpty().trimEnd('/')
         runId = arguments?.getString("runId").orEmpty()
         soakSeconds = arguments?.getString("soakSeconds")?.toIntOrNull()?.coerceIn(0, 900) ?: 0
+        testScope = arguments?.getString("scope") ?: "full"
         start()
     }
 
@@ -78,6 +81,15 @@ class PlaySmokeInstrumentation : Instrumentation() {
         waitForIdleSync()
         var previousResumeLastChannel: Boolean? = null
         try {
+            require(testScope in setOf("full", "browser-only", "browser-and-settings")) { "Unknown isolated test scope" }
+            if (testScope != "full") {
+                previousResumeLastChannel = YourIptvApp.instance.settings.resumeLastChannel
+                YourIptvApp.instance.settings.resumeLastChannel = false
+                execute("shared browser opens and responds to D-pad focus") { browserDpadCheck() }
+                if (testScope == "browser-and-settings")
+                    execute("normal Settings UI opens directly without a PIN") { normalSettingsUiCheck() }
+                return
+            }
             execute("actual isolated installation defaults Settings Lock OFF") {
                 check(!YourIptvApp.instance.settings.isSettingsLocked())
             }
@@ -149,16 +161,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
             previousResumeLastChannel = YourIptvApp.instance.settings.resumeLastChannel
             YourIptvApp.instance.settings.resumeLastChannel = false
             execute("shared browser opens and responds to D-pad focus") {
-                val main = launch(MainActivity::class.java)
-                waitForIdleSync()
-                await(10_000) {
-                    main.findViewById<View>(R.id.nav_container).isShown && main.currentFocus != null
-                }
-                sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN)
-                waitForIdleSync()
-                await(10_000) {
-                    main.findViewById<View>(R.id.nav_container).isShown && main.currentFocus != null
-                }
+                browserDpadCheck()
             }
             if (!isTelevision()) {
                 execute("phone touchscreen opens normal Settings from the shared browser") {
@@ -205,13 +208,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 }
             }
             execute("normal Settings UI opens directly without a PIN") {
-                val screen = launch(SettingsActivity::class.java)
-                waitForIdleSync()
-                onMain {
-                    check(screen.findViewById<TextView>(R.id.list_title).text.toString() == "Settings")
-                    check((screen.findViewById<RecyclerView>(R.id.list).adapter?.itemCount ?: 0) > 0)
-                }
-                capture("settings")
+                normalSettingsUiCheck()
             }
             execute("Settings Lock enables and disables through authenticated Admin UI") {
                 val app = YourIptvApp.instance
@@ -265,9 +262,11 @@ class PlaySmokeInstrumentation : Instrumentation() {
             onMain { opened.asReversed().forEach { if (!it.isFinishing && !it.isDestroyed) it.finish() } }
             val report = JSONObject().put("package", targetContext.packageName)
                 .put("runId", runId)
+                .put("scope", testScope)
                 .put("tests", results.length()).put("failures", failed).put("results", results)
                 .put("fixtureStats", fixtureStats)
                 .put("soakStats", soakStats)
+                .put("browserFocusStats", browserFocusStats)
                 .put("isolatedBrowserAutoResumeDisabledDuringUiTests", previousResumeLastChannel != null)
                 .put("originalResumeLastChannel", previousResumeLastChannel)
                 .put("restoredResumeLastChannel", YourIptvApp.instance.settings.resumeLastChannel)
@@ -288,6 +287,49 @@ class PlaySmokeInstrumentation : Instrumentation() {
             try { action() } catch (error: Throwable) { failure = error }
         }
         failure?.let { throw it }
+    }
+
+    private fun browserDpadCheck() {
+        val main = launch(MainActivity::class.java)
+        val observations = JSONObject()
+        browserFocusStats = observations
+        fun ready(stage: String): Boolean {
+            val windowFocused = main.window.decorView.hasWindowFocus()
+            val focusVisible = main.currentFocus?.isShown == true
+            val navigationVisible = main.findViewById<View>(R.id.nav_container).isShown
+            val guideVisible = main.findViewById<View>(R.id.items).isShown
+            observations.put(stage, JSONObject().put("mainWindowFocused", windowFocused)
+                .put("focusedControlVisible", focusVisible).put("navigationVisible", navigationVisible)
+                .put("guideVisible", guideVisible))
+            // Populated TV guide mode intentionally hides the navigation rail.
+            return windowFocused && focusVisible && (navigationVisible || guideVisible)
+        }
+        waitForIdleSync()
+        await(10_000) {
+            main.window.decorView.hasWindowFocus() &&
+                (main.findViewById<View>(R.id.nav_container).isShown || main.findViewById<View>(R.id.items).isShown)
+        }
+        var needsDirectionalFocus = false
+        onMain { needsDirectionalFocus = main.currentFocus?.isShown != true }
+        observations.put("directionalKeyActivatedFocus", needsDirectionalFocus)
+        if (needsDirectionalFocus) sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN)
+        await(10_000) { ready("beforeDpad") }
+        sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN)
+        waitForIdleSync()
+        await(10_000) { ready("afterDpad") }
+    }
+
+    private fun normalSettingsUiCheck() {
+        val screen = launch(SettingsActivity::class.java)
+        waitForIdleSync()
+        await(10_000) {
+            screen.window.decorView.hasWindowFocus() && screen.findViewById<View>(R.id.list_title).isShown
+        }
+        onMain {
+            check(screen.findViewById<TextView>(R.id.list_title).text.toString() == "Settings")
+            check((screen.findViewById<RecyclerView>(R.id.list).adapter?.itemCount ?: 0) > 0)
+        }
+        capture("settings")
     }
 
     private fun execute(name: String, action: () -> Unit) {
@@ -624,6 +666,9 @@ class PlaySmokeInstrumentation : Instrumentation() {
     private fun capture(name: String) {
         waitForIdleSync()
         SystemClock.sleep(250)
+        val deadline = SystemClock.elapsedRealtime() + 5_000
+        while (uiAutomation.rootInActiveWindow?.packageName?.toString() != targetContext.packageName &&
+            SystemClock.elapsedRealtime() < deadline) SystemClock.sleep(100)
         check(uiAutomation.rootInActiveWindow?.packageName?.toString() == targetContext.packageName) {
             "Refusing a screenshot outside the isolated app"
         }

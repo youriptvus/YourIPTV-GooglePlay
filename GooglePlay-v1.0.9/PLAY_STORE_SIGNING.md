@@ -27,4 +27,10 @@ An upload key authenticates bundle uploads; Play signs device APKs with its app-
 
 Code45 is proposed pending Console history. If used, rebuild under the next unused higher code. The customer updater previousVersionCode field is irrelevant to Play delivery and never an intermediate-upgrade requirement.
 
+## Manual versionCode coordination
+
+The repositories and release processes are independent, but Android still sees one `com.youriptv.app` identity. The owner must manually coordinate versionCode allocation across both distributions and Play Console upload history. Keep a private allocation record; do not introduce automatic source synchronization or change the customer version from this project.
+
+Code 45 remains proposed. If a customer release reaches code 45 or higher before the Play candidate is uploaded or rolled out, recheck the candidate against the installed versions that should be able to update. A Play code at or below an installed customer's code cannot provide an ordinary higher-version update, even with compatible signing. Select an unused higher code, then rebuild, retest, verify and re-hash. Likewise, a later manual move from Play to a customer APK needs a higher installed code and compatible signing; separate Git history does not bypass these Android rules.
+
 Official: https://support.google.com/googleplay/android-developer/answer/9842756?hl=en and https://developer.android.com/studio/publish/app-signing

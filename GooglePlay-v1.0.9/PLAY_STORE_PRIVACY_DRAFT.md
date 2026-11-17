@@ -1,6 +1,8 @@
-# YourIPTV privacy policy ? owner publication draft
+# YourIPTV privacy policy - owner publication draft
 
 Requires owner review, actual publisher/contact/effective date and publication on a public HTML webpage. Never submit bracketed placeholders. Bundled in-app notice is available offline; it does not replace the required public URL.
+
+A self-contained [HTML publication template](privacy-policy-draft.html) is prepared alongside this text. It has no scripts, analytics or external assets. Replace its placeholders and remove its draft notice/noindex marker only after review and authorization; no deployment has been performed.
 
 Effective: [owner-approved date]
 
@@ -16,7 +18,7 @@ YourIPTV plays authorized sources you provide. No television subscription/provid
 
 The app stores playlist names/URLs, provider usernames/passwords where needed, guide settings/cache, favorites, preferences and playback state. It stores local Settings/Admin/parental security state, restrictions and failed-attempt/lockout information. Provider connection metadata supports connection limits. Recordings and user-created backups are local when used.
 
-Database/preferences use Android app-private storage; automatic Android app backup is disabled. Private storage is not database encryption. Exported JSON backups include credentials/URLs. Anyone receiving an unprotected export may use them; keep exports private and choose destinations carefully. No automatic developer backup upload occurs.
+Database/preferences use Android app-private storage. The app disables automatic cloud backup and declares complete Android backup/device-transfer exclusions. These rules do not delete data during compatible in-place updates or remove deliberate manual export. Private storage is not database encryption. Exported JSON backups include credentials/URLs. Anyone receiving an unprotected export may use them; keep exports private and choose destinations carefully. No automatic developer backup upload occurs.
 
 ## Requests to selected services
 
