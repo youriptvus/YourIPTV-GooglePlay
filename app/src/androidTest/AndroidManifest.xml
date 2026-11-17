@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- AGP rewrites the first instrumentation from testInstrumentationRunner. -->
+    <instrumentation
+        android:name="com.youriptv.app.PlaySmokeInstrumentation"
+        android:targetPackage="com.youriptv.app.playtest"
+        android:functionalTest="true"
+        android:handleProfiling="false" />
+    <!-- Additional test-only entry; never included in the production application. -->
+    <instrumentation
+        android:name="com.youriptv.app.TrialPlaybackInstrumentation"
+        android:targetPackage="com.youriptv.app.playtest"
+        android:label="Private provider validation"
+        android:functionalTest="true"
+        android:handleProfiling="false" />
+</manifest>

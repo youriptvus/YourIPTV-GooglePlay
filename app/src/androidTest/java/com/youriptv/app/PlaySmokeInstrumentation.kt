@@ -39,6 +39,7 @@ import com.youriptv.app.ui.PrivacyActivity
 import com.youriptv.app.ui.SettingsActivity
 import com.youriptv.app.ui.SettingsCategory
 import com.youriptv.app.ui.PlayerActivity
+import com.youriptv.app.ui.LiveBufferingRecovery
 import androidx.media3.common.Player
 import java.net.HttpURLConnection
 import java.net.URL
@@ -75,6 +76,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
         }
         // Application.onCreate completes on the main looper after Instrumentation.onCreate.
         waitForIdleSync()
+        var previousResumeLastChannel: Boolean? = null
         try {
             execute("actual isolated installation defaults Settings Lock OFF") {
                 check(!YourIptvApp.instance.settings.isSettingsLocked())
@@ -141,14 +143,21 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 for (forbidden in listOf("REQUEST_INSTALL_PACKAGES", "UPDATE_PACKAGES_WITHOUT_USER_ACTION", "SYSTEM_ALERT_WINDOW"))
                     check("android.permission.$forbidden" !in permissions)
             }
+            // Repeated QA runs contain a saved synthetic channel. Keep browser UI checks
+            // in the browser instead of triggering the app's legitimate startup resume.
+            // This override is confined to .playtest and restored in the finally block.
+            previousResumeLastChannel = YourIptvApp.instance.settings.resumeLastChannel
+            YourIptvApp.instance.settings.resumeLastChannel = false
             execute("shared browser opens and responds to D-pad focus") {
                 val main = launch(MainActivity::class.java)
                 waitForIdleSync()
+                await(10_000) {
+                    main.findViewById<View>(R.id.nav_container).isShown && main.currentFocus != null
+                }
                 sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN)
                 waitForIdleSync()
-                runOnMainSync {
-                    check(main.findViewById<View>(R.id.nav_container).isShown)
-                    check(main.currentFocus != null)
+                await(10_000) {
+                    main.findViewById<View>(R.id.nav_container).isShown && main.currentFocus != null
                 }
             }
             if (!isTelevision()) {
@@ -156,7 +165,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
                     val main = launch(MainActivity::class.java)
                     waitForIdleSync()
                     var settings: View? = null
-                    runOnMainSync {
+                    onMain {
                         val nav = main.findViewById<ViewGroup>(R.id.nav_container)
                         settings = (0 until nav.childCount).map { nav.getChildAt(it) }
                             .filterIsInstance<TextView>().single { it.text.toString() == "Settings" }
@@ -169,7 +178,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
                         val screen = monitor.waitForActivityWithTimeout(5_000) ?: error("Touch did not open Settings")
                         opened += screen
                         waitForIdleSync()
-                        runOnMainSync { check(screen.findViewById<TextView>(R.id.list_title).text.toString() == "Settings") }
+                        onMain { check(screen.findViewById<TextView>(R.id.list_title).text.toString() == "Settings") }
                     } finally { removeMonitor(monitor) }
                 }
                 execute("phone screen recreates correctly when switching portrait and landscape") {
@@ -179,7 +188,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
                         Configuration.ORIENTATION_LANDSCAPE else Configuration.ORIENTATION_PORTRAIT
                     val monitor = addMonitor(AboutActivity::class.java.name, null, false)
                     try {
-                        runOnMainSync {
+                        onMain {
                             screen.requestedOrientation = if (wanted == Configuration.ORIENTATION_LANDSCAPE)
                                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                         }
@@ -187,9 +196,9 @@ class PlaySmokeInstrumentation : Instrumentation() {
                         opened += screen
                         waitForIdleSync()
                         check(screen.resources.configuration.orientation == wanted)
-                        runOnMainSync { check(screen.findViewById<TextView>(R.id.about_title).text.toString().startsWith("About")) }
+                        onMain { check(screen.findViewById<TextView>(R.id.about_title).text.toString().startsWith("About")) }
                     } finally {
-                        runOnMainSync { if (!screen.isDestroyed) screen.requestedOrientation = previous }
+                        onMain { if (!screen.isDestroyed) screen.requestedOrientation = previous }
                         monitor.waitForActivityWithTimeout(5_000)?.let { opened += it }
                         removeMonitor(monitor)
                     }
@@ -198,7 +207,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
             execute("normal Settings UI opens directly without a PIN") {
                 val screen = launch(SettingsActivity::class.java)
                 waitForIdleSync()
-                runOnMainSync {
+                onMain {
                     check(screen.findViewById<TextView>(R.id.list_title).text.toString() == "Settings")
                     check((screen.findViewById<RecyclerView>(R.id.list).adapter?.itemCount ?: 0) > 0)
                 }
@@ -221,6 +230,8 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 chooseLockToggle("Turn off Settings lock")
                 enterDialogPin("738164")
                 await(5_000) { !app.settings.isSettingsLocked() && screen.isFinishing }
+                // Let the setup/on/off confirmation toast queue finish before later raw captures.
+                SystemClock.sleep(11_000)
             }
             execute("About opens offline privacy policy inside the same app") {
                 val about = launch(AboutActivity::class.java)
@@ -228,14 +239,14 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 capture("about")
                 val monitor = addMonitor(PrivacyActivity::class.java.name, null, false)
                 try {
-                    runOnMainSync {
+                    onMain {
                         check(about.findViewById<TextView>(R.id.about_version).text.contains("1.0.9"))
                         check(about.findViewById<Button>(R.id.about_privacy).performClick())
                     }
                     val privacy = monitor.waitForActivityWithTimeout(5_000) ?: error("Privacy screen did not open")
                     opened += privacy
                     waitForIdleSync()
-                    runOnMainSync {
+                    onMain {
                         check(privacy.findViewById<TextView>(R.id.about_title).text.toString() == "Privacy policy")
                         check(privacy.findViewById<TextView>(R.id.about_body).text.length > 200)
                     }
@@ -250,12 +261,16 @@ class PlaySmokeInstrumentation : Instrumentation() {
             }
             if (fixtureBase.isNotEmpty()) playbackFixtureTests()
         } finally {
-            runOnMainSync { opened.asReversed().forEach { if (!it.isFinishing && !it.isDestroyed) it.finish() } }
+            previousResumeLastChannel?.let { YourIptvApp.instance.settings.resumeLastChannel = it }
+            onMain { opened.asReversed().forEach { if (!it.isFinishing && !it.isDestroyed) it.finish() } }
             val report = JSONObject().put("package", targetContext.packageName)
                 .put("runId", runId)
                 .put("tests", results.length()).put("failures", failed).put("results", results)
                 .put("fixtureStats", fixtureStats)
                 .put("soakStats", soakStats)
+                .put("isolatedBrowserAutoResumeDisabledDuringUiTests", previousResumeLastChannel != null)
+                .put("originalResumeLastChannel", previousResumeLastChannel)
+                .put("restoredResumeLastChannel", YourIptvApp.instance.settings.resumeLastChannel)
                 .put("limitations", "Settings reconstruction tests are not process death. Phone/tablet resource inflation on TV is not real phone testing. D-pad input is injected through ADB/instrumentation, not a physical remote.")
             targetContext.getExternalFilesDir(null)?.resolve("play-smoke-results.json")?.writeText(report.toString(2))
             finish(if (failed == 0) Activity.RESULT_OK else Activity.RESULT_CANCELED, Bundle().apply {
@@ -264,6 +279,15 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 putString("results", report.toString())
             })
         }
+    }
+
+    /** Report test assertion failures without throwing them on the app main looper. */
+    private fun onMain(action: () -> Unit) {
+        var failure: Throwable? = null
+        runOnMainSync {
+            try { action() } catch (error: Throwable) { failure = error }
+        }
+        failure?.let { throw it }
     }
 
     private fun execute(name: String, action: () -> Unit) {
@@ -281,15 +305,15 @@ class PlaySmokeInstrumentation : Instrumentation() {
         val index = SettingsCategory.SETTINGS_LOCK.ordinal + if (YourIptvApp.instance.settings.isSettingsLocked()) 0 else 2
         val list = screen.findViewById<RecyclerView>(R.id.list)
         waitForIdleSync()
-        runOnMainSync { list.layoutManager!!.scrollToPosition(index) }
+        onMain { list.layoutManager!!.scrollToPosition(index) }
         await(5_000) { list.findViewHolderForAdapterPosition(index) != null }
-        runOnMainSync { check(list.findViewHolderForAdapterPosition(index)!!.itemView.performClick()) }
+        onMain { check(list.findViewHolderForAdapterPosition(index)!!.itemView.performClick()) }
         await(5_000) { screen.findViewById<TextView>(R.id.list_title).text.toString() == "Settings Lock" }
         waitForIdleSync()
-        runOnMainSync { list.layoutManager!!.scrollToPosition(0) }
+        onMain { list.layoutManager!!.scrollToPosition(0) }
         waitForIdleSync()
         await(5_000) { list.findViewHolderForAdapterPosition(0) != null }
-        runOnMainSync { check(list.findViewHolderForAdapterPosition(0)!!.itemView.performClick()) }
+        onMain { check(list.findViewHolderForAdapterPosition(0)!!.itemView.performClick()) }
     }
 
     private fun activeNode(predicate: (AccessibilityNodeInfo) -> Boolean): AccessibilityNodeInfo? {
@@ -385,7 +409,8 @@ class PlaySmokeInstrumentation : Instrumentation() {
             }
             sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_RIGHT)
             sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN)
-            runOnMainSync { check(main.currentFocus != null) }
+            onMain { check(main.currentFocus != null) }
+            SystemClock.sleep(3_500)
             capture("synthetic-guide")
         }
         if (channels.size < 2) return
@@ -399,17 +424,17 @@ class PlaySmokeInstrumentation : Instrumentation() {
             override fun onPlayerError(error: androidx.media3.common.PlaybackException) { errors.incrementAndGet() }
         }
         execute("one shared Media3 player renders synthetic live MPEG-TS") {
-            runOnMainSync { YourIptvApp.playQueue = channels }
+            onMain { YourIptvApp.playQueue = channels }
             screen = launch(PlayerActivity::class.java)
-            runOnMainSync { app.livePlayback.player?.addListener(listener) ?: error("Shared player was not attached") }
+            onMain { app.livePlayback.player?.addListener(listener) ?: error("Shared player was not attached") }
             await(20_000) { app.livePlayback.player?.playbackState == Player.STATE_READY && rendered.get() > 0 }
-            runOnMainSync { check(app.livePlayback.current?.url == channels[0].url) }
+            onMain { check(app.livePlayback.current?.url == channels[0].url) }
             capture("synthetic-player")
         }
         if (screen == null) return
         execute("RIGHT without channel history is safe") {
             sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_RIGHT)
-            runOnMainSync { check(app.livePlayback.current?.url == channels[0].url) }
+            onMain { check(app.livePlayback.current?.url == channels[0].url) }
         }
         execute("channel switching and RIGHT recall toggle within the current queue") {
             val samePlayer = app.livePlayback.player
@@ -419,47 +444,47 @@ class PlaySmokeInstrumentation : Instrumentation() {
             await(10_000) { app.livePlayback.current?.url == channels[0].url && app.livePlayback.player?.playbackState == Player.STATE_READY }
             sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_RIGHT)
             await(10_000) { app.livePlayback.current?.url == channels[1].url && app.livePlayback.player?.playbackState == Player.STATE_READY }
-            runOnMainSync { check(app.livePlayback.player === samePlayer) }
+            onMain { check(app.livePlayback.player === samePlayer) }
         }
         execute("channel overlay consumes RIGHT before previous-channel recall") {
             sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_LEFT)
             await(5_000) { screen!!.findViewById<View>(R.id.channel_overlay).visibility == View.VISIBLE }
             sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_RIGHT)
             await(5_000) { screen!!.findViewById<View>(R.id.channel_overlay).visibility == View.GONE }
-            runOnMainSync { check(app.livePlayback.current?.url == channels[1].url) }
+            onMain { check(app.livePlayback.current?.url == channels[1].url) }
         }
         execute("AndroidX Back dismisses the live channel overlay without exiting playback") {
             sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_LEFT)
             await(5_000) { screen!!.findViewById<View>(R.id.channel_overlay).visibility == View.VISIBLE }
-            runOnMainSync { (screen as PlayerActivity).onBackPressedDispatcher.onBackPressed() }
+            onMain { (screen as PlayerActivity).onBackPressedDispatcher.onBackPressed() }
             await(5_000) { screen!!.findViewById<View>(R.id.channel_overlay).visibility == View.GONE }
-            runOnMainSync { check(!screen!!.isFinishing && app.livePlayback.current?.url == channels[1].url) }
+            onMain { check(!screen!!.isFinishing && app.livePlayback.current?.url == channels[1].url) }
         }
         execute("AndroidX Back cancels numeric entry before it can change the channel") {
             sendKeyDownUpSync(KeyEvent.KEYCODE_1)
             await(5_000) { screen!!.findViewById<View>(R.id.number_entry).visibility == View.VISIBLE }
-            runOnMainSync { (screen as PlayerActivity).onBackPressedDispatcher.onBackPressed() }
+            onMain { (screen as PlayerActivity).onBackPressedDispatcher.onBackPressed() }
             await(5_000) { screen!!.findViewById<View>(R.id.number_entry).visibility == View.GONE }
-            runOnMainSync { check(!screen!!.isFinishing && app.livePlayback.current?.url == channels[1].url) }
+            onMain { check(!screen!!.isFinishing && app.livePlayback.current?.url == channels[1].url) }
         }
         execute("AndroidX Back hides Info before exiting fullscreen live playback") {
             sendKeyDownUpSync(KeyEvent.KEYCODE_INFO)
             await(5_000) { screen!!.findViewById<View>(R.id.banner).visibility == View.VISIBLE }
-            runOnMainSync { (screen as PlayerActivity).onBackPressedDispatcher.onBackPressed() }
+            onMain { (screen as PlayerActivity).onBackPressedDispatcher.onBackPressed() }
             await(5_000) { screen!!.findViewById<View>(R.id.banner).visibility == View.GONE }
-            runOnMainSync { check(!screen!!.isFinishing && app.livePlayback.current?.url == channels[1].url) }
+            onMain { check(!screen!!.isFinishing && app.livePlayback.current?.url == channels[1].url) }
         }
         if (!isTelevision()) {
             execute("phone fullscreen rotation retains the playing Media3 instance") {
                 val player = app.livePlayback.player
                 val previous = screen!!.requestedOrientation
                 try {
-                    runOnMainSync { screen!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
+                    onMain { screen!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
                     await(8_000) { screen!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE }
-                    runOnMainSync { check(app.livePlayback.player === player && !screen!!.isDestroyed) }
+                    onMain { check(app.livePlayback.player === player && !screen!!.isDestroyed) }
                     await(10_000) { app.livePlayback.player?.playbackState == Player.STATE_READY }
-                    runOnMainSync { check(screen!!.findViewById<View>(R.id.player_touch_options).isShown) }
-                } finally { runOnMainSync { screen!!.requestedOrientation = previous } }
+                    onMain { check(screen!!.findViewById<View>(R.id.player_touch_options).isShown) }
+                } finally { onMain { screen!!.requestedOrientation = previous } }
             }
         }
         execute("fullscreen MPEG-TS recovers repeatedly from synthetic clean stream ends") {
@@ -485,7 +510,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
             check(rendered.get() - framesBefore >= 3)
             await(10_000) { app.livePlayback.player?.playbackState == Player.STATE_READY }
         }
-        if (soakSeconds > 0) execute("bounded ${soakSeconds}s synthetic clean-end playback observation") {
+        if (soakSeconds > 0) execute("bounded ${soakSeconds}s synthetic clean-end recovery with preserved slow backoff") {
             val baseline = stats()
             val path = URL(channels[1].url).path
             val opensBefore = baseline.getJSONObject("full_gets").optInt(path)
@@ -497,18 +522,31 @@ class PlaySmokeInstrumentation : Instrumentation() {
             var longestNotPlayingMs = 0L
             var playingSamples = 0
             var totalSamples = 0
+            var slowGuardSamples = 0
+            var slowGuardAwaitingRecovery = false
+            var completedSlowRecoveries = 0
             val observations = JSONArray()
             while (SystemClock.elapsedRealtime() - started < soakSeconds * 1_000L) {
                 var playing = false
-                runOnMainSync {
+                onMain {
                     check(!screen!!.isDestroyed && !screen!!.isFinishing)
                     val player = app.livePlayback.player ?: error("Shared player disappeared")
                     check(app.livePlayback.current?.url == channels[1].url)
                     playing = player.isPlaying
+                    if (app.livePlayback.recoveryFailed && app.livePlayback.hasPendingRestart) {
+                        slowGuardSamples++
+                        slowGuardAwaitingRecovery = true
+                    }
+                    if (playing && slowGuardAwaitingRecovery) {
+                        completedSlowRecoveries++
+                        slowGuardAwaitingRecovery = false
+                    }
                     if (totalSamples % 20 == 0) observations.put(JSONObject()
                         .put("elapsedMs", SystemClock.elapsedRealtime() - started)
                         .put("playbackState", player.playbackState)
                         .put("isPlaying", playing)
+                        .put("slowRecoveryGuard", app.livePlayback.recoveryFailed)
+                        .put("hasPendingRestart", app.livePlayback.hasPendingRestart)
                         .put("videoWidth", player.videoFormat?.width ?: 0)
                         .put("videoHeight", player.videoFormat?.height ?: 0))
                 }
@@ -519,7 +557,18 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 SystemClock.sleep(500)
             }
             val after = stats()
-            val requiredCycles = maxOf(1, soakSeconds / 18)
+            // This six-second fixture never reaches the baseline ten-second stable reset.
+            // Once the three quick reopens are used, the preserved thirty-second guard is
+            // expected. Count completed progress within that policy, not continuous video.
+            val normalCleanEndDelayMs = 1_500L
+            val fixtureDurationMs = 6_000L
+            val cycleSchedulingAllowanceMs = 5_000L
+            val prepareAllowanceMs = 15_000L
+            val boundedCycleMs = LiveBufferingRecovery.SLOW_RETRY_MS + normalCleanEndDelayMs +
+                fixtureDurationMs + cycleSchedulingAllowanceMs
+            val requiredCycles = maxOf(1, (soakSeconds * 1_000L / boundedCycleMs).toInt())
+            val maximumExpectedNotPlayingMs = LiveBufferingRecovery.SLOW_RETRY_MS +
+                normalCleanEndDelayMs + prepareAllowanceMs
             soakStats = JSONObject().put("requestedSeconds", soakSeconds)
                 .put("actualDurationMs", SystemClock.elapsedRealtime() - started)
                 .put("cleanEndedDelta", ended.get() - endedBefore)
@@ -527,6 +576,13 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 .put("fullGetDelta", after.getJSONObject("full_gets").optInt(path) - opensBefore)
                 .put("playerErrorDelta", errors.get() - errorsBefore)
                 .put("requiredCycles", requiredCycles)
+                .put("boundedCycleMs", boundedCycleMs)
+                .put("maximumExpectedNotPlayingMs", maximumExpectedNotPlayingMs)
+                .put("slowRetryPolicyMs", LiveBufferingRecovery.SLOW_RETRY_MS)
+                .put("stablePlaybackResetPolicyMs", LiveBufferingRecovery.STABLE_PLAYBACK_MS)
+                .put("slowGuardSamples", slowGuardSamples)
+                .put("completedSlowRecoveries", completedSlowRecoveries)
+                .put("thresholdRationale", "Six-second clips cannot satisfy the preserved ten-second stable reset. After three quick reopens, thirty-second slow retries are expected; this measures repeated recovery including those gaps, not uninterrupted playback.")
                 .put("playingSamples", playingSamples).put("totalSamples", totalSamples)
                 .put("longestObservedNotPlayingMs", longestNotPlayingMs)
                 .put("samples", observations).put("serverBefore", baseline).put("serverAfter", after)
@@ -534,9 +590,14 @@ class PlaySmokeInstrumentation : Instrumentation() {
             check(rendered.get() - framesBefore >= requiredCycles)
             check(after.getJSONObject("full_gets").optInt(path) - opensBefore >= requiredCycles)
             check(errors.get() == errorsBefore)
-            check(playingSamples > 0 && longestNotPlayingMs < 30_000)
+            check(slowGuardSamples > 0 && completedSlowRecoveries >= requiredCycles)
+            check(playingSamples > 0 && longestNotPlayingMs <= maximumExpectedNotPlayingMs)
+            onMain {
+                val player = app.livePlayback.player ?: error("Shared player disappeared")
+                check(player.isPlaying || app.livePlayback.hasPendingRestart || player.playbackState == Player.STATE_BUFFERING)
+            }
         }
-        runOnMainSync { app.livePlayback.player?.removeListener(listener) }
+        onMain { app.livePlayback.player?.removeListener(listener) }
     }
 
     /** Poll UI state on the main looper; network and waiting stay off it. */
@@ -544,7 +605,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
         val deadline = SystemClock.elapsedRealtime() + timeout
         while (SystemClock.elapsedRealtime() < deadline) {
             var matched = false
-            runOnMainSync { matched = condition() }
+            onMain { matched = condition() }
             if (matched) return
             SystemClock.sleep(100)
         }
@@ -583,7 +644,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
         val position = IntArray(2)
         var x = 0f
         var y = 0f
-        runOnMainSync {
+        onMain {
             view.getLocationOnScreen(position)
             x = position[0] + view.width / 2f
             y = position[1] + view.height / 2f
@@ -606,7 +667,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
             screenHeightDp = heightDp
             smallestScreenWidthDp = widthDp
         }
-        runOnMainSync {
+        onMain {
             val themed = ContextThemeWrapper(targetContext.createConfigurationContext(configuration), R.style.Theme_YourIPTV)
             check(themed.resources.getBoolean(R.bool.is_portrait))
             val view = LayoutInflater.from(themed).inflate(R.layout.activity_main, null) as LinearLayout

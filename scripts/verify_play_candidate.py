@@ -102,8 +102,8 @@ def aapt_value(value: str) -> str:
     return value.strip().split(" ", 1)[0]
 
 
-def parse_aapt_manifest(dump: str) -> ET.Element:
-    """Recover the actual binary manifest tree from official aapt2 xmltree output."""
+def parse_aapt_xml(dump: str) -> ET.Element:
+    """Recover an actual binary XML tree from official aapt2 xmltree output."""
     stack: list[tuple[int, ET.Element]] = []
     root = None
     for line in dump.splitlines():
@@ -128,7 +128,14 @@ def parse_aapt_manifest(dump: str) -> ET.Element:
                 # Build Tools 36 xmltree emits the expanded namespace URI.
                 name = ANDROID + name.removeprefix("http://schemas.android.com/apk/res/android:")
             stack[-1][1].set(name, aapt_value(attribute.group(2)))
-    if root is None or root.tag != "manifest":
+    if root is None:
+        raise ValueError("aapt2 did not return an XML tree")
+    return root
+
+
+def parse_aapt_manifest(dump: str) -> ET.Element:
+    root = parse_aapt_xml(dump)
+    if root.tag != "manifest":
         raise ValueError("aapt2 did not return an Android manifest tree")
     return root
 
@@ -172,9 +179,12 @@ def inspect_manifest(root: ET.Element, args: argparse.Namespace) -> dict:
         "target_sdk": integer(sdk.get(ANDROID + "targetSdkVersion")) == args.target_sdk,
         "not_debuggable": not truth(app.get(ANDROID + "debuggable")),
         "android_backup_disabled": app.get(ANDROID + "allowBackup", "true").lower() == "false",
+        "explicit_legacy_backup_rules_present": bool(app.get(ANDROID + "fullBackupContent", "").startswith("@")),
+        "explicit_device_transfer_rules_present": bool(app.get(ANDROID + "dataExtractionRules", "").startswith("@")),
         "only_approved_permissions": set(permissions) <= allowed,
         "network_permissions_present": {"android.permission.INTERNET", "android.permission.ACCESS_NETWORK_STATE"} <= set(permissions),
-        "androidx_self_permission_signature_guarded": dynamic not in permissions or declarations.get(dynamic) in {"signature", "2", "0x2"},
+        "androidx_self_permission_signature_guarded": dynamic not in permissions or
+            declarations.get(dynamic) == "signature" or integer(declarations.get(dynamic)) == 2,
         "touchscreen_optional": features.get("android.hardware.touchscreen") is False,
         "leanback_optional": features.get("android.software.leanback") is False,
         "no_required_hardware_features": not any(features.values()),
@@ -187,7 +197,103 @@ def inspect_manifest(root: ET.Element, args: argparse.Namespace) -> dict:
             "version_name": root.get(ANDROID + "versionName"), "min_sdk": integer(sdk.get(ANDROID + "minSdkVersion")),
             "target_sdk": integer(sdk.get(ANDROID + "targetSdkVersion")), "permissions": permissions,
             "features_required": features, "launchers": launchers, "exported_components": exported,
-            "unexpected_exported_components": unexpected_exported}
+            "unexpected_exported_components": unexpected_exported,
+            "backup_rule_references": {key: app.get(ANDROID + key) for key in ("fullBackupContent", "dataExtractionRules")}}
+
+
+BACKUP_DOMAINS = {"root", "file", "database", "sharedpref", "external"}
+DEVICE_BACKUP_DOMAINS = {"device_root", "device_file", "device_database", "device_sharedpref"}
+
+
+def inspect_backup_xml(documents: dict[str, ET.Element]) -> dict:
+    def excluded(node: ET.Element | None, domains: set[str]) -> bool:
+        if node is None:
+            return False
+        entries = node.findall("exclude")
+        return len(entries) == len(domains) and {(entry.get("domain"), entry.get("path")) for entry in entries} == {(domain, ".") for domain in domains}
+
+    legacy23 = documents["legacy23"]
+    legacy24 = documents["legacy24"]
+    modern = documents["modern"]
+    all_domains = BACKUP_DOMAINS | DEVICE_BACKUP_DOMAINS
+    checks = {
+        "api23_full_backup_root": legacy23.tag == "full-backup-content",
+        "api23_all_domains_excluded": excluded(legacy23, BACKUP_DOMAINS),
+        "api24_full_backup_root": legacy24.tag == "full-backup-content",
+        "api24_all_domains_excluded": excluded(legacy24, all_domains),
+        "api31_extraction_root": modern.tag == "data-extraction-rules",
+        "api31_cloud_domains_excluded": excluded(modern.find("cloud-backup"), all_domains),
+        "api31_device_transfer_domains_excluded": excluded(modern.find("device-transfer"), all_domains),
+        "no_backup_includes": all(not root.findall(".//include") for root in documents.values()),
+    }
+    return {"checks": checks, "excluded_domains": {key: sorted({entry.get("domain", "") for entry in root.findall(".//exclude")}) for key, root in documents.items()}}
+
+
+def apk_xml_resource_table(dump: str) -> dict:
+    """Resolve optimized APK file names and version-qualified alternatives from aapt2."""
+    resources = {}
+    current = None
+    for line in dump.splitlines():
+        if re.match(r"^\s*resource\s+", line):
+            current = None
+        entry = re.match(r"^\s*resource\s+(0x[0-9a-fA-F]+)\s+(?:[A-Za-z0-9_.]+:)?xml/([a-z0-9_]+)\b", line)
+        if entry:
+            current = resources.setdefault(entry.group(2), {"id": entry.group(1), "configurations": []})
+            continue
+        variant = re.match(r"^\s*\(([^)]*)\)\s+\(file\)\s+(\S+)\s+type=XML", line)
+        if current is not None and variant:
+            current["configurations"].append({"qualifier": variant.group(1), "path": variant.group(2)})
+    return resources
+
+
+def backup_resources(args: argparse.Namespace, evidence: dict) -> None:
+    specifications = {
+        "legacy23": ("backup_rules", "", "base/res/xml/backup_rules.xml"),
+        "legacy24": ("backup_rules", "v24", "base/res/xml-v24/backup_rules.xml"),
+        "modern": ("data_extraction_rules", "", "base/res/xml/data_extraction_rules.xml"),
+    }
+    documents = {}
+    paths = {}
+    for key, (_, _, entry) in specifications.items():
+        result = run([str(args.java), "--class-path", str(args.bundletool), str(args.repo_root / "scripts/DumpBundleXml.java"), str(args.aab), entry])
+        evidence["commands"].append(result)
+        if result["exit_code"] != 0:
+            raise ValueError("Cannot decode packaged AAB backup rule: " + key)
+        documents[key] = ET.fromstring(result["stdout"])
+        paths[key] = entry
+    aab = inspect_backup_xml(documents)
+    aab["resource_entries"] = paths
+    refs = evidence["aab"]["manifest"]["backup_rule_references"]
+    aab["checks"]["manifest_full_backup_reference_matches"] = refs["fullBackupContent"] == "@xml/backup_rules"
+    aab["checks"]["manifest_extraction_reference_matches"] = refs["dataExtractionRules"] == "@xml/data_extraction_rules"
+    evidence["aab"]["backup"] = aab
+
+    table = run([str(args.aapt2), "dump", "resources", str(args.apk)])
+    evidence["commands"].append(table)
+    if table["exit_code"] != 0:
+        raise ValueError("Cannot resolve packaged APK backup resource IDs")
+    resources = apk_xml_resource_table(table["stdout"])
+    documents, paths = {}, {}
+    for key, (name, qualifier, _) in specifications.items():
+        variants = resources.get(name, {}).get("configurations", [])
+        matches = [variant["path"] for variant in variants if variant["qualifier"] == qualifier]
+        if len(matches) != 1:
+            raise ValueError("Cannot resolve exactly one packaged APK backup configuration: " + key)
+        paths[key] = matches[0]
+        result = run([str(args.aapt2), "dump", "xmltree", str(args.apk), "--file", matches[0]])
+        evidence["commands"].append(result)
+        if result["exit_code"] != 0:
+            raise ValueError("Cannot decode packaged APK backup rule: " + key)
+        documents[key] = parse_aapt_xml(result["stdout"])
+    apk = inspect_backup_xml(documents)
+    apk["resource_entries"] = paths
+    refs = evidence["apk"]["manifest"]["backup_rule_references"]
+    for attribute, name, check in (("fullBackupContent", "backup_rules", "manifest_full_backup_reference_matches"),
+                                   ("dataExtractionRules", "data_extraction_rules", "manifest_extraction_reference_matches")):
+        reference = refs.get(attribute) or ""
+        apk["checks"][check] = reference == "@xml/" + name or (reference.startswith("@0x") and
+            integer(reference[1:]) == integer(resources.get(name, {}).get("id")))
+    evidence["apk"]["backup"] = apk
 
 
 def inspect_archive(path: Path, external_tokens: list[bytes]) -> dict:
@@ -338,6 +444,10 @@ def main() -> int:
         evidence["apk"]["manifest"] = inspect_manifest(parse_aapt_manifest(dumped["stdout"]), args)
     except (ValueError, KeyError) as error:
         evidence["errors"].append("apk manifest: " + str(error))
+    try:
+        backup_resources(args, evidence)
+    except (OSError, ValueError, KeyError, ET.ParseError, zipfile.BadZipFile) as error:
+        evidence["errors"].append("packaged backup rules: " + str(error))
     if args.apksigner:
         signed = run([str(args.apksigner), "verify", "--verbose", "--print-certs", str(args.apk)])
         evidence["commands"].append(signed)
@@ -365,7 +475,7 @@ def main() -> int:
     all_checks = {"bundletool_valid": evidence["bundletool_valid"]}
     for label in ("aab", "apk"):
         item = evidence.get(label, {})
-        for section in ("archive", "manifest"):
+        for section in ("archive", "manifest", "backup"):
             for name, passed in item.get(section, {}).get("checks", {}).items():
                 all_checks[f"{label}.{section}.{name}"] = passed
         if args.require_signed:

@@ -1,0 +1,14 @@
+// Local test-runner selection only. No production sources, identity or build type changes.
+if (gradle.startParameter.projectProperties['isolatedDeviceTests'] != 'true') {
+    throw new GradleException('Private trial instrumentation requires -PisolatedDeviceTests=true')
+}
+gradle.beforeProject { project ->
+    project.plugins.withId('com.android.application') {
+        project.extensions.getByName('androidComponents').finalizeDsl { androidDsl ->
+            if (androidDsl.testBuildType != 'isolatedTest') {
+                throw new GradleException('Private trial instrumentation must target isolatedTest')
+            }
+            androidDsl.defaultConfig.testInstrumentationRunner = 'com.youriptv.app.TrialPlaybackInstrumentation'
+        }
+    }
+}
