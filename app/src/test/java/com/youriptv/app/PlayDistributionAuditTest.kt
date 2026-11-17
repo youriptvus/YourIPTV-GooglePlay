@@ -64,6 +64,43 @@ class PlayDistributionAuditTest {
         assertFalse(build.contains("UPDATE_MANIFEST_URL"))
     }
 
+    @Test fun automaticBackupsAndDeviceTransfersExcludeCredentialsAndLocalSecurity() {
+        val application = manifest().getElementsByTagName("application").item(0) as org.w3c.dom.Element
+        assertEquals("false", application.getAttributeNS(android, "allowBackup"))
+        assertEquals("@xml/backup_rules", application.getAttributeNS(android, "fullBackupContent"))
+        assertEquals("@xml/data_extraction_rules", application.getAttributeNS(android, "dataExtractionRules"))
+        assertFalse("A custom backup agent must not bypass the declared exclusion boundary",
+            application.hasAttributeNS(android, "backupAgent"))
+        val credentialDomains = setOf("root", "file", "database", "sharedpref", "external")
+        val allDomains = credentialDomains + setOf("device_root", "device_file", "device_database", "device_sharedpref")
+        fun document(path: String) = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(File(main, path))
+        fun requireCompleteExclusion(element: org.w3c.dom.Element, expected: Set<String>) {
+            assertEquals("Automatic transfers must not reinclude credentials or local policy", 0,
+                element.getElementsByTagName("include").length)
+            val excludes = element.getElementsByTagName("exclude")
+            assertEquals(expected.size, excludes.length)
+            val domains = (0 until excludes.length).map {
+                val exclude = excludes.item(it) as org.w3c.dom.Element
+                assertEquals("Every exclusion covers the complete domain recursively", ".", exclude.getAttribute("path"))
+                exclude.getAttribute("domain")
+            }.toSet()
+            assertEquals(expected, domains)
+        }
+        val legacy = document("res/xml/backup_rules.xml").documentElement
+        assertEquals("full-backup-content", legacy.tagName)
+        requireCompleteExclusion(legacy, credentialDomains)
+        val directBoot = document("res/xml-v24/backup_rules.xml").documentElement
+        assertEquals("full-backup-content", directBoot.tagName)
+        requireCompleteExclusion(directBoot, allDomains)
+        val modern = document("res/xml/data_extraction_rules.xml").documentElement
+        assertEquals("data-extraction-rules", modern.tagName)
+        for (mode in listOf("cloud-backup", "device-transfer")) {
+            val sections = modern.getElementsByTagName(mode)
+            assertEquals("A missing transfer mode would enable its default extraction", 1, sections.length)
+            requireCompleteExclusion(sections.item(0) as org.w3c.dom.Element, allDomains)
+        }
+    }
+
     @Test fun updateNavigationDescribesThePlayChannel() {
         val category = com.youriptv.app.ui.SettingsCategory.UPDATES
         assertTrue(category.description.contains("Google Play"))
