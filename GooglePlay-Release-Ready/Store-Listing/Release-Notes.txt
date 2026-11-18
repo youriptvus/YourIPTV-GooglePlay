@@ -1,0 +1,6 @@
+One player for Android phones, tablets and TV.
+Normal Settings opens without a PIN on fresh installs; optional Settings Lock, Admin and parental protections remain independent.
+Secure HTTPS sources are required.
+Improved playlist-download integrity.
+Updates are delivered through Google Play.
+No channels or provider account included.

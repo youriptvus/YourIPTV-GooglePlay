@@ -1,0 +1,103 @@
+{
+  "staticArtworkPassed": true,
+  "staticChecks": [
+    {
+      "file": "App-Icon.png",
+      "width": 512,
+      "height": 512,
+      "colorType": 6,
+      "bytes": 355485,
+      "passed": true,
+      "sha256": "1b994b1548d6d408a0639fc1d69227f7ffd9f7bdfb8bc6cc0592a8e84949cd41"
+    },
+    {
+      "file": "Feature-Graphic.png",
+      "width": 1024,
+      "height": 500,
+      "colorType": 2,
+      "bytes": 265975,
+      "passed": true,
+      "sha256": "4dd1f7be5f54384d6b9963f94a4ebf80fea7fc434a283f5690e534219885f848"
+    },
+    {
+      "file": "Android-TV-Banner.png",
+      "width": 1280,
+      "height": 720,
+      "colorType": 2,
+      "bytes": 616430,
+      "passed": true,
+      "sha256": "6f220b14aed32bdb0ab4b8e5fcc4fac48daa4bb990584dd60cee09974cb006c3"
+    },
+    {
+      "file": "app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/drawable-xhdpi/banner.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/drawable-xxxhdpi/banner.png",
+      "passed": true
+    }
+  ],
+  "staticCheckCount": 20,
+  "currentScreenshotsPending": true,
+  "tabletActualCaptureAvailable": false
+}

@@ -1,0 +1,29 @@
+{
+  "prepared_at_utc": "2026-11-18T03:20:04.276526+00:00",
+  "base_url": "https://youriptv.us/review-media/",
+  "local_development_only": false,
+  "deployed": false,
+  "rights": "Locally generated synthetic testsrc2 video and sine audio; no external media",
+  "files": {
+    "playlist.m3u": {
+      "bytes": 342,
+      "sha256": "b6daee126a4567806131e0d4c3f1a83d2579aff224ec2356677862b5f52eb2dc"
+    },
+    "epg.xml": {
+      "bytes": 24781,
+      "sha256": "b76caaed60cd3743359515608fe7d3a1c6390f22b823e866b16cd1731e29c450"
+    },
+    "channel1.ts": {
+      "bytes": 1513964,
+      "sha256": "755a4f5c83a0763fe9148c45d28b7c43ec72bf72313ba7497173854e42772e93"
+    },
+    "channel2.ts": {
+      "bytes": 1513964,
+      "sha256": "755a4f5c83a0763fe9148c45d28b7c43ec72bf72313ba7497173854e42772e93"
+    },
+    "README.md": {
+      "bytes": 1876,
+      "sha256": "149124e821da38006c5e3887594582f6411bac76c727b206361ee34820c828db"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+APP / DEVELOPER BRAND: YourIPTV
+PACKAGE: com.youriptv.app
+CURRENT LOCAL VERSION: 1.0.9 / proposed versionCode 48; owner must verify Console upload history.
+CATEGORY RECOMMENDATION: Video Players & Editors.
+SUPPORT / PRIVACY EMAIL: admin@youriptv.us
+WEBSITE: https://youriptv.us
+PRIVACY URL: https://youriptv.us/privacy (reachable; publish the prepared Play-inclusive policy before submission).
+PRICE: Free. No in-app purchases, player subscription, paywall or payment SDK identified.
+ADS: Select No for the audited build; no ad SDK or ad display flow is present.
+APP ACCESS: The app itself has no YourIPTV login. Media features require authorized source setup. Give reviewers the working HTTPS demo/account and Review/Reviewer-Instructions.md; do not mark all media features reviewable while source access is missing. Use the restricted-access declaration if the supplied provider account restricts features.
+TARGET AUDIENCE: General-purpose player; not designed specifically for children. Owner must select the ages actually intended and marketed. Do not select children solely because parental controls exist. Choosing child age groups introduces additional Families obligations.
+CONTENT RATING: Complete the IARC questionnaire from actual app behavior. No content catalogue is bundled or sold. Explain externally supplied live/video sources truthfully; do not invent an Everyone/PEGI/IARC rating. The app has no public posting, social feed or in-app purchases.
+DATA SAFETY: Use Privacy/Data-Safety-Answers.md; do not copy a blanket no-collection or no-sharing claim.
+ACCOUNT CREATION: No YourIPTV app/cloud-account creation. Provider credentials access an existing external source account; they do not create a YourIPTV account.
+APP CONTENT / IP: User-provided authorized media only. Use the existing approved YourIPTV artwork and original synthetic demo media; no channel/provider logos or private trial account in the listing.
+ANDROID TV: Opt into Android TV for this same package/AAB and supply TV assets. Do not create a separate app/listing.
+PUBLICATION: Manual owner action only. No Google Play availability or approval claimed.

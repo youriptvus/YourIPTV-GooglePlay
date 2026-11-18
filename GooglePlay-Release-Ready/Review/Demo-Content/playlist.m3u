@@ -1,0 +1,9 @@
+#EXTM3U x-tvg-url="https://youriptv.us/review-media/epg.xml"
+#EXTINF:-1 tvg-id="synthetic1" group-title="Authorized review content",Synthetic Channel One
+https://youriptv.us/review-media/channel1.ts
+#EXTINF:-1 tvg-id="synthetic2" group-title="Authorized review content",Synthetic Channel Two
+https://youriptv.us/review-media/channel2.ts
+#EXTINF:-1 tvg-type="movie" group-title="Authorized synthetic movies",YourIPTV Synthetic Movie (six-second demo)
+https://youriptv.us/review-media/channel1.ts?review-kind=movie
+#EXTINF:-1 tvg-type="series" group-title="Authorized synthetic series",YourIPTV Synthetic Series S01E01
+https://youriptv.us/review-media/channel2.ts?review-kind=episode
