@@ -1,5 +1,19 @@
 # Play candidate test report
 
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+
+The current HTTPS-only secure candidate, production source `cc13ebe5bba6dfba1fd00d38e976ce2c1756e4f3`, is being prepared separately under `artifacts/code48-secure/`. Secure-source host results passed 414 JVM tests / 57 classes, focused 61 / 6 classes, verifier tests 6/6 and full lint (0 errors, 272 warnings); final signing/compiled-artifact results are pending. The 401-test HTTP-integrity build and first 81-check code 48 artifact audit predate this transport change and are intermediate/superseded. Root-level code 45 evidence remains historical. See [current secure status](CURRENT_STATUS.md).
+
+## HTTP-integrity phase: Play 1.0.9 / proposed code 48 (intermediate)
+
+November 17, 2026. Production build source is `2c02256822cfc8c9c6b0436cceaeb1f4e7b3830a`. The raw encoded Content-Length guard rejects incomplete fixed-length responses, including gzip completion, before a shortened catalog can be accepted. Full host verification passed **401 tests / 56 classes**, with 0 failures, errors or skipped tests; full lint passed with **0 errors and 272 warnings**. Focused coverage was 35 tests / 4 classes, included in that full total. Post-fix synthetic localhost checks passed **16/16**, including complete 40,346,015-byte / 147,803-entry plain/gzip catalogs and fault responses.
+
+These are PC/JVM and synthetic localhost checks. No new device/provider pass or TV EOF cause/fix is established. Clean early EOF without usable framing/Content-Length remains indistinguishable from legitimate shorter content. The new signed code 48 delivery is being prepared under `artifacts/code48-secure/`; packaging, signatures, artifact audit and final hashes remain pending. The root-level code 45 AAB/APK/source ZIP and its measurements below predate the guard and remain historical. See [current status](CURRENT_STATUS.md).
+
+## Historical code 45 delivery and measured evidence
+
+The following results are preserved measurements from the named prior runs. No current connectivity/installation guarantee or continuing device permission is implied; the later owner-requested TV uninstall does not retroactively change those results.
+
 November 16, 2026 (America/New_York). Baseline: official `v1.0.9`, `0612c0acb500f096da5cfb766f6e7f0a012c4ba8`, code 44. Candidate: `com.youriptv.app`, `1.0.9`, proposed code 45 pending Console history. Production build commit: `f5a421823aa94fc8f652edc52050b8f12f5d7130`.
 
 ## Completed host verification
@@ -13,11 +27,11 @@ November 16, 2026 (America/New_York). Baseline: official `v1.0.9`, `0612c0acb500
 | Lint corrections | Media3 opt-in declarations, two narrowly documented dialog-authorization false positives and shared AndroidX Back handling; no blanket lint baseline |
 | Retained warnings | Primarily internationalization, layout/style and available dependency updates; intentional cleartext transport is documented. A passing lint task does not certify every warning or dependency. |
 
-Reports: `app/build/reports/tests/testReleaseUnitTest/index.html`, `app/build/test-results/testReleaseUnitTest/`, and `app/build/reports/lint-results-release.*`. A clean build was performed before corrections; corrected sources were recompiled and verified by the final host and packaging commands.
+Historical report-generation paths were `app/build/reports/tests/testReleaseUnitTest/index.html`, `app/build/test-results/testReleaseUnitTest/`, and `app/build/reports/lint-results-release.*`; those live paths now describe the latest build. Preserved code 45 host results are in [artifacts/final-host-checks.json](artifacts/final-host-checks.json). A clean build was performed before corrections; corrected sources were recompiled and verified by the final host and packaging commands.
 
 `bundleRelease assembleRelease --offline --console=plain --max-workers=1` **passed in 2 minutes 12 seconds** using the existing external signing configuration. Log: `D:\APK\work\YourIPTV-GooglePlay-preparation\final-backup-package.log`. The isolated app/test build also passed in 15 seconds. Earlier pre-exclusion artifact hashes are intermediate and superseded.
 
-The current post-device test-helper tree also passed `testReleaseUnitTest lintRelease` offline, retaining 385 tests and 0 lint errors. The final `final-tree-checks.log` completed in 8 seconds; the earlier `post-device-test-lint.log` completed in 26 seconds. Production source remains identical to the signed build commit.
+The then-current post-device test-helper tree also passed `testReleaseUnitTest lintRelease` offline, retaining 385 tests and 0 lint errors. The final `final-tree-checks.log` completed in 8 seconds; the earlier `post-device-test-lint.log` completed in 26 seconds. At that code 45 historical freeze, production source matched its signed build commit.
 
 ## Verified production artifacts
 
@@ -65,7 +79,7 @@ The actual AAB protobuf XML and APK binary XML were decoded: API 23 five-domain 
 | onn. Streaming Device 4K Pro | `192.168.1.150:5555`, API 34; customer `1.0.9` / code 44 | Latest full run: 26/27 passed; remaining browser case separately passed 1/1 after harness correction. No single full 27/27 run is claimed. |
 | Samsung SM-S166V | `R5GL75PGMFP`, API 36; customer `1.0.3` / code 34 | Full run: 28/30 passed; remaining two harness cases separately passed 2/2. No single full 30/30 run is claimed. |
 
-Only temporary `com.youriptv.app.playtest` and its test APK may be installed. The same isolated APK ran on both targets. It is a debug test configuration, not another production application or AAB, and does not prove optimized release behavior or Play-generated APK compatibility.
+The historical runs installed only temporary `com.youriptv.app.playtest` and its test APK. The same isolated APK ran on both targets. This describes those runs and does not authorize a new install or test. It is a debug test configuration, not another production application or AAB, and does not prove optimized release behavior or Play-generated APK compatibility.
 
 Instrumentation uses synthetic local media/guide data, actual UI/key/touch events, shared-player frame observations and server-request counters. The latest TV full run passed 26 of 27 checks, including the 180-second soak under policy-derived recovery expectations: 5 stream ends, 4 new first-frame events, 8 full GETs, 0 player errors and a 32.548-second maximum observed gap. Existing later recovery/backoff delays remain; this is not an instant-reconnect or endurance guarantee.
 
@@ -99,6 +113,6 @@ No Play upload, Play App Signing enrollment, Play-generated split/certificate te
 
 The preserved original Git metadata differences are `.git/FETCH_HEAD`, `.git/logs/refs/remotes/origin/HEAD`, and a newly present `.git/refs/tags/v1.0.9` at the official baseline commit. No workspace agent issued a fetch/pull/tag or other mutating Git command against the original; the actor/cause is unconfirmed. These files are preserved for owner review, not reverted or deleted. Pre-restriction remote comparisons matched; this workflow performed no GitHub mutation, and no further remote checks are permitted.
 
-Read-only customer-artifact checks also passed: the versioned 1.0.9 upload-folder APK, current generic APK and backup APK each remain 3,749,548 bytes with the recorded official SHA-256 `6ac5ae11b0771ffd47c182a31318ff26ceaec53e7a3598110597af2c7a98b8fa`. Evidence: ignored `artifacts/customer-release-artifacts-preserved.json`. No customer release artifact was written or replaced.
+During the prior November 16-17 delivery, read-only customer-artifact checks also passed: the versioned 1.0.9 upload-folder APK, then-current generic APK and backup APK each were 3,749,548 bytes with the recorded official SHA-256 `6ac5ae11b0771ffd47c182a31318ff26ceaec53e7a3598110597af2c7a98b8fa`. Evidence: ignored `artifacts/customer-release-artifacts-preserved.json`. No customer release artifact was written or replaced.
 
 Historical customer totals do not certify this candidate. Source/host assertions are not decoder or physical-device evidence, and connectivity is not functionality. No customer app/data clearing, uninstall, replacement, credential/PIN/launcher change is authorized to fill this report. No publication or Google approval is claimed.

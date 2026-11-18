@@ -10,7 +10,7 @@ Short description (under80 characters):
 
 Full description draft:
 
-> YourIPTV is an independent media player for your own authorized IPTV sources. Bring an Xtream Codes connection, an M3U or M3U Plus playlist, and an XMLTV program guide from a service you have permission to use.
+> YourIPTV is an independent media player for your own authorized IPTV sources. Bring an Xtream Codes connection, an M3U or M3U Plus playlist, and an XMLTV program guide from a service you have permission to use. Use secure HTTPS source addresses; HTTP-only sources are not supported.
 >
 > Use one app on your Android phone, tablet, Android TV or Google TV. Touch controls serve mobile devices, while television navigation supports a remote and D-pad.
 >

@@ -24,7 +24,7 @@ Database/preferences use Android app-private storage. The app disables automatic
 
 Configured sources contact provider, playlist/guide, stream and source-referenced artwork hosts. Requests may carry configured credentials/user agent, content identifiers and requested guide/media resources. Recipients also receive ordinary network information such as IP address/request time. Xtream protocols can include credentials in request URLs.
 
-Developer does not operate your chosen providers or control their retention/security/content rights. Review provider policies. HTTPS protects supported connections; explicit HTTP remains for compatible sources and permits network observation/modification of credentials/data/content. Not every transfer is encrypted.
+Developer does not operate your chosen providers or control their retention/security/content rights. Review provider policies. This Google Play application requires HTTPS for network sources and blocks insecure HTTP connections and HTTPS-to-HTTP redirects. It uses platform certificate validation. Existing HTTP-only sources need a working HTTPS address from their provider before they can connect. HTTPS protects app connections in transit; selected recipients still receive and process the information needed to deliver their service.
 
 ## Sharing and developer services
 
@@ -48,4 +48,4 @@ Publisher updates this policy when practices change. Use contact above for priva
 
 Publish stable public non-geofenced non-editable HTML, not PDF/login/shared editable document, identifying app/publisher. Enter Console URL and align in-app notice. Official: https://support.google.com/googleplay/android-developer/answer/10144311?hl=en and https://support.google.com/googleplay/android-developer/answer/9859455?hl=en-en
 
-Transport limitation: the preserved HTTP/Media3 paths permit provider redirects between HTTPS and HTTP. HTTPS entered initially is not a guarantee that every redirected transfer stays encrypted. No certificate-validation bypass was identified. The unconditional all-data-encrypted-in-transit declaration remains unsupported.
+Transport implementation: the current secure candidate enforces HTTPS for provider, playlist, XMLTV, media and artwork requests; insecure connections and downgrade redirects are blocked. Final compiled-artifact checks are pending while this candidate is built. External apps/document providers selected for playback/export control their own subsequent handling; the owner must reconcile the final Data safety answer with all actual app, SDK and organizational flows.

@@ -1,0 +1,176 @@
+{
+  "source": "docs/branding/youriptv_icon_source.jpg",
+  "sourceSha256": "89e9006f0624a936b04c524e47aa44cd25b6c595e75ee78f5adff9466e9356b4",
+  "wordmarkExtraction": {
+    "x": 153,
+    "y": 305,
+    "width": 465,
+    "height": 163,
+    "method": "Native SVG clip; no generated/retyped wordmark or poster imagery"
+  },
+  "renderer": "Chrome headless SVG/canvas PNG export; local data URIs only",
+  "appResources": {
+    "app/src/main/res/mipmap-mdpi/ic_launcher.png": {
+      "width": 48,
+      "height": 48,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 4817,
+      "sha256": "0e2d106812bf67e21d92be8075f0a37baebb9a323baf82b8a1d4b084c7710329"
+    },
+    "app/src/main/res/mipmap-mdpi/ic_launcher_round.png": {
+      "width": 48,
+      "height": 48,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 4898,
+      "sha256": "c9c4a574bcb88acb7c839611c7288033e1b995676ed6c0adceca45dc62a7b3f7"
+    },
+    "app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png": {
+      "width": 108,
+      "height": 108,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 5399,
+      "sha256": "554d12cea67c2207d0ac37ef70fe1a90b148c41995886521b3a6407ad0e50dfc"
+    },
+    "app/src/main/res/mipmap-hdpi/ic_launcher.png": {
+      "width": 72,
+      "height": 72,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 10104,
+      "sha256": "400efda250c99c76a00f725c99605e2c691a3492eae8fa3b12770e856d3566bc"
+    },
+    "app/src/main/res/mipmap-hdpi/ic_launcher_round.png": {
+      "width": 72,
+      "height": 72,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 9858,
+      "sha256": "b7bd975c497fb01edcec5ee5807d723aa1fdcf005fbdad53642849efd7f1f8ed"
+    },
+    "app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png": {
+      "width": 162,
+      "height": 162,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 10429,
+      "sha256": "5c58932171f83e4228ad84bd92e6d8a1f5e55c956b7477e8154120a195db4a16"
+    },
+    "app/src/main/res/mipmap-xhdpi/ic_launcher.png": {
+      "width": 96,
+      "height": 96,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 16750,
+      "sha256": "097ff66975852877f9c2566ed8b43ec6cfc080eb91a833a69d01324cb93529b1"
+    },
+    "app/src/main/res/mipmap-xhdpi/ic_launcher_round.png": {
+      "width": 96,
+      "height": 96,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 16120,
+      "sha256": "8c5163a06b8b8e3ef063f488ac564bde05205aff78a9bf6620606752dcc9eee0"
+    },
+    "app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png": {
+      "width": 216,
+      "height": 216,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 17401,
+      "sha256": "b56847dd0d96471ce6a117c83c5f59d89af839309b50f05ed38ca2354fe23129"
+    },
+    "app/src/main/res/mipmap-xxhdpi/ic_launcher.png": {
+      "width": 144,
+      "height": 144,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 35550,
+      "sha256": "6e077da50e35c1530e0a03844d80736423136d9e881118fe227f357f328d6b22"
+    },
+    "app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png": {
+      "width": 144,
+      "height": 144,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 33256,
+      "sha256": "639770858af0590142eae271585f4e72d49d25a364e35ace4060e685e39e601f"
+    },
+    "app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png": {
+      "width": 324,
+      "height": 324,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 34341,
+      "sha256": "d9ba76b86f8cbf8d9b8be17889ef16ff312ee3a7c77dee2f7cd7902f2e838bfa"
+    },
+    "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png": {
+      "width": 192,
+      "height": 192,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 60415,
+      "sha256": "e32afa82785a27db0e7b3c79f20afc5d289c001e8f961cce7b9b6850e605e3d0"
+    },
+    "app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png": {
+      "width": 192,
+      "height": 192,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 55095,
+      "sha256": "419cf27b08fa7e25a658e4ed20eacfce3d097a571572f90d762a82ef1c09e312"
+    },
+    "app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png": {
+      "width": 432,
+      "height": 432,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 58154,
+      "sha256": "09155b906de17dfd1a7b6c7c3377f8e48e8aecf45de4f57a5dcf587227cf9e92"
+    },
+    "app/src/main/res/drawable-xhdpi/banner.png": {
+      "width": 320,
+      "height": 180,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 65788,
+      "sha256": "69e9d1d1e27bcc0169b060515feae1b776c5fe3d3fdd6f44cff14527266acce2"
+    },
+    "app/src/main/res/drawable-xxxhdpi/banner.png": {
+      "width": 640,
+      "height": 360,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 204884,
+      "sha256": "b733115c913e2598b98e27e9ef07a44ffc57f4e95509cf9fd9bfa4bb8a6e1170"
+    }
+  },
+  "files": {
+    "App-Icon.png": {
+      "width": 512,
+      "height": 512,
+      "bitDepth": 8,
+      "colorType": 6,
+      "bytes": 355485,
+      "sha256": "1b994b1548d6d408a0639fc1d69227f7ffd9f7bdfb8bc6cc0592a8e84949cd41"
+    },
+    "Feature-Graphic.png": {
+      "width": 1024,
+      "height": 500,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 265975,
+      "sha256": "4dd1f7be5f54384d6b9963f94a4ebf80fea7fc434a283f5690e534219885f848"
+    },
+    "Android-TV-Banner.png": {
+      "width": 1280,
+      "height": 720,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 616430,
+      "sha256": "6f220b14aed32bdb0ab4b8e5fcc4fac48daa4bb990584dd60cee09974cb006c3"
+    }
+  }
+}

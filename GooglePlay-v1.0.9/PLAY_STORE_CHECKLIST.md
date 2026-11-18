@@ -1,13 +1,14 @@
 # Release checklist
 
-Unchecked means evidence/gate pending, not an implied pass. Exact current results in test report/final handoff.
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+
+Checked historical results describe the recorded code 45 delivery; unchecked gates are not implied passes. Current authorization/version/device status is in the superseding status document.
 
 - [x] Official v1.0.9/latest/main/tag identity 0612c0acb500f096da5cfb766f6e7f0a012c4ba8 verified before import.
 - [x] Independent source directory prepared excluding original Git/secrets/caches.
 - [x] Original tracked source, HEAD/index/config/local branches match the initial evidence.
 - [ ] Owner review of three unexplained fetch/tag metadata changes; strict full-Git preservation did not pass.
 - [x] Independent initial/production commits and new-only local origin; no GitHub operation under the local-only instruction.
-- [ ] Owner-manual PRIVATE non-fork remote creation/verification/push; workspace tools are restricted to local work.
 - [x] One production package/shared player/AAB phone/tablet/TV, verified in actual bundle metadata.
 - [x] Fresh Settings OFF/persistence/deliberate On/Off verified to host and isolated-device scope; synthetic legacy inputs remain protected.
 - [x] Admin/lockouts/parental independence/provider-limit host and isolated-device scenarios passed to report scope.
@@ -24,7 +25,8 @@ Unchecked means evidence/gate pending, not an implied pass. Exact current result
 - [x] Actual package/version/API36/launchers/features/banner/icons verified.
 - [x] No packaged native libraries; architecture-neutral Java/Kotlin, known-secret/legacy-plaintext/test separation audited. Physical 16 KB device run unperformed.
 - [x] External signing only; both final artifacts have the verified official certificate.
-- [ ] Console unused 45 or next higher code confirmed.
+- [ ] Final secure candidate HTTPS-only input/network/redirect policy passes source tests and compiled AAB/APK checks; legacy HTTP URLs require provider HTTPS.
+- [ ] Owner selects a Console-unused production code greater than 47 and any later applicable code; 48 is locally proposed, pending unused Console-history verification.
 - [x] One AAB location/SHA256/commands/production source commit recorded.
 - [x] Safe TV identity/scoped scenarios: 26 checks in latest full run plus 1/1 focused rerun, with restart/same-code replacement; earlier failed harness attempts retained.
 - [x] Safe Samsung identity/scoped scenarios: 28 checks in full run plus 2/2 focused rerun, with restart/same-code replacement; original full-run failures retained.
@@ -33,7 +35,8 @@ Unchecked means evidence/gate pending, not an implied pass. Exact current result
 - [x] Synthetic guide/refresh/live/D-pad/touch/RIGHT/lifecycle and 180-second clean-end recovery observations recorded on both devices.
 - [x] Private phone full catalog/EPG/live and TV subset/direct-live observations recorded with cleanup and preserved failures.
 - [ ] TV full private catalog EOF/truncation investigated; full TV private EPG and broader provider/endurance coverage completed.
-- [ ] Compatible upgrade/data preservation and Play-generated certificate/update path tested.
+- [ ] New explicit owner device request obtained before any `.150` testing or reinstall.
+- [ ] Compatible upgrade/data preservation and Play-generated certificate/update path tested on a subsequently authorized device.
 - [ ] Account identity/package ownership/Play Signing decision complete.
 - [ ] Public privacy HTML published and actual Data safety finalized.
 - [ ] Content rating/ads/target audience declared accurately.
@@ -42,5 +45,7 @@ Unchecked means evidence/gate pending, not an implied pass. Exact current result
 - [ ] Internal/required closed testing and production access complete if applicable.
 - [ ] TV review/device catalog and phone/tablet compatibility validated.
 - [ ] Explicit owner submission approval obtained; Google approval before availability claims.
+
+Optional owner repository preference: PRIVATE non-fork remote creation/verification/push remains owner-manual under the local-only restriction. A GitHub repository is not a Google Play submission requirement.
 
 The owner's latest instruction permits local work only. Workspace tools must not call GitHub, create a remote, push or upload anything. No GitHub Release or Play submission was performed.

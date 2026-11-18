@@ -8,7 +8,7 @@ Use a stable owner-controlled HTTPS directory hosting a small M3U/M3U Plus playl
 
 The ignored `artifacts/reviewer-demo/` folder contains two six-second synthetic MPEG-TS samples, an M3U playlist, matching XMLTV guide, checksums and hosting instructions. The video test pattern and sine audio were generated locally; there is no external television/movie media, subscription server or customer account. These files are outside application assets and are not bundled into the AAB.
 
-The initial export uses `http://127.0.0.1:18765/` and is **LOCAL DEVELOPMENT ONLY**. Loopback is not reachable to remote reviewers. The source script prepares a future approved HTTPS base and regenerates the guide without publishing anything:
+The historical initial export uses `http://127.0.0.1:18765/` and is **LOCAL DEVELOPMENT ONLY**. It is not usable as a network source in the HTTPS-only production candidate, and loopback is not reachable to remote reviewers. The source script prepares a future approved HTTPS base and regenerates the guide without publishing anything:
 
 ```powershell
 py scripts/export_review_demo.py --reuse-media --public-base https://YOUR-APPROVED-HOST.example/youriptv-review/

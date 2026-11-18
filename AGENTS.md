@@ -1,17 +1,20 @@
 # Independent Play project rules
 
+> **Current status, November 17:** The owner's final-completion request resumes local release preparation and explicitly authorizes safe isolated `.playtest` checks on `.150` and the Samsung phone. Never replace or clear customer `com.youriptv.app` installations/data. The actual Play source is 1.0.9 / proposed code 48, pending Console-history verification. Preserve older artifacts and uncommitted work. The separate playback issue was reported server-side; no encoder/decoder changes are included.
+
 The sibling customer repository is read-only. Never change its files, Git metadata, workflows, releases, updater or settings. No shared Git directory, customer worktree, fork or automatic synchronization.
 
 - One production `com.youriptv.app`, shared player/version and AAB for phone/tablet/TV. `.playtest` is temporary isolated QA only, never another production listing/AAB.
 - Preserve v1.0.9 TS recovery, Right previous-channel/retries, provider limits, parental restrictions and authorized Admin functions.
 - Fresh Settings Lock OFF; preserve saved/ambiguous existing security. Missing custom PIN is not proof of an old default.
 - Play delivers updates. No APK installer/downloader/customer updater routes or installer overlay permissions.
-- Generic authorized user sources only; no subscription-provider shortcuts, credentials or unauthorized streams. No paywalls/timers/trials.
+- Generic authorized HTTPS sources only; production cleartext and HTTPS-to-HTTP redirects are blocked. Do not restore an HTTP toggle or bypass. Existing HTTP-only sources need provider-supplied HTTPS addresses. No subscription-provider shortcuts, credentials or unauthorized streams. No paywalls/timers/trials.
 - Never commit/upload keys, private config/passwords, customer databases, backups or sensitive logs/screenshots. External signing keys/config must stay outside Git. Never print secrets. Use `py` for Python.
 - Work locally only under the owner's latest explicit instruction. Do not call GitHub, read remote state, create a remote, push or upload anything from workspace tools. The owner handles any private-repository creation, verification and push manually. Retain the already configured new-only origin locally. Obsolete comp6062 remains prohibited.
-- Local commits, builds, tests and authorized isolated LAN/USB device checks are allowed. No GitHub Release or Play submission. Do not start a GitHub authentication/connection flow to finish the current task.
+- Current continuation completes the existing local project and prepares `GooglePlay-Release-Ready`. The latest explicit request renews safe isolated phone/TV testing; inspect current device/package state first and preserve all customer installations/data and existing QA state. Earlier uninstall/connectivity records are historical. Production signing uses the existing authorized external configuration. No GitHub Release, Play submission, website/cPanel/DNS deployment or GitHub authentication flow.
+- Official application/developer brand: YourIPTV. Website: `https://youriptv.us`. Support/privacy: `admin@youriptv.us`. Preferred verified privacy URL: `https://youriptv.us/privacy`; its live content still needs the locally prepared Play-specific update before submission. Never modify the separate IPTV service website.
 - For any later owner-run publication, review secrets and verify the exact PRIVATE non-fork destination first. No remote-private claim without actual owner-supplied server evidence.
-- Code45 proposed pending Console upload-history check. If used, choose higher unused code and rebuild/retest/re-hash; no code44 reuse.
+- Code 45 is the historical Play artifact code. Customer code 44 is published and private diagnostic code 47 was consumed. Future compatible production codes must exceed 47 and be Console-unused; 48 is locally proposed, pending unused Console-history verification. Preserve the historical code 45 AAB/APK/source ZIP and records; current local preparation uses versionName 1.0.9 / proposed code 48 without changing the original customer repository.
 - No automatic production-key generation/replacement or Play Signing enrollment. Owner decides signing compatibility. Unsigned release preparation permitted.
 - Never clear/uninstall/replace customer apps/data, delete playlists, alter PINs/launcher or factory reset for QA. Verify identity and use isolated QA/emulator. Sound assumed unless an actual error/report.
 - Report exact tests and limitations: static/JVM, isolated device and actual production/Play delivery differ. Never mark unperformed tests passed.

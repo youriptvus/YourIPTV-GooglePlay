@@ -1,5 +1,7 @@
 # Independent repository separation
 
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+
 | | Customer | Google Play |
 |---|---|---|
 | Remote | https://github.com/youriptvus/YourIPTV | https://github.com/youriptvus/YourIPTV-GooglePlay |
@@ -8,7 +10,7 @@
 | History | Existing unchanged | Fresh independent Git |
 | Updates | Customer updater unchanged | Play delivery |
 | Package | com.youriptv.app | com.youriptv.app |
-| Version |1.0.9/code44 unchanged |1.0.9/proposed45 |
+| Recorded baseline/delivery version |1.0.9/code44 source baseline; owner now confirms published |1.0.9/code45 historical artifacts |
 
 Not a branch/worktree/fork/shared Git directory. Same Android package is intentional: normally no side-by-side install, and compatible certificates/higher code needed for updates. No automatic synchronization.
 

@@ -5,7 +5,7 @@ Source inventory, not a submitted form. Owner is responsible for all active arti
 | Flow | Storage/recipient | Purpose/limits |
 |---|---|---|
 | Playlist names/URLs, usernames/passwords, guide URL/user agent | Db.kt/Repository.kt, app-private SQLite; selected servers | Source access. URLs may identify users/embed credentials. Private storage is not encryption. |
-| Xtream API/media requests | XtreamUrls.kt; selected provider/stream/guide | Authentication/catalogue/guide/playback; credentials in URL path/query. HTTPS preferred; explicit HTTP remains. |
+| Xtream API/media requests | XtreamUrls.kt; selected provider/stream/guide | Authentication/catalogue/guide/playback; credentials in URL path/query. HTTPS required; insecure HTTP and HTTPS-to-HTTP redirects blocked in the current secure candidate. |
 | IP and ordinary metadata | Provider/stream/guide/source image hosts via Http/Media3/image loader | Network recipients receive metadata; no claim they discard it. |
 | Favorites, playback state, preferences, guide/cache | Local DB/preferences/files | Player/resume/guide/refresh; no developer telemetry endpoint identified. |
 | Admin/Settings/parental security and lockouts | Local preferences | Local protection, no cloud authentication. Do not publish legacy secret/digest details. |
@@ -26,10 +26,10 @@ Google defines collection as off-device transmission, including third-party libr
 
 Owner must confirm actual recipients, purposes, retention and developer-controlled services. Determine which transfer is required/optional and whether current form exemptions apply. No advertising/analytics purpose without evidence.
 
-**Encryption in transit:** explicit HTTP is supported. Do not unconditionally answer all data encrypted in transit while HTTP credential/data paths remain. HTTPS uses platform certificate validation, but user-selected sources may not use it.
+**Encryption in transit:** the current secure candidate requires HTTPS for provider, playlist, XMLTV, media and artwork requests, blocks insecure HTTP and downgrade redirects, and retains platform certificate validation. Final compiled-artifact verification is pending. Confirm the complete app/SDK/organizational transfer inventory before answering the Console form; recipient handling and deliberately selected external apps/document providers remain distinct from the app's own HTTPS transport.
 
 **Deletion:** local controls/Android storage actions remove applicable app data; exported files need separate deletion. No developer cloud account. Provider accounts/records belong to their services; do not claim developer can delete them. Answer account-deletion prompts according to actual account model.
 
 Closed/open/production tracks require Data safety, including apps declaring no collection; internal-only testing has an exemption. Reconcile final form, public privacy and in-app notice. Source: https://support.google.com/googleplay/android-developer/answer/10787469?hl=en
 
-Transport limitation: the preserved HTTP/Media3 paths permit provider redirects between HTTPS and HTTP. HTTPS entered initially is not a guarantee that every redirected transfer stays encrypted. No certificate-validation bypass was identified. The unconditional all-data-encrypted-in-transit declaration remains unsupported.
+Compatibility change: existing HTTP-only provider/playlist/guide/media/artwork addresses no longer connect in the secure Play candidate. Obtain working HTTPS addresses from the source owner and update saved configuration; imported data is not a grant to make an insecure request. Historical code 45 HTTP trials and the first code 48 bundle predate this policy and do not validate the secure candidate.

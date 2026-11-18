@@ -12,6 +12,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import threading
+from urllib.parse import parse_qs, urlsplit
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -33,6 +34,10 @@ def main():
 {base}/channel1.ts
 #EXTINF:-1 tvg-id="synthetic2" group-title="Authorized test content",Synthetic Channel Two
 {base}/channel2.ts
+#EXTINF:-1 tvg-type="movie" group-title="Generated Movies",Synthetic Movie
+{base}/movie/generated.ts
+#EXTINF:-1 tvg-type="series" group-title="Generated Series",Synthetic Show S01E01
+{base}/series/generated.ts
 '''.encode()
     now = datetime.now(timezone.utc)
     start, stop = (now-timedelta(hours=1)).strftime('%Y%m%d%H%M%S +0000'), (now+timedelta(hours=8)).strftime('%Y%m%d%H%M%S +0000')
@@ -46,13 +51,32 @@ def main():
         def do_HEAD(self): self.respond(head=True)
         def do_GET(self): self.respond()
         def respond(self, head=False):
-            path = self.path.split('?',1)[0]
+            request = urlsplit(self.path)
+            path = request.path
             if path == '/stats':
                 with lock: data = json.dumps(counters).encode()
                 mime = 'application/json'
+            elif path == '/player_api.php':
+                # Entirely synthetic local API, never a provider account or production asset.
+                action = parse_qs(request.query).get('action', [''])[0]
+                if not action:
+                    value = {'user_info': {'auth': 1, 'status': 'Active', 'max_connections': '1',
+                             'active_cons': '0', 'exp_date': None}, 'server_info': {'timezone': 'UTC'}}
+                elif action in ('get_live_categories', 'get_vod_categories', 'get_series_categories'):
+                    value = [{'category_id': '1', 'category_name': 'Generated Xtream demo'}]
+                elif action == 'get_live_streams':
+                    value = [{'stream_id': '11', 'name': 'Synthetic Xtream Channel', 'category_id': '1',
+                              'epg_channel_id': 'synthetic1', 'num': '1'}]
+                elif action in ('get_vod_streams', 'get_series'):
+                    value = []
+                else:
+                    self.send_error(404)
+                    return
+                data, mime = json.dumps(value).encode(), 'application/json'
             elif path == '/playlist.m3u': data, mime = playlist, 'audio/x-mpegurl'
             elif path == '/epg.xml': data, mime = epg, 'application/xml'
-            elif path in ('/channel1.ts', '/channel2.ts'): data, mime = payload, 'video/mp2t'
+            elif path in ('/channel1.ts', '/channel2.ts', '/movie/generated.ts', '/series/generated.ts',
+                          '/live/fixture/fixture/11.ts'): data, mime = payload, 'video/mp2t'
             else:
                 self.send_error(404)
                 return

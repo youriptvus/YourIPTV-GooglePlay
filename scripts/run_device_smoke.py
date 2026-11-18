@@ -110,13 +110,20 @@ def main():
         (args.screenshots / f'{device}-playtest-{stage}.png').write_bytes(png)
 
     before = customer_state()
+    installed = adb('shell', 'pm', 'list', 'packages', '--user', '0', PACKAGE).splitlines()
+    isolated_existed = f'package:{PACKAGE}' in installed
     timestamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
     evidence = args.output / f'{timestamp}-{args.serial.replace(":", "-")}'
     evidence.mkdir(parents=True, exist_ok=False)
     (evidence / 'identity.json').write_text(json.dumps(identity, indent=2), encoding='utf-8')
+    (evidence / 'installation-scope.json').write_text(json.dumps({
+        'isolated_package': PACKAGE, 'existing_qa_installation': isolated_existed,
+        'fresh_isolated_installation': not isolated_existed,
+        'scope': 'A pre-existing QA app is updated without clearing its data. Fresh-context preference checks are not a fresh APK installation.'
+    }, indent=2), encoding='utf-8')
     print(f"Verified {identity['manufacturer']} {identity['model']}; installing only {PACKAGE}", flush=True)
-    adb('install', '-r', '-t', args.apk)
-    adb('install', '-r', '-t', args.test_apk)
+    adb('install', '--user', '0', '-r', '-t', args.apk)
+    adb('install', '--user', '0', '-r', '-t', args.test_apk)
     if args.fixture_base:
         adb('reverse', 'tcp:18765', 'tcp:18765')
         reverse_created = True
@@ -159,7 +166,7 @@ def main():
                 raise RuntimeError('Actual process restart did not preserve the tested policy')
             raw_stage_capture('post-restart')
             adb('shell', 'am', 'force-stop', PACKAGE)
-            replacement_output = adb('install', '-r', '-t', args.apk)
+            replacement_output = adb('install', '--user', '0', '-r', '-t', args.apk)
             replaced = start_isolated()
             replaced_policy = play_policy()
             if replaced_policy != initial or replaced['pid'] == restarted['pid']:

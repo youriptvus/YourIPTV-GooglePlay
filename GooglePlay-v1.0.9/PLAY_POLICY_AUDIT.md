@@ -1,5 +1,7 @@
 ﻿# Google Play official-requirements research
 
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+
 Research date: 2026-11-16 (America/New_York). This is a policy research record, not an approval, source-code audit, device-test result, or final Data safety declaration.
 
 ## SDK and unified delivery
@@ -41,7 +43,7 @@ Source: https://developer.android.com/about/versions/16/behavior-changes-16
 
 ## Privacy, Data safety and access
 
-Closed/open/production tracks need Data safety; internal-only testing is exempt. Inventory all outgoing app/SDK data, not only developer-owned servers. Credentials/URLs go to selected providers; IP and request metadata go to content/EPG/image hosts. Determine whether each transfer is collected/shared, service-provider processing, or user-initiated transfer under the form definitions. Do not claim no collection solely because there is no analytics SDK. Declare encryption truthfully: permitted HTTP providers mean not all transport is encrypted. Check credentials, diagnostics, exports/backups and WebViews separately. Owner must confirm organizational practices and retention before submission.
+Closed/open/production tracks need Data safety; internal-only testing is exempt. Inventory all outgoing app/SDK data, not only developer-owned servers. Credentials/URLs go to selected providers; IP and request metadata go to content/EPG/image hosts. Determine whether each transfer is collected/shared, service-provider processing, or user-initiated transfer under the form definitions. Do not claim no collection solely because there is no analytics SDK. The secure candidate requires HTTPS and blocks insecure/downgrade requests; verify its final source, compiled policy and runtime scope before making the encryption-in-transit declaration. Check credentials, diagnostics, exports/backups and WebViews separately. Owner must confirm organizational practices and retention before submission.
 Source: https://support.google.com/googleplay/android-developer/answer/10787469?hl=en
 
 Privacy policy is required even if no personal data is collected. Publish a stable public non-geofenced non-editable HTML webpage (not PDF), identify YourIPTV/developer, and link it both in Play Console and in the app. Include contact, data types/purposes/recipients/security, retention/deletion and user choices. A local draft alone is not the public-policy prerequisite. Provide persistent reviewer instructions and any required authorized credentials in App access; do not place actual customer credentials in source.
@@ -50,7 +52,7 @@ https://support.google.com/googleplay/android-developer/answer/9859455?hl=en-en
 
 ## Signing and versions
 
-Same package alone does not enable sideload-to-Play upgrades; APK signing certificates and Android versionCode must be compatible. Play App Signing can accept an existing app-signing key through the Console PEPK workflow; owner must choose this deliberately before rollout rather than accepting a newly generated incompatible key. A separate upload key only authenticates uploads; Play signs installed APKs with its app-signing key. Store keys outside Git. Inspect Console uploaded bundles/artifact explorer across all tracks to confirm code45 unused; local/GitHub absence is insufficient. Without Console evidence, call45 a candidate, not a verified unused code.
+Same package alone does not enable sideload-to-Play upgrades; APK signing certificates and Android versionCode must be compatible. Play App Signing can accept an existing app-signing key through the Console PEPK workflow; owner must choose this deliberately before rollout rather than accepting a newly generated incompatible key. A separate upload key only authenticates uploads; Play signs installed APKs with its app-signing key. Store keys outside Git. Inspect Console uploaded bundles/artifact explorer across all tracks to select an unused future code greater than known diagnostic 47 and any later applicable code; local absence is insufficient. Code 45 is the historical artifact identity; 48 is locally proposed, pending unused Console-history verification.
 Source: https://support.google.com/googleplay/android-developer/answer/9842756?hl=en
 https://developer.android.com/studio/publish/app-signing
 

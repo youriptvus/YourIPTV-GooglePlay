@@ -1,5 +1,15 @@
 # YourIPTV Google Play release-candidate handoff
 
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+
+The current HTTPS-only secure candidate, production source `cc13ebe5bba6dfba1fd00d38e976ce2c1756e4f3`, is being prepared separately under `artifacts/code48-secure/`. Secure-source host results passed 414 JVM tests / 57 classes, focused 61 / 6 classes, verifier tests 6/6 and full lint (0 errors, 272 warnings); final signing/compiled-artifact results are pending. The 401-test HTTP-integrity build and first 81-check code 48 artifact audit predate this transport change and are intermediate/superseded. Root-level code 45 evidence remains historical. See [current secure status](CURRENT_STATUS.md).
+
+## HTTP-integrity phase: Play 1.0.9 / proposed code 48 (intermediate)
+
+The owner-approved independent preparation uses production source `2c02256822cfc8c9c6b0436cceaeb1f4e7b3830a` with the encoded Content-Length guard. Current host verification passed 401 tests / 56 classes, full lint (0 errors, 272 warnings), and 16/16 synthetic localhost checks; focused tests were 35 / 4 classes within the full total. These results do not establish a TV/device fix. Signed code 48 packaging/artifact checks and final source archive are pending under `artifacts/code48-secure/`. [Current status and limitations](CURRENT_STATUS.md).
+
+## Historical code 45 delivery
+
 Prepared November 16, 2026 (America/New_York). The local release candidate is built and verified to the scopes below. Retained failures and remaining owner gates are explicit. The owner's latest instruction permits local work only; no GitHub creation/verification/push/upload is performed by workspace tools. No GitHub Release, Play Console upload, signing enrollment, publication or Google approval is claimed.
 
 | Status | Delivery scope |
@@ -22,7 +32,7 @@ Prepared November 16, 2026 (America/New_York). The local release candidate is bu
 | Production build commit | `f5a421823aa94fc8f652edc52050b8f12f5d7130`; the verified AAB/APK below were built from this committed production source |
 | Local branches | Independent `main` and `development`; no original Git directory, worktree, branch or automatic synchronization |
 | Only configured remote | `origin` fetch/push: `https://github.com/youriptvus/YourIPTV-GooglePlay` |
-| Candidate version | versionName `1.0.9`, proposed versionCode `45`; not verified unused in Play Console |
+| Recorded candidate version | versionName `1.0.9`, versionCode `45`; historical artifact identity, superseded for future compatible upgrades by the known diagnostic code 47 |
 | Production identity | One `com.youriptv.app` application, shared player and production AAB for phone, tablet, Android TV and Google TV |
 | Platform | min SDK 23, compile SDK 36, target SDK 36; Java 17 bytecode, JDK 21 used locally |
 
@@ -73,15 +83,15 @@ The local build reads the existing protected signing properties/key externally. 
 | Final AAB/APK audit | **77 checks passed; 0 failed checks/errors**. Package/version/API, permissions, both launchers/optional hardware, icons/banner, actual compiled backup resources and official signatures verified. No packaged native `.so`, APK installer path, legacy plaintext credential or test markers. |
 | Local repository independence | **8 checks passed**: own Git directory/history, no alternates/attached original worktree, new-only origin, one app module and no production flavors |
 | Settings OFF/choice persistence/migration/Admin/parental/limits | Host tests and both devices' scoped security/UI checks pass; legacy inputs are synthetic, not a production customer upgrade |
-| onn. TV | Connected: `192.168.1.150:5555`, Android API 34, customer `1.0.9` / code 44; no customer replacement authorized |
-| Samsung phone | Connected: `R5GL75PGMFP`, `SM-S166V`, Android API 36, customer `1.0.3` / code 34; no customer replacement authorized |
+| onn. TV | Recorded during the prior run: `192.168.1.150:5555`, Android API 34, customer `1.0.9` / code 44; no customer replacement authorized |
+| Samsung phone | Recorded during the prior run: `R5GL75PGMFP`, `SM-S166V`, Android API 36, customer `1.0.3` / code 34; no customer replacement authorized |
 | Live/guide/refresh/RIGHT/recovery | TV full run 26/27 plus focused 1/1; Samsung full run 28/30 plus focused 2/2. All scoped scenarios have evidence across runs; no single full 27/27 or 30/30 pass is claimed. |
 | Bounded playback observation | Both 180-second soaks passed with policy-derived expectations, 5 ends / 4 new first-frame events / 8 GETs / 0 player errors each. Max observed gap: TV 32.548 s, phone 32.194 s. Later baseline backoff is preserved; prior harness failures remain in the report. |
 | Restart and compatible replacement | Both devices' actual process restart and same-code test-APK replacement passed for OFF and active playlist ID; customer installation metadata unchanged. This is not a versionCode-increasing production upgrade test. |
 | Private provider trial | Phone full 147,803-item catalog/53,030-program guide + 60.141 s actual 720p H.264/MPEG-TS passed. TV three-entry subset + direct 60.099 s actual 720p H.264/MPEG-TS candidate 2 passed; candidate 1 stalled and full 40 MB TV import still failed EOF. No full TV private catalog/EPG pass is claimed. Cleanup/account-idle/customer-preservation passed. |
 | Screenshots | 14 raw actual TV/phone captures visually reviewed; public/synthetic content only, no bitmap editing. [Capture index](screenshots/README.md). These are QA evidence; final production/store format approval and tablet captures remain owner work. |
-| Original preservation | Tracked source, HEAD/index/config/local branches match the starting evidence. Three fetch/tag metadata changes were observed; strict all-Git-metadata preservation did not pass. See the qualification below. |
-| Customer release APKs | Versioned 1.0.9, generic current and backup copies all match the owner-recorded official code 44 APK: 3,749,548 bytes, SHA-256 `6ac5ae11b0771ffd47c182a31318ff26ceaec53e7a3598110597af2c7a98b8fa`. Read-only checks; no artifact writes. |
+| Original preservation | During the prior November 16-17 preparation, tracked source, HEAD/index/config/local branches matched the starting evidence. Three fetch/tag metadata changes were observed; strict all-Git-metadata preservation did not pass. See the qualification below. |
+| Customer release APKs | In the prior November 16-17 read-only checks, versioned 1.0.9, generic current and backup copies all matched the owner-recorded official code 44 APK: 3,749,548 bytes, SHA-256 `6ac5ae11b0771ffd47c182a31318ff26ceaec53e7a3598110597af2c7a98b8fa`. Read-only checks; no artifact writes. |
 | Remote PRIVATE/non-fork/push | Owner-manual under the latest local-only instruction; not performed or verified by workspace tools |
 
 The detailed scenario matrix belongs in [PLAY_STORE_TEST_REPORT.md](PLAY_STORE_TEST_REPORT.md). Do not treat source assertions, constructor reconstruction, ADB connectivity or an isolated package as production migration/Play delivery evidence. Sound is assumed. Abrupt provider/network failures, long endurance, physical remote/audio timing, tablet hardware, accessibility and actual Play-generated updates require evidence before any pass is claimed.
@@ -110,7 +120,7 @@ Current official requirements were researched and rechecked on November 16, 2026
 Remaining owner actions:
 
 1. If desired, manually authenticate as `youriptvus`, confirm any existing new remote/history, create it PRIVATE only if genuinely absent, verify PRIVATE/non-fork and safely push this independent history. Workspace tools must not execute those steps under the current local-only instruction. Never force-push unexpected history. [Owner-run remote steps](REPOSITORY_SEPARATION.md).
-2. Check `com.youriptv.app` ownership, every uploaded Play versionCode and current customer release codes. Manually coordinate code allocation across both distributions without source synchronization. Approve 45 only if unused and above the installations meant to update; if a customer release reaches 45 or higher first, recheck and choose an unused higher code, then rebuild, retest and re-hash.
+2. Check `com.youriptv.app` ownership, every uploaded Play versionCode and current customer release codes. Manually coordinate code allocation across both distributions without source synchronization. Diagnostic 47 is already known. A future compatible production code must exceed 47 and any later applicable installed code, and be unused in Console; 48 is locally proposed, pending unused Console-history verification. After selecting the next version/code, rebuild, test, verify signatures and hashes.
 3. Decide compatible Play App Signing enrollment and upload-key handling. Preserve the official app-signing identity or approve a verified compatible lineage; no automatic key generation/enrollment.
 4. Provide legal developer identity, monitored privacy/support contact, a public privacy webpage and final Data safety declarations based on actual transfers and organizational practices.
 5. Host stable authorized reviewer content/access outside the home LAN. The generated local fixture proves no public availability. Complete content rating, ads and target-audience declarations.

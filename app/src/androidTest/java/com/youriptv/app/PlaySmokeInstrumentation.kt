@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.SystemClock
+import android.security.NetworkSecurityPolicy
 import android.graphics.Rect
 import android.graphics.Bitmap
 import android.view.ContextThemeWrapper
@@ -41,6 +42,8 @@ import com.youriptv.app.ui.SettingsCategory
 import com.youriptv.app.ui.PlayerActivity
 import com.youriptv.app.ui.LiveBufferingRecovery
 import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.atomic.AtomicInteger
@@ -60,6 +63,8 @@ class PlaySmokeInstrumentation : Instrumentation() {
     private var soakStats: JSONObject? = null
     private var testScope = "full"
     private var browserFocusStats: JSONObject? = null
+    private val vodSeriesStats = JSONObject()
+    private val networkSecurityStats = JSONObject()
 
     override fun onCreate(arguments: Bundle?) {
         super.onCreate(arguments)
@@ -82,6 +87,16 @@ class PlaySmokeInstrumentation : Instrumentation() {
         var previousResumeLastChannel: Boolean? = null
         try {
             require(testScope in setOf("full", "browser-only", "browser-and-settings")) { "Unknown isolated test scope" }
+            var safeQaData = false
+            execute("existing isolated playlists contain only recognized local synthetic fixtures") {
+                safeQaData = YourIptvApp.instance.repo.playlists().all { p ->
+                    (p.name == "Play smoke synthetic demo" && p.type == SourceType.M3U &&
+                        p.url == "$fixtureBase/playlist.m3u" && p.epgUrl == "$fixtureBase/epg.xml" &&
+                        p.username.isBlank() && p.password.isBlank())
+                }
+                check(safeQaData) { "Unrecognized isolated QA data is preserved; refusing automation." }
+            }
+            if (!safeQaData) return
             if (testScope != "full") {
                 previousResumeLastChannel = YourIptvApp.instance.settings.resumeLastChannel
                 YourIptvApp.instance.settings.resumeLastChannel = false
@@ -90,7 +105,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
                     execute("normal Settings UI opens directly without a PIN") { normalSettingsUiCheck() }
                 return
             }
-            execute("actual isolated installation defaults Settings Lock OFF") {
+            execute("actual isolated installation currently has Settings Lock OFF") {
                 check(!YourIptvApp.instance.settings.isSettingsLocked())
             }
             execute("fresh preferences persist OFF across Settings reconstruction") {
@@ -154,6 +169,19 @@ class PlaySmokeInstrumentation : Instrumentation() {
                     PackageManager.GET_PERMISSIONS).requestedPermissions.orEmpty().toSet()
                 for (forbidden in listOf("REQUEST_INSTALL_PACKAGES", "UPDATE_PACKAGES_WITHOUT_USER_ACTION", "SYSTEM_ALERT_WINDOW"))
                     check("android.permission.$forbidden" !in permissions)
+            }
+            execute("isolated QA permits literal loopback cleartext and blocks remote cleartext") {
+                if (android.os.Build.VERSION.SDK_INT < 24)
+                    throw IllegalStateException("Host-specific network-policy QA requires API 24 or newer.")
+                val policy = NetworkSecurityPolicy.getInstance()
+                val remoteAllowed = policy.isCleartextTrafficPermitted("provider.example")
+                val loopbackAllowed = policy.isCleartextTrafficPermitted("127.0.0.1")
+                val lookalikeAllowed = policy.isCleartextTrafficPermitted("127.0.0.1.example.invalid")
+                networkSecurityStats.put("remoteCleartextAllowed", remoteAllowed)
+                    .put("literalLoopbackAllowed", loopbackAllowed)
+                    .put("loopbackLookalikeAllowed", lookalikeAllowed)
+                    .put("scope", "Actual isolated QA NetworkSecurityPolicy; production packaging is audited separately and has no loopback exception")
+                check(!remoteAllowed && loopbackAllowed && !lookalikeAllowed)
             }
             // Repeated QA runs contain a saved synthetic channel. Keep browser UI checks
             // in the browser instead of triggering the app's legitimate startup resume.
@@ -267,6 +295,8 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 .put("fixtureStats", fixtureStats)
                 .put("soakStats", soakStats)
                 .put("browserFocusStats", browserFocusStats)
+                .put("vodSeriesStats", vodSeriesStats)
+                .put("networkSecurityStats", networkSecurityStats)
                 .put("isolatedBrowserAutoResumeDisabledDuringUiTests", previousResumeLastChannel != null)
                 .put("originalResumeLastChannel", previousResumeLastChannel)
                 .put("restoredResumeLastChannel", YourIptvApp.instance.settings.resumeLastChannel)
@@ -442,6 +472,21 @@ class PlaySmokeInstrumentation : Instrumentation() {
             val p = playlist ?: error("Import prerequisite failed")
             check(app.repo.refreshEpg(p, 168, 7, {}) > 0)
             check(channels.any { app.repo.nowAndNext(p.id, it.tvgId).isNotEmpty() })
+        }
+        execute("synthetic Xtream account imports and preserves the provider one-connection limit") {
+            val id = app.repo.savePlaylist(Playlist(name = "Play smoke synthetic Xtream $runId",
+                type = SourceType.XTREAM, url = fixtureBase, username = "fixture", password = "fixture", refreshHours = 0))
+            check(id > 0)
+            try {
+                val account = app.repo.playlist(id) ?: error("Synthetic Xtream playlist save failed")
+                app.repo.refresh(account, {})
+                check(app.repo.playlist(id)?.maxConnections == 1)
+                check(app.repo.connectionLimit(id) == 1)
+                check(app.repo.items(id, ItemKind.LIVE, null).size == 1)
+            } finally {
+                // Only this run's newly created synthetic account is removed.
+                app.repo.deletePlaylist(id)
+            }
         }
         execute("shared live guide displays imported channels and accepts remote navigation") {
             check(channels.size >= 2)
@@ -640,6 +685,53 @@ class PlaySmokeInstrumentation : Instrumentation() {
             }
         }
         onMain { app.livePlayback.player?.removeListener(listener) }
+        onMain { screen?.finish(); app.livePlayback.stop() }
+        waitForIdleSync()
+        for ((kind, label) in listOf(ItemKind.MOVIE to "movie", ItemKind.EPISODE to "episode")) {
+            execute("synthetic $label VOD renders advancing decoded frames in the shared player") {
+                val p = playlist ?: error("Import prerequisite failed")
+                val item = app.repo.items(p.id, kind, null).firstOrNull()
+                    ?: error("Generated $label was not imported")
+                check(item.url.startsWith("$fixtureBase/"))
+                onMain { YourIptvApp.playQueue = listOf(item) }
+                val vodScreen = launch(PlayerActivity::class.java)
+                try {
+                    var vodPlayer: ExoPlayer? = null
+                    await(20_000) {
+                        vodPlayer = vodScreen.findViewById<PlayerView>(R.id.player_view).player as? ExoPlayer
+                        vodPlayer?.videoDecoderCounters?.ensureUpdated()
+                        vodPlayer?.let { it.playbackState == Player.STATE_READY &&
+                            (it.videoDecoderCounters?.renderedOutputBufferCount ?: 0) > 0 } == true
+                    }
+                    var initialFrames = 0
+                    onMain {
+                        vodPlayer!!.videoDecoderCounters!!.ensureUpdated()
+                        initialFrames = vodPlayer!!.videoDecoderCounters!!.renderedOutputBufferCount
+                    }
+                    await(5_000) {
+                        val player = vodPlayer ?: return@await false
+                        player.videoDecoderCounters?.ensureUpdated()
+                        (player.videoDecoderCounters?.renderedOutputBufferCount ?: 0) >= initialFrames + 5 &&
+                            player.currentPosition >= 400L && player.playerError == null
+                    }
+                    onMain {
+                        val player = vodPlayer!!
+                        player.videoDecoderCounters?.ensureUpdated()
+                        check(player.videoFormat?.sampleMimeType == "video/avc")
+                        check((player.videoFormat?.width ?: 0) > 0 && (player.videoFormat?.height ?: 0) > 0)
+                        vodSeriesStats.put(label, JSONObject().put("kind", kind.name)
+                            .put("renderedFrameDelta", player.videoDecoderCounters!!.renderedOutputBufferCount - initialFrames)
+                            .put("positionMs", player.currentPosition).put("width", player.videoFormat!!.width)
+                            .put("height", player.videoFormat!!.height).put("videoMime", player.videoFormat!!.sampleMimeType)
+                            .put("playerError", player.playerError != null))
+                    }
+                    capture("synthetic-$label")
+                } finally {
+                    onMain { vodScreen.finish() }
+                    waitForIdleSync()
+                }
+            }
+        }
     }
 
     /** Poll UI state on the main looper; network and waiting stay off it. */

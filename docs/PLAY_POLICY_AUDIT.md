@@ -1,5 +1,9 @@
 # Implemented candidate policy and security audit
 
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](../GooglePlay-v1.0.9/CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+
+The audit below describes the historical code 45 build and its named test scope. Its passing checks do not establish new device validation. The owner now attributes the separate playback issue to the server; no encoder/decoder change is included, and the separate historical hold record remains outside Play scope.
+
 Audit date November 16, 2026. Source, final release AAB/APK and scoped runtime evidence were inspected from this independent project. Final artifact verification passed 77 checks. The test report records device scope and retained failures; this is not Google approval or complete device QA.
 
 ## Identity, SDK and form factors
@@ -26,9 +30,9 @@ Direct APK updater/UI/install classes and executable update configuration are re
 
 ## Sources and transport
 
-Generic Xtream/M3U/M3U Plus/XMLTV retained; customer preset shortcut removed from Play workflow. User credentials required only for sources that need them. Scheme-less provider input prefers HTTPS in Play changes; explicit HTTP remains for legitimate compatible streams. Network security config allows cleartext broadly because providers are user-selected, not a finite domain allow-list.
+Generic Xtream/M3U/M3U Plus/XMLTV is retained; the customer preset shortcut is removed. The current secure Play candidate requires HTTPS for provider, playlist, XMLTV, media and artwork connections. Explicit HTTP source/EPG input is rejected, production manifest/network configuration disables cleartext, and insecure downgrade redirects are blocked. Existing HTTP-only sources need working HTTPS addresses from their provider. Final source/test/compiled-artifact verification is pending.
 
-Http.open and Media3 retain cross-protocol redirects, including HTTPS-to-HTTP; initial HTTPS is not a guarantee all redirected transfers remain encrypted. Platform HTTPS certificate/hostname verification retained; no custom permissive TrustManager/HostnameVerifier or TLS bypass found. Do not mark all transmitted data encrypted-in-transit. This is a material documented transport limitation, not proof malicious providers are safe.
+Platform HTTPS certificate/hostname verification is retained; no permissive TrustManager/HostnameVerifier or TLS bypass is introduced. The owner must confirm the final app/SDK/organizational transfer inventory for Data safety, including external playback/export recipients. HTTPS transport does not encrypt the local SQLite database or manual JSON exports, and does not guarantee a chosen provider's practices.
 
 No bundled subscriptions or rights to third-party catalogues. Reviewer fixture/demo needs verified licensing and stable public access. Actual external services may log IP/content/account requests. Source logs use error/status metadata; StreamDiagnosis logs a host, so support logs can still reveal provider information. Do not upload raw logs/screenshots containing private sources/credentials.
 
@@ -56,7 +60,9 @@ Offline PrivacyActivity via public About renders bundled policy, no browser requ
 
 ## Remaining gates
 
-Owner-manual private remote setup only under the local-work restriction; Console package/code 45 history; compatible app-signing enrollment; public legal privacy/contact; stable legal reviewer sources; final screenshot/artwork approval; unresolved full-TV private catalog EOF; prolonged playback/abrupt network interruption/production migration/tablet/accessibility; Play internal/closed testing and TV/device review. Unperformed checks stay unpassed. No submission/publication/approval claimed.
+A private GitHub repository is an owner repository preference, not a Google Play submission requirement; workspace GitHub access remains prohibited.
+
+Actual submission gates: Console package/proposed code 48 history; compatible app-signing enrollment; public legal privacy/contact; stable legal reviewer sources; final screenshot/artwork approval; unresolved full-TV private catalog EOF; prolonged playback/abrupt network interruption/production migration/tablet/accessibility; Play internal/closed testing and TV/device review. Unperformed checks stay unpassed. No submission/publication/approval claimed.
 
 Official references:
 

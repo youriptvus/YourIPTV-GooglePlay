@@ -1,5 +1,7 @@
 # YourIPTV for Google Play
 
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](GooglePlay-v1.0.9/CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+
 YourIPTV is an independent IPTV media player for Android phones, tablets, Android TV and Google TV. Add an Xtream Codes, M3U/M3U Plus playlist and XMLTV guide that you are authorized to use. No television channels, subscription or provider account is included. Normal player functionality is free, with no paywall, trial, playback timer or subscription requirement.
 
 This independent project produces one application, `com.youriptv.app`, and one production AAB for all supported form factors. Touch and D-pad input use the shared player and security systems.
@@ -9,7 +11,8 @@ This independent project produces one application, `com.youriptv.app`, and one p
 | Item | Value |
 |---|---|
 | Baseline | Official v1.0.9, commit `0612c0acb500f096da5cfb766f6e7f0a012c4ba8`, code44 |
-| Candidate | 1.0.9, proposed code45; Console uniqueness check pending |
+| Active preparation | 1.0.9 / proposed code 48; unused Console history and new release verification pending |
+| Historical candidate | 1.0.9 / code 45; prior signed artifacts and recorded tests retained |
 | Android | Minimum API23; compile/target API36 |
 | Updates | Google Play; no app APK self-installer |
 | Fresh Settings Lock | OFF; Admin management and parental gates independent |
@@ -25,7 +28,7 @@ Recording uses a provider connection. Reminders and scheduled recording retain t
 
 ## Setup and security
 
-Enter your own provider URL, username/password where needed, playlist name and guide URL. Prefer HTTPS where supported; HTTP sources or provider redirects can expose credentials/content to the network. Keep playlists, credentials, private-account screenshots and backups private.
+Enter your own provider URL, username/password where needed, playlist name and guide URL. The secure Play candidate requires HTTPS for provider, playlist, guide, stream and artwork requests, and blocks insecure HTTP/downgrade redirects. Existing HTTP-only sources need a working HTTPS address from their provider. Keep playlists, credentials, private-account screenshots and backups private.
 
 Fresh Play state opens normal Settings without a Settings PIN. Deliberate Settings Lock management remains Admin protected. Existing security state is preserved when freshness cannot be reliably established. Parental checks remain independent. See [security](docs/SETTINGS_SECURITY.md) for local Admin enrollment and legacy migration.
 
