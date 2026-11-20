@@ -19,4 +19,8 @@
         android:label="Public reviewer and accessibility validation"
         android:functionalTest="true"
         android:handleProfiling="false" />
+    <instrumentation android:name="com.youriptv.app.VodProgressInstrumentation"
+        android:targetPackage="com.youriptv.app.playtest" android:functionalTest="true" android:handleProfiling="false" />
+    <instrumentation android:name="com.youriptv.app.VodUiInstrumentation"
+        android:targetPackage="com.youriptv.app.playtest" android:functionalTest="true" android:handleProfiling="false" />
 </manifest>

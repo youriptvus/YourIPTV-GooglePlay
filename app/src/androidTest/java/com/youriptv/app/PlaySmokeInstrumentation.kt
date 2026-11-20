@@ -286,7 +286,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 val monitor = addMonitor(PrivacyActivity::class.java.name, null, false)
                 try {
                     onMain {
-                        check(about.findViewById<TextView>(R.id.about_version).text.contains("1.0.9"))
+                        check(about.findViewById<TextView>(R.id.about_version).text.contains(BuildConfig.VERSION_NAME))
                         check(about.findViewById<Button>(R.id.about_privacy).performClick())
                     }
                     val privacy = monitor.waitForActivityWithTimeout(5_000) ?: error("Privacy screen did not open")

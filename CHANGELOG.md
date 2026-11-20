@@ -1,3 +1,20 @@
+# YourIPTV release notes
+
+## 1.1.0 (version code 51)
+
+- Movies and series now share durable, account-scoped watch progress with Resume, Play from beginning, watched/unwatched and individual reset actions.
+- Continue Watching identifies the exact unfinished episode and removes completed movies.
+- Series details include available metadata, episode artwork, progress indicators, season selection and restoration of the last episode's focus.
+- Episode playback follows season/episode order across season boundaries. Natural completion offers Next episode, Episode list or Exit.
+- Optional Auto play next episode is off by default and uses a cancellable ten-second countdown. Stopping during credits does not mark content completed.
+- Progress saves every five seconds and on pause, seek and navigation. Ordered app-owned writes survive an Activity closing; playlist refreshes retain progress when content identity remains stable.
+- Phone and TV use the same player and progress logic. Phone navigation supports rotation, safe screen insets and touch playback options.
+- Preserve Live TV recovery, guide/playlist refresh, source limits, parental controls and existing account configuration. No decoder engine change or player feature paywall.
+
+The submitted **1.0.9/code50** closed-test release and its artifacts remain unchanged. This candidate is prepared independently; upload is manual. Play retains minSdk24, HTTPS transport, external signing and automatic-protection compatibility.
+
+---
+
 # Google Play 1.0.9 (proposed code 48)
 
 November 17, 2026. Owner-approved independent Play preparation; code 48 remains subject to Console upload-history verification. [Current source/release status](GooglePlay-v1.0.9/CURRENT_STATUS.md).
