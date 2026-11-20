@@ -11,9 +11,9 @@ android {
         // Google Play automatic protection requires API 24 or newer.
         minSdk = 24
         targetSdk = 36
-        // Original owner icon restored after the accepted code 49 candidate.
-        versionCode = 50
-        versionName = "1.0.9"
+        // Next candidate; submitted 1.0.9/code50 remains unchanged in Play Console.
+        versionCode = 51
+        versionName = "1.1.0"
         testInstrumentationRunner = "com.youriptv.app.PlaySmokeInstrumentation"
     }
 

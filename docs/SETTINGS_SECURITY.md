@@ -1,6 +1,12 @@
 # Google Play Settings and Admin security
 
-Reliably fresh empty preference state starts Settings Lock OFF; normal Settings/playlist/EPG/player/appearance/preferences require no Settings PIN. Persist the initialization once. Any preexisting settings preference state before initialization is conservatively treated as an older installation: retain an explicit saved lock, or default ON if no lock choice exists. This does not silently disable an owner's deliberate/ambiguous protection. Refresh/onboarding/restart never reinitialize a saved choice.
+## Current 1.1.0 Settings default
+
+Ordinary Settings default to unlocked in both distributions. A saved local On or Off choice is preserved. If no choice exists, an already configured Settings PIN or a legacy Settings restriction remains protected; unrelated existing preferences alone do not enable the lock. Initialization persists the resulting choice, so restarts and catalog refreshes cannot reset it. Adding or removing a PIN later does not silently override the local switch.
+
+The default does not disable Admin authorization for lock/PIN management, independent parental restrictions, provider connection limits, or Play app protection. The local switch is excluded from portable backup. Settings visits and pending actions are still revoked when the switch changes or a protected visit ends.
+
+The older policies below are historical and do not override this 1.1.0 behavior.
 
 Lock management needs an authorized Admin check. Fresh installations enroll a local Admin PIN (6?8 digits), stored as salted SHA256, with persistent failed-attempt lockouts; no universal master is bundled for fresh use. On proven legacy state, a digest-only verification path accepts the prior master until deliberate local Admin enrollment; it is not exposed as plaintext in source/docs and does not bypass independent parental checks. Preserve local Admin enrollment after restarts. No unauthenticated recovery/reset bypass. Local PIN security is not database encryption or a remote owner identity.
 
@@ -10,11 +16,11 @@ Parental PIN/restrictions/counters and provider connection limits are independen
 
 ## Imported customer security history (not Play defaults)
 
-The historical fixed-master/default-ON/always-on descriptions below belong only to the original customer implementation. They remain for architecture context, not fresh Play policy.
+The historical fixed-master/default-ON/always-on descriptions below belong only to the original customer implementation. They remain for architecture context, not current policy in either distribution.
 
 # Settings security
 
-## Current 1.0.7 policy — release candidate
+## Historical 1.0.7 policy — release candidate
 
 Version 1.0.7 supersedes the always-on Settings policy from 1.0.1–1.0.5 with an explicit
 **Settings lock** switch. It defaults to **On** on new installations and migration from earlier

@@ -44,3 +44,4 @@ __pycache__/
 # Unrelated nested checkout appeared during preparation; preserve it outside app history.
 /YourIPTV-GooglePlay/
 /GooglePlay-v1.0.9/artifacts/
+/GooglePlay-v1.1.0/artifacts/

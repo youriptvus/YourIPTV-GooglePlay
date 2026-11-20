@@ -1107,11 +1107,6 @@
       "sha256": "52ac7585f95c79a13b6197b65cbaaa3d0dc9b3ae98f3def583d7020c047a65a2",
       "normalized_sha256": "be6a17af4b62665cc3f4aa31897858ff575a63771702073248370c7fbc0f9058"
     },
-    "docs/TIVIMATE_OBSERVATIONS.md": {
-      "size_bytes": 8714,
-      "sha256": "aa5dd402f0837de98de991a2b16a3c64e755adf1a1b654b8cdb0470405b85158",
-      "normalized_sha256": "ded7dd4f8282bd679b5477284fcde2797439aa52d305f50f8712d9b5665700c3"
-    },
     "docs/UPDATE_SERVER.md": {
       "size_bytes": 5819,
       "sha256": "81a4204ba2a149c58a572275933c005f334568b3a79e447cf73db57f059e6e9a",
@@ -1177,5 +1172,9 @@
       "sha256": "ad54cd2f00aac67a13b2513d4587bfe08b6559a4cd2593fb0867cda249875a60",
       "normalized_sha256": "ad54cd2f00aac67a13b2513d4587bfe08b6559a4cd2593fb0867cda249875a60"
     }
+  },
+  "_public_copy": {
+    "original_sha256": "50ac5a0d64cbb9a68fd5b87c797bdfbd25bd711fc4075386d566aa34d64fb3d1",
+    "notice": "Historical reference-document filenames are omitted from this public copy. The original audit record is retained privately and in the baseline Git commit. This is not a newly executed historical audit."
   }
 }

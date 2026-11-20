@@ -5,31 +5,31 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class SettingsLockPolicyTest {
-    @Test fun freshPlayInstallationDefaultsOff() {
+    @Test fun freshAndUnprotectedExistingInstallsDefaultOff() {
         assertFalse(SettingsLockPolicy.enabled(null))
-        assertFalse(SettingsLockPolicy.initial(null, existingInstallation = false))
+        assertFalse(SettingsLockPolicy.initial(null, hasSettingsPin = false))
     }
-
-    @Test fun oldUnclassifiedInstallationRemainsProtected() {
-        assertTrue(SettingsLockPolicy.initial(null, existingInstallation = true))
+    @Test fun previouslySetSettingsPinRemainsProtected() {
+        assertTrue(SettingsLockPolicy.initial(null, hasSettingsPin = true))
     }
-
-    @Test fun deliberateOnAndOffChoicesSurviveMigration() {
-        listOf(false, true).forEach { existing ->
-            assertTrue(SettingsLockPolicy.initial(true, existing))
-            assertFalse(SettingsLockPolicy.initial(false, existing))
+    @Test fun legacySettingsRestrictionRemainsProtected() {
+        assertTrue(SettingsLockPolicy.initial(null, false, legacySettingsProtected = true))
+    }
+    @Test fun explicitOnAndOffAlwaysWinOverPinPresence() {
+        for (pin in listOf(false, true)) for (legacy in listOf(false, true)) {
+            assertTrue(SettingsLockPolicy.initial(true, pin, legacy))
+            assertFalse(SettingsLockPolicy.initial(false, pin, legacy))
         }
     }
-
-    @Test fun persistedChoiceSurvivesRestartAndObsoleteFlagsCannotOverrideIt() {
+    @Test fun aPersistedDefaultOrExplicitChoiceSurvivesRestart() {
         val local = mutableMapOf(SettingsLockPolicy.LOCAL_KEY to SettingsLockPolicy.initial(null, false))
-        fun restarted() = SettingsLockPolicy.enabled(local[SettingsLockPolicy.LOCAL_KEY])
-        assertFalse(restarted())
+        fun reopened() = SettingsLockPolicy.enabled(local[SettingsLockPolicy.LOCAL_KEY])
+        assertFalse(reopened())
         local["lock_settings"] = true
-        assertFalse(restarted())
+        assertFalse(reopened())
         local[SettingsLockPolicy.LOCAL_KEY] = true
-        assertTrue(restarted())
+        assertTrue(reopened())
         local[SettingsLockPolicy.LOCAL_KEY] = false
-        assertFalse(restarted())
+        assertFalse(reopened())
     }
 }
