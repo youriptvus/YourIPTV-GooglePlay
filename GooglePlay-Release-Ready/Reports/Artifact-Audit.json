@@ -693,7 +693,6 @@
         "docs/LIVE_PREVIEW_REFERENCE.md",
         "docs/REMOTE_CONTROLS.md",
         "docs/REQUIREMENTS_CHECKLIST.md",
-        "docs/TIVIMATE_OBSERVATIONS.md",
         "docs/VOD_NAVIGATION.md",
         "docs/branding/youriptv_icon_source.jpg",
         "gradle/wrapper/gradle-wrapper.jar",
@@ -970,5 +969,9 @@
   },
   "failed_checks": [],
   "passed": true,
-  "signature_requirement": "both_verified"
+  "signature_requirement": "both_verified",
+  "_public_copy": {
+    "original_sha256": "9b418c4d6e8e679caf14624b8d2ffabc88b49fa6cacc9c2101d51dc69fc82959",
+    "notice": "Historical reference-document filenames are omitted from this public copy. The original audit record is retained privately and in the baseline Git commit. This is not a newly executed historical audit."
+  }
 }

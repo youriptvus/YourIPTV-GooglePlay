@@ -8,16 +8,21 @@ class Settings(context: Context) {
 
     init {
         // Capture provenance before any initialization writes. Customer builds always persisted
-        // settings on startup; absent local lock provenance must never unlock such an upgrade.
+        // settings on startup. Admin provenance remains independent of the ordinary Settings default.
         synchronized(SettingsLockPolicy) {
             if (!sp.getBoolean(SettingsLockPolicy.PLAY_INITIALIZED_KEY, false)) {
                 val existingInstallation = sp.all.isNotEmpty()
                 val saved = if (sp.contains(SettingsLockPolicy.LOCAL_KEY)) sp.getBoolean(SettingsLockPolicy.LOCAL_KEY, true) else null
                 check(sp.edit()
-                    .putBoolean(SettingsLockPolicy.LOCAL_KEY, SettingsLockPolicy.initial(saved, existingInstallation))
+                    .putBoolean(SettingsLockPolicy.LOCAL_KEY, initialSettingsLock(saved))
                     .putString(PinVault.LEGACY_ADMIN_KEY, existingInstallation.toString())
                     .putBoolean(SettingsLockPolicy.PLAY_INITIALIZED_KEY, true)
                     .commit()) { "Could not persist local security policy" }
+            }
+            if (!sp.contains(SettingsLockPolicy.LOCAL_KEY)) {
+                check(sp.edit().putBoolean(SettingsLockPolicy.LOCAL_KEY, initialSettingsLock(null)).commit()) {
+                    "Could not persist local security policy"
+                }
             }
         }
         // Apply the approved seven-day minimum once; later explicit shorter choices remain valid.
@@ -214,6 +219,12 @@ class Settings(context: Context) {
     })
 
     fun hasPin() = pins.has(PinKind.PARENTAL)
+
+    private fun initialSettingsLock(saved: Boolean?): Boolean = SettingsLockPolicy.initial(
+        saved,
+        hasSettingsPin = sp.getString("settings_pin_hash", null) != null,
+        legacySettingsProtected = sp.getBoolean("lock_settings", false) && sp.getString("pin_hash", null) != null,
+    )
 
     /** Local security policy, deliberately excluded from portable backups and Intent extras. */
     val settingsLockEnabled: Boolean

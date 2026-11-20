@@ -142,10 +142,10 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 context.getSharedPreferences("settings", 0).edit().putBoolean(SettingsLockPolicy.LOCAL_KEY, false).commit()
                 check(!Settings(context).settingsLockEnabled)
             }
-            execute("unknown existing lock provenance remains protected") {
+            execute("existing unprotected installation defaults to Settings Lock OFF") {
                 val context = fixture("upgrade_unknown")
                 context.getSharedPreferences("settings", 0).edit().putBoolean("resume_last", true).commit()
-                check(Settings(context).settingsLockEnabled)
+                check(!Settings(context).settingsLockEnabled)
             }
             execute("new installations require local Admin setup with no shared default") {
                 val s = Settings(fixture("admin_setup"))
