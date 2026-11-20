@@ -1,6 +1,14 @@
+> **Current November20:** Google Console confirms the closed test is published and the minimum12 opted-in tester requirement is complete. Android TV is Active. Publishing overview shows the submitted changes last published November19 and no pending changes. Production is still inactive: the14 continuous days requirement is incomplete and Apply for production is disabled. First observed12-person confirmation:November20,2:33PM Eastern; around December4 is an estimated eligibility check date, subject to continuous participation and Google's actual counter. No generated pre-launch report is available yet. Earlier November19 in-review/0-testers/recruitment-pause text below is historical. No GitHub, customer-source/device or protection changes were made in this check.
+
+> **Current November19:** 1.0.9/code50 with the original full collage icon and automatic protection ON.17 changes, including the closed test and Android TV opt-in, are IN GOOGLE REVIEW. Production is NOT live;12 real closed testers/14 continuous days and production access remain required. See [current handoff](GooglePlay-Release-Ready/Reports/Publication-Handoff.md). Earlier records below are historical.
+
+> Current final delivery (November 18): GooglePlay-Release-Ready/START-HERE.md and Reports/Final-Delivery-Report.md are authoritative. Signed artifacts, current phone/TV/public HTTPS/ATF checks and public privacy verification passed; owner Console/signing/declarations/testing/approval gates remain. Earlier phase numbers and pending-hosting statements below are historical.
+
 # YourIPTV for Google Play
 
-> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](GooglePlay-v1.0.9/CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+> **Final completion package:** [GooglePlay-Release-Ready/START-HERE.md](GooglePlay-Release-Ready/START-HERE.md) contains the current local release and manual Console sequence. Brand: YourIPTV; support/privacy: admin@youriptv.us; site: https://youriptv.us. Fresh completion results are recorded there; earlier code 45/48 results below remain historical.
+
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](GooglePlay-v1.0.9/CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. The latest final-completion request authorizes safe isolated checks; customer packages/data remain protected. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
 
 YourIPTV is an independent IPTV media player for Android phones, tablets, Android TV and Google TV. Add an Xtream Codes, M3U/M3U Plus playlist and XMLTV guide that you are authorized to use. No television channels, subscription or provider account is included. Normal player functionality is free, with no paywall, trial, playback timer or subscription requirement.
 

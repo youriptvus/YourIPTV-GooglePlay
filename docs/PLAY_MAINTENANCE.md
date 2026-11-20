@@ -1,6 +1,6 @@
 # Independent maintenance and release
 
-> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](../GooglePlay-v1.0.9/CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](../GooglePlay-v1.0.9/CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. The latest final-completion request authorizes safe isolated checks; customer packages/data remain protected. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
 
 Play and customer projects may diverge. Play source/Git/CI/versions/artifacts/issues belong here. Do not run customer archive/sync helper for Play-only changes. No secrets from customer source are copied into Git/archive.
 

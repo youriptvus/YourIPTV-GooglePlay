@@ -1,0 +1,54 @@
+{
+  "status": "published_and_verified",
+  "generatedUtc": "2026-11-18T04:42:30.017341+00:00",
+  "publicChecks": [
+    {
+      "path": "privacy/index.html",
+      "status": 200,
+      "bytes": 11824,
+      "sha256": "bcd2dda899f87d67b89c2ef3419674031831feb54dfe015607089693b7c66378",
+      "contentType": "text/html"
+    },
+    {
+      "path": "review-media/playlist.m3u",
+      "status": 200,
+      "bytes": 691,
+      "sha256": "b174c566989569bcc65a3bba75da6f15df2eb63994731d5c9559ca21e63b500d",
+      "contentType": "audio/x-mpegurl"
+    },
+    {
+      "path": "review-media/channel1.ts",
+      "status": 200,
+      "bytes": 1513964,
+      "sha256": "755a4f5c83a0763fe9148c45d28b7c43ec72bf72313ba7497173854e42772e93",
+      "contentType": "video/mp2t"
+    },
+    {
+      "path": "review-media/channel2.ts",
+      "status": 200,
+      "bytes": 1513964,
+      "sha256": "755a4f5c83a0763fe9148c45d28b7c43ec72bf72313ba7497173854e42772e93",
+      "contentType": "video/mp2t"
+    },
+    {
+      "path": "review-media/epg.php",
+      "status": 200,
+      "bytes": 93207,
+      "sha256": "ae8f13a296670705d89c4a4db908e00ef85b32bcbf7fcdf20019dec6291215fc",
+      "contentType": "application/xml; charset=utf-8"
+    },
+    {
+      "path": "privacy",
+      "status": 200,
+      "bytes": 11824,
+      "sha256": "bcd2dda899f87d67b89c2ef3419674031831feb54dfe015607089693b7c66378",
+      "contentType": "text/html"
+    }
+  ],
+  "tls": "TLSv1.3",
+  "protectedData": true,
+  "backupUpdatesUnchanged": true,
+  "separateServiceUnchanged": true,
+  "guideCurrent": true,
+  "guideProgrammeCount": 384
+}

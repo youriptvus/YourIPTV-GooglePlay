@@ -1,10 +1,10 @@
 # Owner Console preparation and submission
 
-> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. The latest final-completion request authorizes safe isolated checks; customer packages/data remain protected. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
 
-Researched November16,2026. Owner access/decisions needed; do not upload/publish automatically.
+Rechecked November 17, 2026. The developer account already exists. The current complete owner sequence is [START-HERE.md](../GooglePlay-Release-Ready/START-HERE.md); no upload/publication is performed by tools.
 
-1. Register https://play.google.com/console if needed; choose accurate personal/organization identity, pay current US$25 one-time fee and complete requested identity/contact/payment/device verification. Organization evidence differs. https://support.google.com/googleplay/android-developer/answer/6112435?rd=1
+1. Open the existing Google Play Console developer account. Do not register or pay again. Complete only any actual outstanding Dashboard verification for this account.
 2. Check account owns/has no conflict for com.youriptv.app. Create ONE application entry if appropriate, no separate phone/TV listing. Resolve existing package/history first.
 3. Check App bundle explorer and all tracks/drafts/prior uploads. A future compatible production code must exceed known diagnostic 47 and any later applicable code, and be unused in Console. 48 is locally proposed, pending unused Console-history verification. After selecting the next version/code, rebuild, test, verify signatures and hashes; do not submit the historical code 45 artifact as an update over 47.
 4. Review Play App Signing BEFORE rollout. Owner selects compatible existing-key/PEPK enrollment and upload key separately. Do not accept incompatible generated signing identity by default. See signing doc.

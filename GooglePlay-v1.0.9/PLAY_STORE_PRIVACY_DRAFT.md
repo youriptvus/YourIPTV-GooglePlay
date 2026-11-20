@@ -1,51 +1,65 @@
-# YourIPTV privacy policy - owner publication draft
+> Current final delivery (November 18): GooglePlay-Release-Ready/START-HERE.md and Reports/Final-Delivery-Report.md are authoritative. Signed artifacts, current phone/TV/public HTTPS/ATF checks and public privacy verification passed; owner Console/signing/declarations/testing/approval gates remain. Earlier phase numbers and pending-hosting statements below are historical.
 
-Requires owner review, actual publisher/contact/effective date and publication on a public HTML webpage. Never submit bracketed placeholders. Bundled in-app notice is available offline; it does not replace the required public URL.
+# YourIPTV completed privacy-policy text
 
-A self-contained [HTML publication template](privacy-policy-draft.html) is prepared alongside this text. It has no scripts, analytics or external assets. Replace its placeholders and remove its draft notice/noindex marker only after review and authorization; no deployment has been performed.
+Current completion: owner-supplied YourIPTV, admin@youriptv.us and https://youriptv.us are incorporated. The verified public /privacy URL currently has customer-only text; the exact completed replacement is [Privacy-Policy-Replacement.html](../GooglePlay-Release-Ready/Privacy/Privacy-Policy-Replacement.html). No deployment was performed. Use the [release package policy/verification](../GooglePlay-Release-Ready/Privacy/Privacy-Policy.md), not the older placeholder draft.
 
-Effective: [owner-approved date]
+# YourIPTV Privacy Policy
 
-Publisher: [legal developer/company responsible for YourIPTV]
+Last updated: November 17, 2026.
 
-Privacy contact: [working monitored contact]
+Developer brand: YourIPTV. Application: YourIPTV. Website: https://youriptv.us. Support and privacy contact: admin@youriptv.us. Public policy address: https://youriptv.us/privacy.
 
-## Purpose
+## The player and its distributions
 
-YourIPTV plays authorized sources you provide. No television subscription/provider account/channels are included. No YourIPTV cloud account is required. The audited candidate has no advertising, analytics or automatic crash-reporting SDK. Android/Google Play may process their own device/store data under their policies.
+YourIPTV is an independent Android media player for sources you are authorized to use. It does not include channels, a provider account or a television subscription. A source account you configure is separate from a YourIPTV application account; the player does not create a YourIPTV cloud account or automatically synchronize your playlist database and viewing history between devices.
 
-## Local information
+This policy covers the application website and the Google Play build as well as the separate customer APK distribution. Their update and connection behavior differs as described below. This policy does not announce Google Play availability.
 
-The app stores playlist names/URLs, provider usernames/passwords where needed, guide settings/cache, favorites, preferences and playback state. It stores local Settings/Admin/parental security state, restrictions and failed-attempt/lockout information. Provider connection metadata supports connection limits. Recordings and user-created backups are local when used.
+## Information used on your device
 
-Database/preferences use Android app-private storage. The app disables automatic cloud backup and declares complete Android backup/device-transfer exclusions. These rules do not delete data during compatible in-place updates or remove deliberate manual export. Private storage is not database encryption. Exported JSON backups include credentials/URLs. Anyone receiving an unprotected export may use them; keep exports private and choose destinations carefully. No automatic developer backup upload occurs.
+The app stores playlist names and addresses, provider usernames and passwords where needed, guide addresses, configured user-agent settings, imported catalogues, guide data, artwork caches and provider-account information such as expiry and connection limits. It also stores favorites, viewing history and resume positions, playback and appearance preferences, local Admin/Settings/parental security state, restrictions, failed-attempt/lockout state, reminders and recording details. Recordings and backups you create remain in the destinations you choose.
 
-## Requests to selected services
+These data support source access, playback, catalogue browsing, search, guide display, preferences, refresh, recording, restrictions and restore. The app does not upload its local playlist database or viewing history to a YourIPTV cloud-sync or analytics service.
 
-Configured sources contact provider, playlist/guide, stream and source-referenced artwork hosts. Requests may carry configured credentials/user agent, content identifiers and requested guide/media resources. Recipients also receive ordinary network information such as IP address/request time. Xtream protocols can include credentials in request URLs.
+## Connections and recipients
 
-Developer does not operate your chosen providers or control their retention/security/content rights. Review provider policies. This Google Play application requires HTTPS for network sources and blocks insecure HTTP connections and HTTPS-to-HTTP redirects. It uses platform certificate validation. Existing HTTP-only sources need a working HTTPS address from their provider before they can connect. HTTPS protects app connections in transit; selected recipients still receive and process the information needed to deliver their service.
+Your device requests provider details, playlists, guides, media and artwork from addresses you configure or that are supplied by those sources. Requests may contain source credentials, user-agent headers, content identifiers and the requested address. Some source protocols put credentials in URL paths or queries. Receiving servers also see ordinary connection information such as IP address and request time, and may associate requests with your source account.
 
-## Sharing and developer services
+The Google Play build requires HTTPS for network sources, retains platform certificate validation and blocks HTTP connections and HTTPS-to-HTTP redirects. Existing HTTP-only sources need working HTTPS addresses supplied by their operator. The separate customer APK distribution may support HTTP sources; HTTP does not encrypt transmitted credentials or content. HTTPS protects a connection in transit; it does not prevent the recipient from using information it receives.
 
-No developer analytics, advertising, cloud account or automatic crash-reporting service was identified in audited candidate source/dependencies. Requests deliver sources you choose. The app does not sell information. When you deliberately export a backup or open media in another application, your chosen recipient/document provider/application handles it under its policy. Reassess this policy if future dependencies/services change.
+Source operators and artwork hosts have their own privacy and retention practices. The player does not control every source a user can configure. Consult the relevant service about its records and practices. When you choose an external player, that application receives the stream address and title, which may contain credentials. The selected application handles them under its own policy.
 
-## Retention/deletion
+## Updates, advertising and accounts
 
-Local configuration remains until changed/removed, relevant app controls delete it, Android storage is cleared or app uninstalled. Guide caches expire under configured retention. Uninstall/clear removes app-private data; separately exported files can remain and need deletion at their selected location. Local deletion does not remove provider records; contact that provider. No YourIPTV cloud account is created.
+Google Play and Android deliver updates for the Play build; it has no direct APK self-installer. The separate customer APK distribution can check official release information and download an APK from its configured official update hosts, including the application website mirror or release hosting. Those hosts may receive normal request metadata. Their handling is separate from Google Play delivery.
 
-## Controls/security
+The audited player includes no advertising SDK, analytics SDK, remote crash-reporting service or YourIPTV account-registration service. It does not sell personal information. Android, Google Play, selected providers, external players and document-storage services may process their own information under their policies.
 
-You choose sources, credentials, refresh preferences, parental controls and optional Settings Lock. Reliably fresh Play state starts with Settings Lock OFF; existing/ambiguous security is preserved. Admin and parental checks remain independent. Local PIN gates are not encryption and cannot prevent all access to rooted/unlocked devices. Keep Android and accounts secure. Never include passwords/private source URLs in support screenshots or logs.
+## Local security, backup and exported files
 
-## Children/content
+The app uses Android app-private database/preferences storage. Provider credentials and credential-bearing addresses are not additionally encrypted by the app. Parental/custom Settings PINs and local Admin PINs, where used, are stored as salted hashes. Local PIN gates are configuration safeguards, not database encryption or a substitute for device security.
 
-YourIPTV provides no catalogue. Source owners control content. Local parental restrictions are available; they do not make this a child-directed service. [Owner confirms intended audience/content rating and relevant child privacy obligations.]
+Automatic Android cloud backup is disabled. The Play build also declares explicit exclusions for system cloud backup and device-to-device transfer, including device-protected storage. Older customer builds and manufacturers' migration tools can behave differently. Compatible in-place updates retain app data.
 
-## Changes/contact
+An explicit JSON backup can include readable source credentials, addresses, favorites, supported preferences and restrictions. PIN hashes/salts, failed-attempt counters and the local Settings Lock flag are excluded from these exports. Protect backup files. Android's document picker can save to local, removable or cloud-backed storage selected by you; that service controls its copy. The app does not automatically upload a backup to a developer service.
 
-Publisher updates this policy when practices change. Use contact above for privacy requests. [Owner confirms support/retention/deletion process, jurisdictional duties, organizational services and notification practice.]
+## Retention and deletion
 
-Publish stable public non-geofenced non-editable HTML, not PDF/login/shared editable document, identifying app/publisher. Enter Console URL and align in-app notice. Official: https://support.google.com/googleplay/android-developer/answer/10144311?hl=en and https://support.google.com/googleplay/android-developer/answer/9859455?hl=en-en
+Local configuration remains until changed or removed with app controls, app storage is cleared or the app is uninstalled. Guide/catalogue caches are refreshed or pruned under app settings. Clear viewing history to remove the selected playlist's history/resume records. Delete a playlist to remove its source details and associated catalogue, guide, favorites, history, reminders and pending recording records. Finished recordings can remain and should be deleted separately from recording controls or their selected storage.
 
-Transport implementation: the current secure candidate enforces HTTPS for provider, playlist, XMLTV, media and artwork requests; insecure connections and downgrade redirects are blocked. Final compiled-artifact checks are pending while this candidate is built. External apps/document providers selected for playback/export control their own subsequent handling; the owner must reconcile the final Data safety answer with all actual app, SDK and organizational flows.
+Clear app storage or uninstall to remove app-managed private data. These are destructive actions and are not required for routine updates. Exported files, external-player data, other people's copies and provider/hosting records are not removed by deleting a playlist or uninstalling. Delete exported copies separately and contact the relevant service about its records. There is no YourIPTV app account to delete.
+
+## Website access and support messages
+
+The application website provides product information, guides, release information and legal pages. Its hosting service can process access and security logs, including IP address, requested page/download, time and browser information, to deliver and protect the site. Hosting retention depends on the service configuration. These records are separate from the app's local playlist/history database.
+
+If you email admin@youriptv.us, the mail service receives the information you choose to send, including your email address and message. It is used to answer support/privacy requests and investigate issues. Support and mail-security records are retained as needed for that purpose, applicable legal/security obligations and the mail-service configuration. Ask admin@youriptv.us about records, retention, correction or deletion. Do not email provider passwords, PINs, full credential-bearing playlist URLs or unredacted backups. Independently held provider records must be addressed to that provider.
+
+## Controls, children and changes
+
+Fresh Google Play preferences start with Settings Lock disabled; deliberate saved choices and ambiguous existing protection are preserved on compatible upgrades. Admin and parental restrictions remain independent. You choose sources, preferences, security and export destinations. Keep your device and accounts secure, especially on shared, rooted or unlocked devices.
+
+YourIPTV is a general-purpose player, supplies no children's catalogue and does not verify the suitability of every external source. Parents and guardians should choose appropriate sources and manage device access. Local parental controls supplement those decisions.
+
+This policy may change when application, website or data practices change. Its date identifies this edition. Send support questions, privacy enquiries and requests about information supplied to the maintainer to admin@youriptv.us.

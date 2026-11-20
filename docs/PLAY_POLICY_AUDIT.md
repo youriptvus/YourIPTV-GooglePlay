@@ -1,6 +1,8 @@
+> Current final delivery (November 18): GooglePlay-Release-Ready/START-HERE.md and Reports/Final-Delivery-Report.md are authoritative. Signed artifacts, current phone/TV/public HTTPS/ATF checks and public privacy verification passed; owner Console/signing/declarations/testing/approval gates remain. Earlier phase numbers and pending-hosting statements below are historical.
+
 # Implemented candidate policy and security audit
 
-> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](../GooglePlay-v1.0.9/CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](../GooglePlay-v1.0.9/CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. The latest final-completion request authorizes safe isolated checks; customer packages/data remain protected. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
 
 The audit below describes the historical code 45 build and its named test scope. Its passing checks do not establish new device validation. The owner now attributes the separate playback issue to the server; no encoder/decoder change is included, and the separate historical hold record remains outside Play scope.
 

@@ -43,6 +43,7 @@ abstract class ListActivity : RemoteActivity() {
                 .apply { marginEnd = (12 * resources.displayMetrics.density).toInt() }
         }
         actions.addView(b)
+        findViewById<View>(R.id.list_actions_scroll).visibility = View.VISIBLE
         return b
     }
 

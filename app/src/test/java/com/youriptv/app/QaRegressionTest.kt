@@ -228,9 +228,9 @@ class QaRegressionTest {
     }
 
     @Test
-    fun liveGuideUsesCompactTiviMateProportions() {
+    fun liveGuideKeepsCompactColumnsAndAccessibleRowTargets() {
         val grid = ui("LiveGuideGrid.kt")
-        assertTrue("about eight 40dp rows fit under the preview at 1080p", grid.contains("TypedValue.COMPLEX_UNIT_DIP, 40f"))
+        assertTrue("actionable guide rows provide a 48dp touch target", grid.contains("TypedValue.COMPLEX_UNIT_DIP, 48f"))
         assertTrue(grid.contains("if (activity.resources.getBoolean(R.bool.is_portrait)) 180f else 260f"))
         val views = ui("GuideViews.kt")
         assertTrue(views.contains("val span = 120 * 60_000L"))

@@ -1,0 +1,183 @@
+{
+  "runId": "20261118T230626Z-c0fdd347",
+  "package": "com.youriptv.app.playtest",
+  "tests": 14,
+  "failures": 0,
+  "results": [
+    {
+      "name": "existing QA data is exclusively recognized generated test media",
+      "status": "passed"
+    },
+    {
+      "name": "public HTTPS reviewer playlist imports two live channels, movie and episode",
+      "status": "passed"
+    },
+    {
+      "name": "public rolling HTTPS XMLTV guide imports current programme data",
+      "status": "passed"
+    },
+    {
+      "name": "Google ATF audit of main screen",
+      "status": "passed"
+    },
+    {
+      "name": "keyboard Tab and Shift-Tab expose visible app focus",
+      "status": "passed"
+    },
+    {
+      "name": "Google ATF audit of settings screen",
+      "status": "passed"
+    },
+    {
+      "name": "Google ATF audit of about screen",
+      "status": "passed"
+    },
+    {
+      "name": "Google ATF audit of privacy screen",
+      "status": "passed"
+    },
+    {
+      "name": "Google ATF audit of LIVE player",
+      "status": "passed"
+    },
+    {
+      "name": "public HTTPS LIVE renders decoded frames without TLS/player error",
+      "status": "passed"
+    },
+    {
+      "name": "Google ATF audit of MOVIE player",
+      "status": "passed"
+    },
+    {
+      "name": "public HTTPS MOVIE renders decoded frames without TLS/player error",
+      "status": "passed"
+    },
+    {
+      "name": "Google ATF audit of EPISODE player",
+      "status": "passed"
+    },
+    {
+      "name": "public HTTPS EPISODE renders decoded frames without TLS/player error",
+      "status": "passed"
+    }
+  ],
+  "googleAccessibilityFrameworkVersion": "4.1.1",
+  "accessibility": [
+    {
+      "screen": "main",
+      "errors": 0,
+      "findings": [
+        {
+          "check": "TextSizeCheck",
+          "type": "WARNING",
+          "resource": "com.youriptv.app.playtest:id/groups",
+          "class": "androidx.recyclerview.widget.RecyclerView",
+          "bounds": "Rect(0, 0 - 500, 1080)",
+          "message": "Consider modifying the LayoutParams to allow for text expansion."
+        },
+        {
+          "check": "TextSizeCheck",
+          "type": "INFO",
+          "resource": "com.youriptv.app.playtest:id/preview_frame",
+          "class": "com.youriptv.app.ui.PreviewFrame",
+          "bounds": "Rect(516, 16 - 1156, 376)",
+          "message": "Consider modifying the LayoutParams to allow for text expansion."
+        },
+        {
+          "check": "TextSizeCheck",
+          "type": "INFO",
+          "resource": "com.youriptv.app.playtest:id/content_column",
+          "class": "android.widget.LinearLayout",
+          "bounds": "Rect(500, 0 - 1920, 1080)",
+          "message": "Consider modifying the LayoutParams to allow for text expansion."
+        }
+      ]
+    },
+    {
+      "screen": "settings",
+      "errors": 0,
+      "findings": []
+    },
+    {
+      "screen": "about",
+      "errors": 0,
+      "findings": []
+    },
+    {
+      "screen": "privacy",
+      "errors": 0,
+      "findings": []
+    },
+    {
+      "screen": "LIVE",
+      "errors": 0,
+      "findings": []
+    },
+    {
+      "screen": "MOVIE",
+      "errors": 0,
+      "findings": [
+        {
+          "check": "TextSizeCheck",
+          "type": "INFO",
+          "resource": "com.youriptv.app.playtest:id/exo_rew_with_amount",
+          "class": "androidx.appcompat.widget.AppCompatButton",
+          "text": "10",
+          "bounds": "Rect(784, 488 - 888, 592)",
+          "message": "Consider modifying the LayoutParams to allow for text expansion."
+        },
+        {
+          "check": "TextSizeCheck",
+          "type": "INFO",
+          "resource": "com.youriptv.app.playtest:id/exo_ffwd_with_amount",
+          "class": "androidx.appcompat.widget.AppCompatButton",
+          "text": "10",
+          "bounds": "Rect(1032, 488 - 1136, 592)",
+          "message": "Consider modifying the LayoutParams to allow for text expansion."
+        },
+        {
+          "check": "TextSizeCheck",
+          "type": "INFO",
+          "resource": "com.youriptv.app.playtest:id/exo_bottom_bar",
+          "class": "android.widget.FrameLayout",
+          "bounds": "Rect(0, 960 - 1920, 1080)",
+          "message": "Consider modifying the LayoutParams to allow for text expansion."
+        }
+      ]
+    },
+    {
+      "screen": "EPISODE",
+      "errors": 0,
+      "findings": [
+        {
+          "check": "TextSizeCheck",
+          "type": "INFO",
+          "resource": "com.youriptv.app.playtest:id/exo_rew_with_amount",
+          "class": "androidx.appcompat.widget.AppCompatButton",
+          "text": "10",
+          "bounds": "Rect(784, 488 - 888, 592)",
+          "message": "Consider modifying the LayoutParams to allow for text expansion."
+        },
+        {
+          "check": "TextSizeCheck",
+          "type": "INFO",
+          "resource": "com.youriptv.app.playtest:id/exo_ffwd_with_amount",
+          "class": "androidx.appcompat.widget.AppCompatButton",
+          "text": "10",
+          "bounds": "Rect(1032, 488 - 1136, 592)",
+          "message": "Consider modifying the LayoutParams to allow for text expansion."
+        },
+        {
+          "check": "TextSizeCheck",
+          "type": "INFO",
+          "resource": "com.youriptv.app.playtest:id/exo_bottom_bar",
+          "class": "android.widget.FrameLayout",
+          "bounds": "Rect(0, 960 - 1920, 1080)",
+          "message": "Consider modifying the LayoutParams to allow for text expansion."
+        }
+      ]
+    }
+  ],
+  "smallestScreenWidthDp": 540,
+  "limitations": "Automated ATF and injected keyboard tests; not manual TalkBack/switch-access/user testing or Google Play delivery. QA package only; generated public media."
+}

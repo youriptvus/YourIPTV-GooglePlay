@@ -1,0 +1,180 @@
+{
+  "serial": "192.168.1.150:5555",
+  "scope": "Wake-only input every ten seconds; no saved power setting changes.",
+  "observations": [
+    {
+      "utc": "2026-11-18T23:20:18.835306+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:20:29.560266+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:20:40.207771+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:20:50.722406+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:21:01.053918+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:21:11.690496+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:21:22.095555+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:21:32.479242+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:21:42.820342+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:21:53.152967+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:22:03.497301+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:22:13.934625+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:22:24.313329+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:22:34.822556+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:22:45.178484+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:22:55.592837+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:23:05.932507+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:23:16.255979+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:23:26.612545+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:23:36.983388+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:23:47.346655+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:23:57.675732+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:24:08.011471+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:24:18.403672+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:24:28.747680+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:24:39.193120+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:24:49.598083+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:25:00.278813+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:25:11.505358+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake"
+      ]
+    }
+  ]
+}

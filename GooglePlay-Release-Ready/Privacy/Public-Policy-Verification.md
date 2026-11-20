@@ -1,11 +1,7 @@
-# Public policy verification
+# Public privacy verification
 
-Anonymous read-only checks on November17,2026 verified https://youriptv.us/ and https://youriptv.us/privacy as HTTPS HTTP200 HTML, without login. /privacy/ also returned200. The site identifies YourIPTV and links admin@youriptv.us. /privacy-policy and /privacy-policy.html returned404. Requests followed only same-site HTTPS redirects; no GitHub links/redirects, service-site requests, uploads, cPanel or DNS changes were made.
+On November 18, 2026, read-only HTTPS requests returned HTTP 200 for https://youriptv.us/privacy, the reviewer playlist and the rolling guide. All 29 prepared policy paragraphs/headings/list entries appear in the public page; the HTML wrapper differs from the self-contained local replacement. Public policy SHA-256: `bcd2dda899f87d67b89c2ef3419674031831feb54dfe015607089693b7c66378`. See Reports/Public-ReadOnly-Verification.json for response hashes and exact scope. The live page includes YourIPTV, admin@youriptv.us and the different Google Play/customer-distribution handling. No new policy deployment is required by these findings.
 
-The live privacy page explicitly identifies customer1.0.9/code44 and describes HTTP providers, direct APK updates, installer privileges and an update overlay. It does not yet explain the different Play behavior. The supplied public URL is real; its Play-specific content update is still an external publication step.
+Privacy-Policy.md and Privacy-Policy-Replacement.html remain local review/replacement materials. The site is publicly accessible without an account from this connection; worldwide availability, future uptime and mailbox delivery are not established. No email, website/cPanel/DNS write or unrelated IPTV service access was performed in this continuation. The earlier hosting receipt is preserved separately.
 
-Privacy-Policy.md and Privacy-Policy-Replacement.html contain the completed replacement text using YourIPTV, admin@youriptv.us and the verified application domain. The HTML is self-contained and requires no scripts, external fonts, analytics or third-party assets. It covers both distributions so the customer policy is not silently removed. No bracketed publisher/contact/date placeholders remain.
-
-The owner must publish the replacement at the existing /privacy route using their own website process, preserve the site's previous file, then verify public HTTPS access and the text from another network before entering the URL in Play Console. This task is not authorized to deploy it. One local network check does not prove worldwide/non-geofenced availability or mailbox delivery.
-
-No website, cPanel, DNS or unrelated IPTV service site was modified. The provided email is used as the owner-specified contact; no test email was sent.
+The earlier website-routing observation remains separate from Play: download buttons selected a version-specific customer 1.0.9/code44 APK, while the backup update feed advertised 1.0.8/code39. The browser button did not dynamically select its file from that feed. This continuation did not change that routing or deploy the Play candidate.

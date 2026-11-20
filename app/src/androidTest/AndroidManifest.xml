@@ -13,4 +13,10 @@
         android:label="Private provider validation"
         android:functionalTest="true"
         android:handleProfiling="false" />
+    <instrumentation
+        android:name="com.youriptv.app.PlayAuditInstrumentation"
+        android:targetPackage="com.youriptv.app.playtest"
+        android:label="Public reviewer and accessibility validation"
+        android:functionalTest="true"
+        android:handleProfiling="false" />
 </manifest>

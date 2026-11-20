@@ -1,0 +1,18 @@
+{
+  "generatedUtc": "2026-11-19T22:07:54.116612+00:00",
+  "versionCode": 50,
+  "minSdk": 24,
+  "artifacts": {
+    "aab": {
+      "path": "GooglePlay-Release-Ready\\AAB\\YourIPTV-GooglePlay-Release.aab",
+      "bytes": 5547594,
+      "sha256": "192b61a59be3c9e2dc05646a7e2d32a6fc9358073ff3346a4bfaf99e663f3f46"
+    },
+    "apk": {
+      "path": "GooglePlay-Release-Ready\\APK\\YourIPTV-GooglePlay-Release.apk",
+      "bytes": 3787894,
+      "sha256": "5590920ca04ce9f2ae535474edef1dffaf9a83cad6b12ef8c0308d5eb4ea746f"
+    }
+  },
+  "googlePlayApproved": false
+}

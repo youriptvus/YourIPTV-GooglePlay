@@ -1,0 +1,9 @@
+App-Icon.png: YourIPTV silver and gold wordmark on a dark background.
+Feature-Graphic.png: YourIPTV authorized playlist player for phones, tablets and Android TV.
+Android-TV-Banner.png: YourIPTV wordmark and Your authorized playlists tagline on a dark gold background.
+Android-TV-Screenshots/synthetic-guide.png: Programme guide with authorized generated channels
+Android-TV-Screenshots/synthetic-movie.png: Shared movie playback controls over locally generated media
+Android-TV-Screenshots/privacy.png: Offline privacy information inside YourIPTV
+Phone-Screenshots/synthetic-guide.png: Programme guide with authorized generated channels
+Phone-Screenshots/synthetic-movie.png: Shared movie playback controls over locally generated media
+Phone-Screenshots/privacy.png: Offline privacy information inside YourIPTV

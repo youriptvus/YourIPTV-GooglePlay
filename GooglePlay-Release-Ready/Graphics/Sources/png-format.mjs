@@ -16,12 +16,12 @@ export function rgbPixels(png){
     const filter=raw[read++];if(filter>4)throw new Error('Unknown PNG filter');
     for(let x=0;x<stride;x++){
       const a=x>=bpp?decoded[y*stride+x-bpp]:0,b=y?decoded[(y-1)*stride+x]:0,c=y&&x>=bpp?decoded[(y-1)*stride+x-bpp]:0;
-      const predictor=[0,a,b,Math.floor((a+b)/2),paeth(a,b,c)][filter];
+      const predictor=filter===0?0:filter===1?a:filter===2?b:filter===3?Math.floor((a+b)/2):paeth(a,b,c);
       decoded[y*stride+x]=(raw[read++]+predictor)&255;
     }
   }
   const rgb=Buffer.alloc(w*h*3);
-  for(let i=0;i<w*h;i++){if(bpp===4&&decoded[i*4+3]!==255)throw new Error('Cannot discard nonopaque alpha');decoded.copy(rgb,i*3,i*bpp,i*bpp+3);}
+  for(let i=0;i<w*h;i++){if(bpp===4&&decoded[i*4+3]!==255)throw new Error('Cannot discard nonopaque alpha');rgb[i*3]=decoded[i*bpp];rgb[i*3+1]=decoded[i*bpp+1];rgb[i*3+2]=decoded[i*bpp+2];}
   return {width:w,height:h,rgb,header};
 }
 export function png24(png){

@@ -1,0 +1,32 @@
+{
+  "generatedUtc": "2026-11-19T21:29:30.756424+00:00",
+  "checkedEntries": 1431,
+  "knownPrivateTokensAbsent": true,
+  "hits": [],
+  "artifacts": {
+    "aab": {
+      "sha256": "192b61a59be3c9e2dc05646a7e2d32a6fc9358073ff3346a4bfaf99e663f3f46",
+      "qaMarkersAbsent": true,
+      "qaMarkerHits": [],
+      "nativeLibraries": [],
+      "noNativeLibraries": true,
+      "bytes": 5547594
+    },
+    "apk": {
+      "sha256": "5590920ca04ce9f2ae535474edef1dffaf9a83cad6b12ef8c0308d5eb4ea746f",
+      "qaMarkersAbsent": true,
+      "qaMarkerHits": [],
+      "nativeLibraries": [],
+      "noNativeLibraries": true,
+      "bytes": 3787894
+    }
+  },
+  "nonCredentialMappingCoincidences": [
+    {
+      "path": "aab!/BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map",
+      "classification": "R8 integer line-number ranges only; not an executable or quoted credential"
+    }
+  ],
+  "scope": "Known legacy/trial values held only in memory; nonignored local source/materials and every production archive entry. No arbitrary-secret or vulnerability-free guarantee.",
+  "passed": true
+}

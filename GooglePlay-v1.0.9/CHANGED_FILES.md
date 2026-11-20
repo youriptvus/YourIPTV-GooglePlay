@@ -1,4 +1,8 @@
+> Current final delivery (November 18): GooglePlay-Release-Ready/START-HERE.md and Reports/Final-Delivery-Report.md are authoritative. Signed artifacts, current phone/TV/public HTTPS/ATF checks and public privacy verification passed; owner Console/signing/declarations/testing/approval gates remain. Earlier phase numbers and pending-hosting statements below are historical.
+
 # Source changes from the official baseline
+
+> **Current completion:** the earlier inventory below describes its recorded phase. Current resource/contact/artwork and release-package changes are recorded by the new [completion reports](../GooglePlay-Release-Ready/Reports/); do not treat 295 as the final new source count. The pinned 234-file original inventory is unchanged.
 
 The current HTTPS-only secure candidate is being prepared separately under `artifacts/code48-secure/`; final secure tests/artifact results are pending. The 401-test HTTP-integrity build and first 81-check code 48 artifact audit predate this transport change and are intermediate/superseded. Root-level code 45 evidence remains historical. See [current secure status](CURRENT_STATUS.md).
 

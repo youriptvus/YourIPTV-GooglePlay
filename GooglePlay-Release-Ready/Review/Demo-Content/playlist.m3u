@@ -1,4 +1,4 @@
-#EXTM3U x-tvg-url="https://youriptv.us/review-media/epg.xml"
+#EXTM3U x-tvg-url="https://youriptv.us/review-media/epg.php"
 #EXTINF:-1 tvg-id="synthetic1" group-title="Authorized review content",Synthetic Channel One
 https://youriptv.us/review-media/channel1.ts
 #EXTINF:-1 tvg-id="synthetic2" group-title="Authorized review content",Synthetic Channel Two

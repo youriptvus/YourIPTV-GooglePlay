@@ -42,6 +42,7 @@ import com.youriptv.app.ui.SettingsCategory
 import com.youriptv.app.ui.PlayerActivity
 import com.youriptv.app.ui.LiveBufferingRecovery
 import androidx.media3.common.Player
+import androidx.media3.common.ForwardingPlayer
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import java.net.HttpURLConnection
@@ -88,10 +89,14 @@ class PlaySmokeInstrumentation : Instrumentation() {
         try {
             require(testScope in setOf("full", "browser-only", "browser-and-settings")) { "Unknown isolated test scope" }
             var safeQaData = false
-            execute("existing isolated playlists contain only recognized local synthetic fixtures") {
+            execute("existing isolated playlists contain only recognized generated test media") {
                 safeQaData = YourIptvApp.instance.repo.playlists().all { p ->
                     (p.name == "Play smoke synthetic demo" && p.type == SourceType.M3U &&
                         p.url == "$fixtureBase/playlist.m3u" && p.epgUrl == "$fixtureBase/epg.xml" &&
+                        p.username.isBlank() && p.password.isBlank()) ||
+                    (p.name == "Google Play reviewer demo" && p.type == SourceType.M3U &&
+                        p.url == "https://youriptv.us/review-media/playlist.m3u" &&
+                        p.epgUrl == "https://youriptv.us/review-media/epg.php" &&
                         p.username.isBlank() && p.password.isBlank())
                 }
                 check(safeQaData) { "Unrecognized isolated QA data is preserved; refusing automation." }
@@ -195,6 +200,22 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 execute("phone touchscreen opens normal Settings from the shared browser") {
                     val main = launch(MainActivity::class.java)
                     waitForIdleSync()
+                    // Activity creation/idle can precede WindowManager focus after
+                    // CLEAR_TASK. Back/touch must wait for this new window to own input.
+                    await(10_000) { main.window.decorView.hasWindowFocus() && !main.isFinishing }
+                    // Landscape guide mode hides the menu; follow the real Back path before touching it.
+                    repeat(2) {
+                        var menuVisible = false
+                        onMain { menuVisible = main.findViewById<View>(R.id.nav_container).isShown }
+                        if (!menuVisible) {
+                            sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
+                            waitForIdleSync()
+                        }
+                    }
+                    await(5_000) {
+                        main.window.decorView.hasWindowFocus() && !main.isFinishing &&
+                            main.findViewById<View>(R.id.nav_container).isShown
+                    }
                     var settings: View? = null
                     onMain {
                         val nav = main.findViewById<ViewGroup>(R.id.nav_container)
@@ -301,7 +322,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 .put("originalResumeLastChannel", previousResumeLastChannel)
                 .put("restoredResumeLastChannel", YourIptvApp.instance.settings.resumeLastChannel)
                 .put("limitations", "Settings reconstruction tests are not process death. Phone/tablet resource inflation on TV is not real phone testing. D-pad input is injected through ADB/instrumentation, not a physical remote.")
-            targetContext.getExternalFilesDir(null)?.resolve("play-smoke-results.json")?.writeText(report.toString(2))
+            targetContext.filesDir.resolve("play-smoke-results.json").writeText(report.toString(2))
             finish(if (failed == 0) Activity.RESULT_OK else Activity.RESULT_CANCELED, Bundle().apply {
                 putInt("tests", results.length())
                 putInt("failures", failed)
@@ -688,23 +709,34 @@ class PlaySmokeInstrumentation : Instrumentation() {
         onMain { screen?.finish(); app.livePlayback.stop() }
         waitForIdleSync()
         for ((kind, label) in listOf(ItemKind.MOVIE to "movie", ItemKind.EPISODE to "episode")) {
-            execute("synthetic $label VOD renders advancing decoded frames in the shared player") {
+            execute("synthetic $label VOD renders advancing decoded frames and finishes at clean EOF") {
                 val p = playlist ?: error("Import prerequisite failed")
                 val item = app.repo.items(p.id, kind, null).firstOrNull()
                     ?: error("Generated $label was not imported")
                 check(item.url.startsWith("$fixtureBase/"))
                 onMain { YourIptvApp.playQueue = listOf(item) }
                 val vodScreen = launch(PlayerActivity::class.java)
+                var vodPlayer: ExoPlayer? = null
+                val vodEnded = AtomicInteger()
+                val vodListener = object : Player.Listener {
+                    override fun onPlaybackStateChanged(state: Int) {
+                        if (state == Player.STATE_ENDED) vodEnded.incrementAndGet()
+                    }
+                }
                 try {
-                    var vodPlayer: ExoPlayer? = null
                     await(20_000) {
-                        vodPlayer = vodScreen.findViewById<PlayerView>(R.id.player_view).player as? ExoPlayer
+                        // VOD intentionally exposes EpisodeAwarePlayer to the controller.
+                        // Unwrap the real engine before inspecting its decoder counters.
+                        var observedPlayer = vodScreen.findViewById<PlayerView>(R.id.player_view).player
+                        while (observedPlayer is ForwardingPlayer) observedPlayer = observedPlayer.wrappedPlayer
+                        vodPlayer = observedPlayer as? ExoPlayer
                         vodPlayer?.videoDecoderCounters?.ensureUpdated()
                         vodPlayer?.let { it.playbackState == Player.STATE_READY &&
                             (it.videoDecoderCounters?.renderedOutputBufferCount ?: 0) > 0 } == true
                     }
                     var initialFrames = 0
                     onMain {
+                        vodPlayer!!.addListener(vodListener)
                         vodPlayer!!.videoDecoderCounters!!.ensureUpdated()
                         initialFrames = vodPlayer!!.videoDecoderCounters!!.renderedOutputBufferCount
                     }
@@ -726,8 +758,11 @@ class PlaySmokeInstrumentation : Instrumentation() {
                             .put("playerError", player.playerError != null))
                     }
                     capture("synthetic-$label")
+                    await(12_000) { vodEnded.get() > 0 && (vodScreen.isFinishing || vodScreen.isDestroyed) }
+                    vodSeriesStats.getJSONObject(label).put("observedEndedEvents", vodEnded.get())
+                        .put("activityFinishedAfterEnd", true)
                 } finally {
-                    onMain { vodScreen.finish() }
+                    onMain { vodPlayer?.removeListener(vodListener); vodScreen.finish() }
                     waitForIdleSync()
                 }
             }
@@ -766,7 +801,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
         }
         val bitmap = uiAutomation.takeScreenshot() ?: error("Raw screenshot capture failed")
         val device = if (isTelevision()) "tv-onn" else "phone-samsung"
-        val directory = targetContext.getExternalFilesDir(null)!!.resolve("screenshots").apply { mkdirs() }
+        val directory = targetContext.filesDir.resolve("screenshots").apply { mkdirs() }
         try {
             check(uiAutomation.rootInActiveWindow?.packageName?.toString() == targetContext.packageName) {
                 "Discarding a screenshot after isolated app focus changed"
@@ -778,13 +813,23 @@ class PlaySmokeInstrumentation : Instrumentation() {
     }
 
     private fun touch(view: View) {
-        val position = IntArray(2)
+        val visible = Rect()
         var x = 0f
         var y = 0f
         onMain {
-            view.getLocationOnScreen(position)
-            x = position[0] + view.width / 2f
-            y = position[1] + view.height / 2f
+            check(view.isShown && view.getGlobalVisibleRect(visible) && !visible.isEmpty) {
+                "Touch target is not visible inside the app window"
+            }
+            // Scrolled navigation can partially clip a row. Its un-clipped center
+            // may land outside our window, where targeted injection must be refused.
+            x = visible.exactCenterX()
+            y = visible.exactCenterY()
+        }
+        val deadline = SystemClock.elapsedRealtime() + 5_000
+        while (uiAutomation.rootInActiveWindow?.packageName?.toString() != targetContext.packageName &&
+            SystemClock.elapsedRealtime() < deadline) SystemClock.sleep(100)
+        check(uiAutomation.rootInActiveWindow?.packageName?.toString() == targetContext.packageName) {
+            "Refusing touch injection outside the isolated app after waiting for accessibility-window focus"
         }
         val time = SystemClock.uptimeMillis()
         listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP).forEach { action ->

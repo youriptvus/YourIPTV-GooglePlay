@@ -8,10 +8,11 @@ android {
     compileSdk = 36
     defaultConfig {
         applicationId = "com.youriptv.app"
-        minSdk = 23
+        // Google Play automatic protection requires API 24 or newer.
+        minSdk = 24
         targetSdk = 36
-        // Proposed above customer diagnostic 47; verify Play Console history before upload.
-        versionCode = 48
+        // Original owner icon restored after the accepted code 49 candidate.
+        versionCode = 50
         versionName = "1.0.9"
         testInstrumentationRunner = "com.youriptv.app.PlaySmokeInstrumentation"
     }
@@ -70,6 +71,7 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:$media3")
     implementation("androidx.media3:media3-exoplayer-hls:$media3")
     implementation("androidx.media3:media3-ui:$media3")
+    androidTestImplementation("com.google.android.apps.common.testing.accessibility.framework:accessibility-test-framework:4.1.1")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20250517")
     testImplementation("net.sf.kxml:kxml2:2.2.2")

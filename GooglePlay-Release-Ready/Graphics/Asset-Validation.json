@@ -6,9 +6,9 @@
       "width": 512,
       "height": 512,
       "colorType": 6,
-      "bytes": 355485,
+      "bytes": 539978,
       "passed": true,
-      "sha256": "1b994b1548d6d408a0639fc1d69227f7ffd9f7bdfb8bc6cc0592a8e84949cd41"
+      "sha256": "585a5f4314ffbadd9ba68c48708f1fcf26e68fe98ff8b0b7cf24e7f930178521"
     },
     {
       "file": "Feature-Graphic.png",
@@ -95,9 +95,115 @@
     {
       "file": "app/src/main/res/drawable-xxxhdpi/banner.png",
       "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-mdpi/ic_launcher.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-mdpi/ic_launcher_round.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-hdpi/ic_launcher.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-hdpi/ic_launcher_round.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-xhdpi/ic_launcher.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-xhdpi/ic_launcher_round.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-xxhdpi/ic_launcher.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-xxhdpi/ic_launcher_round.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-xxxhdpi/ic_launcher.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-xxxhdpi/ic_launcher_round.png",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-anydpi-v26/ic_launcher.xml",
+      "passed": true
+    },
+    {
+      "file": "app/src/main/res/mipmap-television-anydpi-v26/ic_launcher_round.xml",
+      "passed": true
     }
   ],
-  "staticCheckCount": 20,
-  "currentScreenshotsPending": true,
-  "tabletActualCaptureAvailable": false
+  "staticCheckCount": 32,
+  "sourceArtworkUnchanged": true,
+  "currentScreenshotsPending": false,
+  "screenshotChecks": [
+    {
+      "file": "Android-TV-Screenshots/synthetic-guide.png",
+      "width": 1920,
+      "height": 1080,
+      "passed": true,
+      "sha256": "a90cad1a1a48d781ac19fd5da792e63fe2c0e141e01679f1b01fdc9b80c70e6f"
+    },
+    {
+      "file": "Android-TV-Screenshots/synthetic-movie.png",
+      "width": 1920,
+      "height": 1080,
+      "passed": true,
+      "sha256": "ba502e40362f74b31a3c1623003526e629f3a16a40ce740f58eb2a7c32dc700c"
+    },
+    {
+      "file": "Android-TV-Screenshots/privacy.png",
+      "width": 1920,
+      "height": 1080,
+      "passed": true,
+      "sha256": "9b7c6f187a57a222648366b2b0ecc44333d86078e34dad2247234fd95e2be868"
+    },
+    {
+      "file": "Phone-Screenshots/synthetic-guide.png",
+      "width": 2400,
+      "height": 1350,
+      "passed": true,
+      "sha256": "f80456c7431835c8272ce2e5df2cd555c22cca99be370e55e679605ec1d4458c"
+    },
+    {
+      "file": "Phone-Screenshots/synthetic-movie.png",
+      "width": 2400,
+      "height": 1350,
+      "passed": true,
+      "sha256": "9ced4031d6219e6d7564c8d9007e72cf7331a4ae5375ff6a79bd77f602f66f8f"
+    },
+    {
+      "file": "Phone-Screenshots/privacy.png",
+      "width": 2400,
+      "height": 1350,
+      "passed": true,
+      "sha256": "43b1a578a3e6291e60e7923ef5a82f17d769d4998e80095b3aa1a73a22932deb"
+    }
+  ],
+  "currentPhoneScreenshots": 3,
+  "currentTvScreenshots": 3,
+  "tabletActualCaptureAvailable": false,
+  "formattingSelfCheck": {
+    "passed": true,
+    "historicalPublicInputs": 2,
+    "formats": [
+      "RGB",
+      "opaque RGBA"
+    ],
+    "allUiRgbPixelsPreserved": true,
+    "writesToUploadFolders": false,
+    "result": "Both2340x1080 historical captures verified in check-only mode as2400x1350 PNG24, preserving every source UI pixel1:1; no historical image was placed in an upload folder."
+  }
 }

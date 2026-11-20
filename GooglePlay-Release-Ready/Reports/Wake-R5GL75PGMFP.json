@@ -1,0 +1,188 @@
+{
+  "serial": "R5GL75PGMFP",
+  "scope": "Wake-only input every ten seconds; no saved power setting changes.",
+  "observations": [
+    {
+      "utc": "2026-11-18T23:15:45.825951+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:15:56.155586+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:16:06.409844+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:16:16.669908+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:16:26.887560+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:16:37.129073+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:16:47.355674+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:16:57.632365+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:17:07.861794+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:17:18.086582+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:17:28.318590+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:17:38.556800+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:17:48.742415+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:17:58.970205+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:18:09.233199+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:18:19.504158+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:18:29.730566+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:18:40.002604+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:18:50.227845+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:19:00.463048+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:19:10.697478+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:19:20.935317+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:19:31.174321+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:19:41.409248+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:19:51.624222+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    },
+    {
+      "utc": "2026-11-18T23:20:01.817925+00:00",
+      "wakefulness": [
+        "mWakefulness=Awake",
+        "mWakefulness=1"
+      ]
+    }
+  ]
+}

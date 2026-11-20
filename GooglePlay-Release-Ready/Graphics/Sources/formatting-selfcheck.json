@@ -1,0 +1,19 @@
+{
+  "purpose": "Formatting-only self-check using historical public QA captures. Run with --check-only; these are not current store screenshots.",
+  "captures": [
+    {
+      "source": "GooglePlay-v1.0.9/screenshots/phone-samsung-playtest-synthetic-guide.png",
+      "device": "phone",
+      "filename": "historical-rgb-selfcheck.png",
+      "role": "historical_format_selfcheck",
+      "alt": "Historical synthetic guide used only to verify faithful framing."
+    },
+    {
+      "source": "GooglePlay-v1.0.9/screenshots/phone-samsung-playtest-post-restart.png",
+      "device": "phone",
+      "filename": "historical-rgba-selfcheck.png",
+      "role": "historical_format_selfcheck",
+      "alt": "Historical settings view used only to verify lossless opaque-alpha normalization."
+    }
+  ]
+}

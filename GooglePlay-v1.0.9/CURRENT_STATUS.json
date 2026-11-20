@@ -1,208 +1,60 @@
 {
-  "schemaVersion": 1,
-  "recordType": "superseding_local_project_status",
-  "updatedLocalDate": "2026-11-17",
-  "timezone": "America/New_York",
-  "package": "com.youriptv.app",
-  "scope": "Current local Play 1.0.9 / proposed code 48 preparation; historical code 45 artifacts and records preserved.",
-  "ownerConfirmedCustomerRelease": {
+  "generatedUtc": "2026-11-19T22:07:54.116612+00:00",
+  "versionName": "1.0.9",
+  "versionCode": 50,
+  "applicationId": "com.youriptv.app",
+  "minSdk": 24,
+  "targetSdk": 36,
+  "localProductionBuildPassed": true,
+  "artifactAuditPassed": true,
+  "knownPrivateTokensAndQaMarkersAbsent": true,
+  "hostTests": {
+    "tests": 414,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "hostClasses": 57,
+  "verifierTestsPassed": 8,
+  "lint": {
+    "Warning": 280
+  },
+  "originalIconRestored": true,
+  "compiledOriginalIconChecks": 25,
+  "customerRepositoryPreserved": true,
+  "artifacts": {
+    "aab": {
+      "path": "GooglePlay-Release-Ready\\AAB\\YourIPTV-GooglePlay-Release.aab",
+      "bytes": 5547594,
+      "sha256": "192b61a59be3c9e2dc05646a7e2d32a6fc9358073ff3346a4bfaf99e663f3f46"
+    },
+    "apk": {
+      "path": "GooglePlay-Release-Ready\\APK\\YourIPTV-GooglePlay-Release.apk",
+      "bytes": 3787894,
+      "sha256": "5590920ca04ce9f2ae535474edef1dffaf9a83cad6b12ef8c0308d5eb4ea746f"
+    }
+  },
+  "certificateSha256": "4aef8798d4038bb8b20486b96b50af0870bca9d9b244a541a8973f76cecd0539",
+  "console": {
+    "status": "code50_available_to_internal_testers",
+    "versionCode": 50,
     "versionName": "1.0.9",
-    "versionCode": 44,
-    "publicationStatus": "published",
-    "verificationBasis": "owner confirmation; no new remote verification"
+    "releaseName": "1.0.9 (50) - Original icon restored",
+    "automaticProtection": true,
+    "appSigningIdentityPreserved": true,
+    "track": "Internal testing",
+    "trackId": "4700767266419939531",
+    "productionPublished": false,
+    "googleReviewStatus": "Not reviewed",
+    "observedUtc": "2026-11-19T20:47:19Z",
+    "evidence": "D:\\APK\\work\\YourIPTV-Play-Console-20261119T185224Z\\screen-204719212015.png",
+    "enhancedBundleReviewEvidence": "D:\\APK\\work\\YourIPTV-Play-Console-20261119T185224Z\\screen-204633268168.png"
   },
-  "subsequentPrivateDiagnostic": {
-    "versionName": "1.1.0-diagnostic.1",
-    "versionCode": 47,
-    "purpose": "separate Series/AVI decoder investigation",
-    "productionRelease": false,
-    "playConsoleUploadStatus": "unknown"
-  },
-  "historicalPlayCandidate": {
-    "versionName": "1.0.9",
-    "versionCode": 45,
-    "status": "historical signed local candidate",
-    "ordinaryHigherVersionUpdateOver47": false,
-    "artifactBytesPreserved": true,
-    "sourceZipBytesPreserved": true,
-    "historicalJsonBytesPreserved": true
-  },
-  "nextProductionCode": {
-    "mustExceed": 47,
-    "numericalLowerBound": 48,
-    "consoleUnusedVerified": false,
-    "mustAlsoExceedLaterApplicableCustomerOrPrivateCodes": true,
-    "selectionRequires": "owner review of all Console tracks/drafts/prior uploads and manual shared-package allocation",
-    "proposedCode": 48,
-    "proposedLocalCode": 48
-  },
-  "recordedTvState": {
-    "device": "192.168.1.150:5555",
-    "basis": "later owner-requested uninstall record; no new device query",
-    "packagesAbsent": [
-      "com.youriptv.app",
-      "com.youriptv.app.playtest"
-    ],
-    "appDataRetained": false,
-    "testingOrReinstallRequiresNewExplicitOwnerRequest": true,
-    "uninstallEvidenceTimestampUtc": "2026-11-17T22:45:29.8407838Z",
-    "verifiedDuringThisStatusCorrection": false,
-    "evidenceFile": "D:\\APK\\work\\YourIPTV-series-investigation-20261117T041158Z-e075dbe6\\owner-requested-uninstall.json"
-  },
-  "samsungCurrentState": "not newly verified",
-  "separateSeriesInvestigation": {
-    "issueDisposition": "owner_reports_server_side",
-    "verificationBasis": "owner confirmation; no new device/server test",
-    "clientDecoderFixImplemented": false,
-    "encoderDecoderChangesIncludedInPlay": false,
-    "activePlayBlocker": false,
-    "historicalHoldRecord": "outside Play scope; unchanged",
-    "tvFullCatalogEofOrFirstSubsetStallResolvedByOwnerStatement": false
-  },
-  "permittedContinuation": [
-    "local documentation/status work",
-    "source review",
-    "synthetic JVM/localhost catalog diagnostics"
-  ],
-  "historicalEvidencePolicy": "November 16-17 delivery records only: retain original metrics, failures, preservation checks, hashes and bytes; no fresh device or customer-preservation verification is implied.",
-  "localFactSources": [
-    "owner workspace instructions dated 2026-11-17",
-    "D:\\APK\\work\\YourIPTV-series-investigation-20261117T041158Z-e075dbe6\\CURRENT_STATE.md"
-  ],
-  "nextPlayVersionName": "1.0.9 (owner-approved local preparation)",
-  "priorLocalDevelopmentTestingBuildAuthorizationRemains": true,
-  "nextReleaseVersionCodeSelection": "48 proposed for local preparation; Console upload history remains unverified",
-  "standingRestrictionsRemain": [
-    "no GitHub calls or uploads from workspace tools",
-    "no .150 player testing or reinstall without a new explicit owner request",
-    "no production signing-key creation/replacement or Play enrollment without owner authorization",
-    "no Play submission/publication without owner authorization"
-  ],
-  "releasePreparation": {
-    "ownerApproved": true,
-    "versionName": "1.0.9",
-    "proposedVersionCode": 48,
-    "consoleUnusedVerified": false,
-    "deliveryDirectory": "artifacts/code48-secure/",
-    "artifactResults": "pending final secure candidate",
-    "requiresSeparateSeriesFix": false,
-    "originalCustomerRepositoryMustRemainUntouched": true,
-    "productionBuildCommit": "cc13ebe5bba6dfba1fd00d38e976ce2c1756e4f3",
-    "build": {
-      "passed": true,
-      "durationSeconds": 199,
-      "aabBytes": 5510666,
-      "apkBytes": 3744931,
-      "artifactAudit": "pending"
-    },
-    "repositoryIndependenceChecksPassed": 8,
-    "legacyPlaintextAndTestMarkerSeparationPassed": true
-  },
-  "localSourceIntegrityFollowup": {
-    "phase": "PC/JVM integrity checks passed before HTTPS-only integration; final secure checks pending",
-    "pcJdkReproduction": {
-      "declaredContentLength": 4158,
-      "deliveredBytes": 62,
-      "priorPathAcceptedEntries": 1
-    },
-    "syntheticDiagnosticChecksPassed": 16,
-    "completeSyntheticCatalogBytes": 40346015,
-    "completeSyntheticCatalogEntries": 147803,
-    "transportCoverage": [
-      "plain",
-      "gzip",
-      "faults"
-    ],
-    "guardFinalTests": {
-      "focused": {
-        "tests": 35,
-        "classes": 4,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0
-      },
-      "full": {
-        "tests": 401,
-        "classes": 56,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0
-      },
-      "lint": {
-        "errors": 0,
-        "warnings": 272
-      },
-      "postFixSynthetic": {
-        "checks": 16,
-        "passed": 16,
-        "plainBytes": 40346015,
-        "entries": 147803,
-        "gzipEncodedBytes": 1343718
-      }
-    },
-    "deviceValidated": false,
-    "tvEofCauseEstablishedOrFixed": false,
-    "historicalCode45ArtifactsAndZipPredateGuard": true,
-    "scope": "PC/JVM and synthetic localhost only; no Android/device/provider/database runtime validation",
-    "unknownLengthLimitation": "Clean early EOF without usable framing/Content-Length cannot be distinguished from legitimate shorter content.",
-    "evidenceFile": "D:\\APK\\work\\YourIPTV-GooglePlay-catalog-eof-20261117\\final-validation-summary.json"
-  },
-  "performedDuringCurrentContinuation": {
-    "productionSourceChange": true,
-    "versionNameChange": false,
-    "versionCodeChange": true,
-    "currentLocalVersionCode": 48,
-    "productionRebuildCompleted": true,
-    "deviceOrProviderSession": false,
-    "githubCallsOrUploads": false,
-    "playSubmission": false,
-    "signingKeyCreationReplacementOrEnrollment": false,
-    "customerSynchronization": false,
-    "secureProductionRebuildCompleted": true
-  },
-  "supersededIntermediateCode48": {
-    "directory": "artifacts/code48/",
-    "productionBuildCommit": "2c02256822cfc8c9c6b0436cceaeb1f4e7b3830a",
-    "artifactChecksPassed": 81,
-    "status": "intermediate/superseded by HTTPS-only compliance change",
-    "artifactsPreserved": true
-  },
-  "secureTransportCompliance": {
-    "phase": "host/verifier tests and lint passed; final signed artifact/security-policy checks pending",
-    "requiresHttps": true,
-    "productionCleartextAllowed": false,
-    "httpsToHttpRedirectAllowed": false,
-    "legacyHttpNeedsProviderHttps": true,
-    "compiledFinalArtifactVerified": false,
-    "finalHostResults": {
-      "full": {
-        "tests": 414,
-        "classes": 57,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0
-      },
-      "focused": {
-        "tests": 61,
-        "classes": 6,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0
-      },
-      "verifierTests": {
-        "tests": 6,
-        "passed": 6
-      },
-      "lint": {
-        "errors": 0,
-        "warnings": 272
-      }
-    },
-    "freshDeviceValidated": false,
-    "privacyLegalIdentityAndContactOwnerConfirmed": false,
-    "publicPrivacyPublished": false,
-    "privateGithubRequiredForPlaySubmission": false,
-    "earlierSynthetic16CheckRun": "pre-HTTPS HTTP-integrity phase only; no fresh secure runtime inference",
-    "productionBuildCommit": "cc13ebe5bba6dfba1fd00d38e976ce2c1756e4f3"
-  }
+  "freshProtectedPlayDeliveryTest": false,
+  "freshCode50PhysicalDeviceTests": false,
+  "historicalDeviceEvidence": "Code48 November18: Samsung35/35; TV32/32; public HTTPS/ATF14/14 each. Not a code50 or Play-delivery pass.",
+  "googlePlayApproved": false,
+  "allSubmissionStepsComplete": false,
+  "productionPublished": false,
+  "evidenceDirectory": "D:\\APK\\work\\YourIPTV-Play-publication-20261119T194954Z\\icon-correction"
 }

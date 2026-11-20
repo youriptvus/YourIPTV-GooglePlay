@@ -349,7 +349,7 @@ class PlayerActivity : RemoteActivity() {
         if (reuse) {
             if (allowedOrPrompt(item)) {
                 playingUrl = PlaybackFactory.streamUrl(item)
-                playerView.useController = false
+                setControllerEnabled(false)
                 val p = player
                 val error = p?.playerError
                 if (app.livePlayback.recoveryFailed) recoveryObserver()
@@ -567,7 +567,7 @@ class PlayerActivity : RemoteActivity() {
             p.playWhenReady = true
             if (resumeAt > 0) Dialogs.toast(this@PlayerActivity, "Resuming from ${Format.duration(resumeAt)}")
         }
-        playerView.useController = item.kind != ItemKind.LIVE
+        setControllerEnabled(item.kind != ItemKind.LIVE)
         playerView.controllerShowTimeoutMs = 4000
         timeBar()?.setKeyTimeIncrement(app.settings.skipSeconds * 1000L)
         if (item.kind == ItemKind.LIVE) {
@@ -613,7 +613,13 @@ class PlayerActivity : RemoteActivity() {
             }
             return
         }
-        player?.let { lifecycleScope.launch(Dispatchers.IO) { app.repo.recordHistory(item, it.duration, it.duration) } }
+        player?.let { activePlayer ->
+            // Read player state on its main looper; background persistence receives values only.
+            val completedDuration = activePlayer.duration
+            lifecycleScope.launch(Dispatchers.IO) {
+                app.repo.recordHistory(item, completedDuration, completedDuration)
+            }
+        }
         if (item.kind == ItemKind.EPISODE && index + 1 < queue.size) {
             Dialogs.toast(this, "Playing next episode")
             previousIndex = index; index++; startItem()
@@ -1071,13 +1077,22 @@ class PlayerActivity : RemoteActivity() {
         }
     }
 
+    private fun setControllerEnabled(enabled: Boolean) {
+        playerView.useController = enabled
+        // VOD's PlayerView owns the full-screen accessibility action. Keep its controls
+        // and the Options button exposed without a second identical container target.
+        // Live playback still exposes the root's banner action. Touch listeners stay intact.
+        findViewById<View>(R.id.root).importantForAccessibility =
+            if (enabled) View.IMPORTANT_FOR_ACCESSIBILITY_NO else View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
+    }
+
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         if (isInPictureInPictureMode) {
             banner.visibility = View.GONE; hideOverlay(); numberEntry.visibility = View.GONE
-            playerView.useController = false
+            setControllerEnabled(false)
         } else {
-            playerView.useController = !isLive
+            setControllerEnabled(!isLive)
         }
     }
 

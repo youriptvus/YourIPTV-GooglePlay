@@ -1,0 +1,49 @@
+{
+  "checkedUtc": "2026-11-20T19:43:23.579971+00:00",
+  "versionCode": 50,
+  "closedRelease": "Available to selected testers",
+  "releaseTimeConsoleEastern": "2026-11-19 17:11",
+  "minimumTwelveConfirmed": true,
+  "fourteenDaysComplete": false,
+  "nextPhase": "Participants install from Google Play, exercise features, remain opted in and send real feedback",
+  "feedbackAddress": "admin@youriptv.us",
+  "consoleFeedbackRoute": "user-feedback/beta-feedback",
+  "feedbackObserved": "No participant feedback entries displayed in Console at this check",
+  "preLaunchConfiguration": "No developer-login credentials or custom script; no app account gate. No generated report available at the earlier same-day overview check.",
+  "sampleSourceCheck": {
+    "transport": "Verified HTTPS; no redirects",
+    "playlist": {
+      "url": "https://youriptv.us/review-media/playlist.m3u",
+      "status": 200,
+      "bytes": 691,
+      "items": 4,
+      "validM3u": true,
+      "allEntriesHttps": true
+    },
+    "guide": {
+      "url": "https://youriptv.us/review-media/epg.php",
+      "status": 200,
+      "bytes": 93207,
+      "root": "tv",
+      "channels": 2,
+      "programmes": 384
+    },
+    "scope": "Source availability/parser checks only; no claim of Play-delivered playback or provider-specific features"
+  },
+  "evidence": {
+    "release": "screen-193753966135.png",
+    "preLaunchSettings": "screen-193900454710.png",
+    "feedback": "screen-194220755298.png",
+    "directory": "D:\\APK\\work\\YourIPTV-Play-Console-20261119T185224Z"
+  },
+  "instructions": "GooglePlay-Release-Ready/Review/Tester-Instructions.txt",
+  "guide": "GooglePlay-Release-Ready/Review/Closed-Test-Guide.md",
+  "feedbackTemplate": "GooglePlay-Release-Ready/Review/Closed-Test-Feedback-Template.csv",
+  "participantInstallsVerified": false,
+  "participantFeedbackFabricated": false,
+  "messagesSent": false,
+  "consoleConfigurationChanged": false,
+  "githubAction": false,
+  "customerFilesChanged": false,
+  "protectionChanged": false
+}

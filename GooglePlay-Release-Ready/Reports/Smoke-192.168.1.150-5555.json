@@ -1,0 +1,446 @@
+{
+  "package": "com.youriptv.app.playtest",
+  "runId": "722d56a1e534e7e9e436f9f2e4db997b",
+  "scope": "full",
+  "tests": 32,
+  "failures": 0,
+  "results": [
+    {
+      "name": "existing isolated playlists contain only recognized generated test media",
+      "status": "passed"
+    },
+    {
+      "name": "actual isolated installation currently has Settings Lock OFF",
+      "status": "passed"
+    },
+    {
+      "name": "fresh preferences persist OFF across Settings reconstruction",
+      "status": "passed"
+    },
+    {
+      "name": "explicit lock ON and OFF persist independently of Admin and parental PINs",
+      "status": "passed"
+    },
+    {
+      "name": "existing explicit lock ON survives upgrade initialization",
+      "status": "passed"
+    },
+    {
+      "name": "existing explicit lock OFF survives upgrade initialization",
+      "status": "passed"
+    },
+    {
+      "name": "unknown existing lock provenance remains protected",
+      "status": "passed"
+    },
+    {
+      "name": "new installations require local Admin setup with no shared default",
+      "status": "passed"
+    },
+    {
+      "name": "custom Settings PIN cannot authorize Admin and parental lockout is independent",
+      "status": "passed"
+    },
+    {
+      "name": "installed Play manifest has no self-installer or overlay permission",
+      "status": "passed"
+    },
+    {
+      "name": "isolated QA permits literal loopback cleartext and blocks remote cleartext",
+      "status": "passed"
+    },
+    {
+      "name": "shared browser opens and responds to D-pad focus",
+      "status": "passed"
+    },
+    {
+      "name": "normal Settings UI opens directly without a PIN",
+      "status": "passed"
+    },
+    {
+      "name": "Settings Lock enables and disables through authenticated Admin UI",
+      "status": "passed"
+    },
+    {
+      "name": "About opens offline privacy policy inside the same app",
+      "status": "passed"
+    },
+    {
+      "name": "phone portrait resources inflate with shared browser controls",
+      "status": "passed"
+    },
+    {
+      "name": "tablet portrait resources inflate with shared browser controls",
+      "status": "passed"
+    },
+    {
+      "name": "synthetic M3U Plus playlist imports and refreshes independently",
+      "status": "passed"
+    },
+    {
+      "name": "synthetic XMLTV refresh provides integrated programme data",
+      "status": "passed"
+    },
+    {
+      "name": "synthetic Xtream account imports and preserves the provider one-connection limit",
+      "status": "passed"
+    },
+    {
+      "name": "shared live guide displays imported channels and accepts remote navigation",
+      "status": "passed"
+    },
+    {
+      "name": "one shared Media3 player renders synthetic live MPEG-TS",
+      "status": "passed"
+    },
+    {
+      "name": "RIGHT without channel history is safe",
+      "status": "passed"
+    },
+    {
+      "name": "channel switching and RIGHT recall toggle within the current queue",
+      "status": "passed"
+    },
+    {
+      "name": "channel overlay consumes RIGHT before previous-channel recall",
+      "status": "passed"
+    },
+    {
+      "name": "AndroidX Back dismisses the live channel overlay without exiting playback",
+      "status": "passed"
+    },
+    {
+      "name": "AndroidX Back cancels numeric entry before it can change the channel",
+      "status": "passed"
+    },
+    {
+      "name": "AndroidX Back hides Info before exiting fullscreen live playback",
+      "status": "passed"
+    },
+    {
+      "name": "fullscreen MPEG-TS recovers repeatedly from synthetic clean stream ends",
+      "status": "passed"
+    },
+    {
+      "name": "bounded 180s synthetic clean-end recovery with preserved slow backoff",
+      "status": "passed"
+    },
+    {
+      "name": "synthetic movie VOD renders advancing decoded frames and finishes at clean EOF",
+      "status": "passed"
+    },
+    {
+      "name": "synthetic episode VOD renders advancing decoded frames and finishes at clean EOF",
+      "status": "passed"
+    }
+  ],
+  "fixtureStats": {
+    "before": {
+      "full_gets": {
+        "\/epg.xml": 8,
+        "\/playlist.m3u": 4,
+        "\/player_api.php": 28,
+        "\/channel1.ts": 16,
+        "\/channel2.ts": 58,
+        "\/stats": 142,
+        "\/movie\/generated.ts": 6,
+        "\/series\/generated.ts": 6
+      },
+      "range_gets": {
+        "\/channel1.ts": 8,
+        "\/channel2.ts": 29,
+        "\/movie\/generated.ts": 3,
+        "\/series\/generated.ts": 3
+      }
+    },
+    "after": {
+      "full_gets": {
+        "\/epg.xml": 8,
+        "\/playlist.m3u": 4,
+        "\/player_api.php": 28,
+        "\/channel1.ts": 16,
+        "\/channel2.ts": 64,
+        "\/stats": 185,
+        "\/movie\/generated.ts": 6,
+        "\/series\/generated.ts": 6
+      },
+      "range_gets": {
+        "\/channel1.ts": 8,
+        "\/channel2.ts": 32,
+        "\/movie\/generated.ts": 3,
+        "\/series\/generated.ts": 3
+      }
+    },
+    "observedEndedDelta": 3,
+    "renderedFirstFrameDelta": 3,
+    "observationMs": 24012
+  },
+  "soakStats": {
+    "requestedSeconds": 180,
+    "actualDurationMs": 180366,
+    "cleanEndedDelta": 5,
+    "renderedFirstFrameDelta": 4,
+    "fullGetDelta": 8,
+    "playerErrorDelta": 0,
+    "requiredCycles": 4,
+    "boundedCycleMs": 42500,
+    "maximumExpectedNotPlayingMs": 46500,
+    "slowRetryPolicyMs": 30000,
+    "stablePlaybackResetPolicyMs": 10000,
+    "slowGuardSamples": 276,
+    "completedSlowRecoveries": 4,
+    "thresholdRationale": "Six-second clips cannot satisfy the preserved ten-second stable reset. After three quick reopens, thirty-second slow retries are expected; this measures repeated recovery including those gaps, not uninterrupted playback.",
+    "playingSamples": 60,
+    "totalSamples": 360,
+    "longestObservedNotPlayingMs": 33046,
+    "samples": [
+      {
+        "elapsedMs": 1,
+        "playbackState": 3,
+        "isPlaying": true,
+        "slowRecoveryGuard": false,
+        "hasPendingRestart": false,
+        "videoWidth": 640,
+        "videoHeight": 360
+      },
+      {
+        "elapsedMs": 10015,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 20030,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 30044,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 40059,
+        "playbackState": 3,
+        "isPlaying": true,
+        "slowRecoveryGuard": false,
+        "hasPendingRestart": false,
+        "videoWidth": 640,
+        "videoHeight": 360
+      },
+      {
+        "elapsedMs": 50073,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 60087,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 70101,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 80116,
+        "playbackState": 3,
+        "isPlaying": true,
+        "slowRecoveryGuard": false,
+        "hasPendingRestart": false,
+        "videoWidth": 640,
+        "videoHeight": 360
+      },
+      {
+        "elapsedMs": 90130,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 100144,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 110159,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 120171,
+        "playbackState": 3,
+        "isPlaying": true,
+        "slowRecoveryGuard": false,
+        "hasPendingRestart": false,
+        "videoWidth": 640,
+        "videoHeight": 360
+      },
+      {
+        "elapsedMs": 130185,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 140199,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 150213,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      },
+      {
+        "elapsedMs": 160228,
+        "playbackState": 3,
+        "isPlaying": true,
+        "slowRecoveryGuard": false,
+        "hasPendingRestart": false,
+        "videoWidth": 640,
+        "videoHeight": 360
+      },
+      {
+        "elapsedMs": 170243,
+        "playbackState": 1,
+        "isPlaying": false,
+        "slowRecoveryGuard": true,
+        "hasPendingRestart": true,
+        "videoWidth": 0,
+        "videoHeight": 0
+      }
+    ],
+    "serverBefore": {
+      "full_gets": {
+        "\/epg.xml": 8,
+        "\/playlist.m3u": 4,
+        "\/player_api.php": 28,
+        "\/channel1.ts": 16,
+        "\/channel2.ts": 64,
+        "\/stats": 186,
+        "\/movie\/generated.ts": 6,
+        "\/series\/generated.ts": 6
+      },
+      "range_gets": {
+        "\/channel1.ts": 8,
+        "\/channel2.ts": 32,
+        "\/movie\/generated.ts": 3,
+        "\/series\/generated.ts": 3
+      }
+    },
+    "serverAfter": {
+      "full_gets": {
+        "\/epg.xml": 8,
+        "\/playlist.m3u": 4,
+        "\/player_api.php": 28,
+        "\/channel1.ts": 16,
+        "\/channel2.ts": 72,
+        "\/stats": 187,
+        "\/movie\/generated.ts": 6,
+        "\/series\/generated.ts": 6
+      },
+      "range_gets": {
+        "\/channel1.ts": 8,
+        "\/channel2.ts": 36,
+        "\/movie\/generated.ts": 3,
+        "\/series\/generated.ts": 3
+      }
+    }
+  },
+  "browserFocusStats": {
+    "directionalKeyActivatedFocus": false,
+    "beforeDpad": {
+      "mainWindowFocused": true,
+      "focusedControlVisible": true,
+      "navigationVisible": false,
+      "guideVisible": true
+    },
+    "afterDpad": {
+      "mainWindowFocused": true,
+      "focusedControlVisible": true,
+      "navigationVisible": false,
+      "guideVisible": true
+    }
+  },
+  "vodSeriesStats": {
+    "movie": {
+      "kind": "MOVIE",
+      "renderedFrameDelta": 13,
+      "positionMs": 494,
+      "width": 640,
+      "height": 360,
+      "videoMime": "video\/avc",
+      "playerError": false,
+      "observedEndedEvents": 1,
+      "activityFinishedAfterEnd": true
+    },
+    "episode": {
+      "kind": "EPISODE",
+      "renderedFrameDelta": 10,
+      "positionMs": 471,
+      "width": 640,
+      "height": 360,
+      "videoMime": "video\/avc",
+      "playerError": false,
+      "observedEndedEvents": 1,
+      "activityFinishedAfterEnd": true
+    }
+  },
+  "networkSecurityStats": {
+    "remoteCleartextAllowed": false,
+    "literalLoopbackAllowed": true,
+    "loopbackLookalikeAllowed": false,
+    "scope": "Actual isolated QA NetworkSecurityPolicy; production packaging is audited separately and has no loopback exception"
+  },
+  "isolatedBrowserAutoResumeDisabledDuringUiTests": true,
+  "originalResumeLastChannel": false,
+  "restoredResumeLastChannel": false,
+  "limitations": "Settings reconstruction tests are not process death. Phone\/tablet resource inflation on TV is not real phone testing. D-pad input is injected through ADB\/instrumentation, not a physical remote."
+}

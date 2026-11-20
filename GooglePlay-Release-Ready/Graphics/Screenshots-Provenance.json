@@ -1,0 +1,203 @@
+{
+  "method": "Actual app screenshots only; no generated/reconstructed UI, text overlays, UI crop or stretch.",
+  "captures": [
+    {
+      "device": "tv",
+      "role": "synthetic-guide",
+      "alt": "Programme guide with authorized generated channels",
+      "output": "Android-TV-Screenshots/synthetic-guide.png",
+      "width": 1920,
+      "height": 1080,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 87736,
+      "sha256": "a90cad1a1a48d781ac19fd5da792e63fe2c0e141e01679f1b01fdc9b80c70e6f",
+      "source": {
+        "path": "Sources/Raw-Captures/tv/synthetic-guide.png",
+        "width": 1920,
+        "height": 1080,
+        "sha256": "a90cad1a1a48d781ac19fd5da792e63fe2c0e141e01679f1b01fdc9b80c70e6f",
+        "rgbPixelsSha256": "c77423d6001723d4051ae98de89abfd594c292075b9ce62ccefadd621199d511"
+      },
+      "formatting": {
+        "addedCanvasPixelsOnly": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "uiPixelScale": 1,
+        "sourceRgbPixelsExactlyPreserved": true
+      },
+      "captureProvenance": {
+        "package": "com.youriptv.app.playtest",
+        "productionVersion": "1.0.9/code48",
+        "source": "Actual framework UI screenshot from the current successful complete device suite",
+        "mediaRights": "Locally generated test pattern; no external television or private provider data",
+        "qaDifference": "Separate QA package/debug signing/loopback fixture; final shared production layouts and player. Not a Play-generated installation."
+      }
+    },
+    {
+      "device": "tv",
+      "role": "synthetic-movie",
+      "alt": "Shared movie playback controls over locally generated media",
+      "output": "Android-TV-Screenshots/synthetic-movie.png",
+      "width": 1920,
+      "height": 1080,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 226577,
+      "sha256": "ba502e40362f74b31a3c1623003526e629f3a16a40ce740f58eb2a7c32dc700c",
+      "source": {
+        "path": "Sources/Raw-Captures/tv/synthetic-movie.png",
+        "width": 1920,
+        "height": 1080,
+        "sha256": "ba502e40362f74b31a3c1623003526e629f3a16a40ce740f58eb2a7c32dc700c",
+        "rgbPixelsSha256": "79bb842976541c3e11fb169e4b83e47f6669aca634e5495f51c3f59ddc5b1f0c"
+      },
+      "formatting": {
+        "addedCanvasPixelsOnly": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "uiPixelScale": 1,
+        "sourceRgbPixelsExactlyPreserved": true
+      },
+      "captureProvenance": {
+        "package": "com.youriptv.app.playtest",
+        "productionVersion": "1.0.9/code48",
+        "source": "Actual framework UI screenshot from the current successful complete device suite",
+        "mediaRights": "Locally generated test pattern; no external television or private provider data",
+        "qaDifference": "Separate QA package/debug signing/loopback fixture; final shared production layouts and player. Not a Play-generated installation."
+      }
+    },
+    {
+      "device": "tv",
+      "role": "privacy",
+      "alt": "Offline privacy information inside YourIPTV",
+      "output": "Android-TV-Screenshots/privacy.png",
+      "width": 1920,
+      "height": 1080,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 500674,
+      "sha256": "9b7c6f187a57a222648366b2b0ecc44333d86078e34dad2247234fd95e2be868",
+      "source": {
+        "path": "Sources/Raw-Captures/tv/privacy.png",
+        "width": 1920,
+        "height": 1080,
+        "sha256": "9b7c6f187a57a222648366b2b0ecc44333d86078e34dad2247234fd95e2be868",
+        "rgbPixelsSha256": "4e60002ffcfdcd9c6045ae1b1bd0980c2760b43f3a3fcb5a94a6a95d549b0cfb"
+      },
+      "formatting": {
+        "addedCanvasPixelsOnly": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "uiPixelScale": 1,
+        "sourceRgbPixelsExactlyPreserved": true
+      },
+      "captureProvenance": {
+        "package": "com.youriptv.app.playtest",
+        "productionVersion": "1.0.9/code48",
+        "source": "Actual framework UI screenshot from the current successful complete device suite",
+        "mediaRights": "Locally generated test pattern; no external television or private provider data",
+        "qaDifference": "Separate QA package/debug signing/loopback fixture; final shared production layouts and player. Not a Play-generated installation."
+      }
+    },
+    {
+      "device": "phone",
+      "role": "synthetic-guide",
+      "alt": "Programme guide with authorized generated channels",
+      "output": "Phone-Screenshots/synthetic-guide.png",
+      "width": 2400,
+      "height": 1350,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 117186,
+      "sha256": "f80456c7431835c8272ce2e5df2cd555c22cca99be370e55e679605ec1d4458c",
+      "source": {
+        "path": "Sources/Raw-Captures/phone/synthetic-guide.png",
+        "width": 2340,
+        "height": 1080,
+        "sha256": "59fa12d7bb0c1d3b5aa2cab61c533a63702c0374b7bb89a11892e46e7b7bcbb8",
+        "rgbPixelsSha256": "f3d3d776628227519dd36734bcb8719365cb8d8078f07f76d61bb7b9a0e54e3c"
+      },
+      "formatting": {
+        "addedCanvasPixelsOnly": true,
+        "offsetX": 30,
+        "offsetY": 135,
+        "uiPixelScale": 1,
+        "sourceRgbPixelsExactlyPreserved": true
+      },
+      "captureProvenance": {
+        "package": "com.youriptv.app.playtest",
+        "productionVersion": "1.0.9/code48",
+        "source": "Actual framework UI screenshot from the current successful complete device suite",
+        "mediaRights": "Locally generated test pattern; no external television or private provider data",
+        "qaDifference": "Separate QA package/debug signing/loopback fixture; final shared production layouts and player. Not a Play-generated installation."
+      }
+    },
+    {
+      "device": "phone",
+      "role": "synthetic-movie",
+      "alt": "Shared movie playback controls over locally generated media",
+      "output": "Phone-Screenshots/synthetic-movie.png",
+      "width": 2400,
+      "height": 1350,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 238834,
+      "sha256": "9ced4031d6219e6d7564c8d9007e72cf7331a4ae5375ff6a79bd77f602f66f8f",
+      "source": {
+        "path": "Sources/Raw-Captures/phone/synthetic-movie.png",
+        "width": 2340,
+        "height": 1080,
+        "sha256": "d3a06b24b596b6e10d6f13a5e537f8f96abf56f9dd4ed50a87828b38c6677cde",
+        "rgbPixelsSha256": "5429318adb0766a98b46eedde926edb302a6a4cb6327ac3b9092208266c8ae03"
+      },
+      "formatting": {
+        "addedCanvasPixelsOnly": true,
+        "offsetX": 30,
+        "offsetY": 135,
+        "uiPixelScale": 1,
+        "sourceRgbPixelsExactlyPreserved": true
+      },
+      "captureProvenance": {
+        "package": "com.youriptv.app.playtest",
+        "productionVersion": "1.0.9/code48",
+        "source": "Actual framework UI screenshot from the current successful complete device suite",
+        "mediaRights": "Locally generated test pattern; no external television or private provider data",
+        "qaDifference": "Separate QA package/debug signing/loopback fixture; final shared production layouts and player. Not a Play-generated installation."
+      }
+    },
+    {
+      "device": "phone",
+      "role": "privacy",
+      "alt": "Offline privacy information inside YourIPTV",
+      "output": "Phone-Screenshots/privacy.png",
+      "width": 2400,
+      "height": 1350,
+      "bitDepth": 8,
+      "colorType": 2,
+      "bytes": 138317,
+      "sha256": "43b1a578a3e6291e60e7923ef5a82f17d769d4998e80095b3aa1a73a22932deb",
+      "source": {
+        "path": "Sources/Raw-Captures/phone/privacy.png",
+        "width": 2340,
+        "height": 1080,
+        "sha256": "ded6c7f61e0fcff713834b93a6ad0f58aa48db16d642348e71f2944a25a629ce",
+        "rgbPixelsSha256": "4a5f89e8ad7ba7847571c044ed5121dd90e11087ce610dfb9f3113a259f9b9c0"
+      },
+      "formatting": {
+        "addedCanvasPixelsOnly": true,
+        "offsetX": 30,
+        "offsetY": 135,
+        "uiPixelScale": 1,
+        "sourceRgbPixelsExactlyPreserved": true
+      },
+      "captureProvenance": {
+        "package": "com.youriptv.app.playtest",
+        "productionVersion": "1.0.9/code48",
+        "source": "Actual framework UI screenshot from the current successful complete device suite",
+        "mediaRights": "Locally generated test pattern; no external television or private provider data",
+        "qaDifference": "Separate QA package/debug signing/loopback fixture; final shared production layouts and player. Not a Play-generated installation."
+      }
+    }
+  ]
+}

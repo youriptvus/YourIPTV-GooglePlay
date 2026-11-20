@@ -1,6 +1,8 @@
 # Signing and package compatibility
 
-> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+> **Current final signing handoff:** [Reports/Signing-Report.md](../GooglePlay-Release-Ready/Reports/Signing-Report.md). Existing keys remain external and unchanged. The final completion AAB signature/hash is recorded by the new build report; the prior identity below remains historical/reference.
+
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. The latest final-completion request authorizes safe isolated checks; customer packages/data remain protected. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
 
 Production remains com.youriptv.app. Separate Git history does not change Android signing rules. Same package cannot ordinarily coexist with the customer app; updates need appropriate certificate compatibility and a higher versionCode.
 

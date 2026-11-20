@@ -1,0 +1,23 @@
+YourIPTV closed test — 1.0.9 (code50)
+
+The closed test is now available. Use the same Google account that joined the test on both this page and your Android device's Play Store:
+https://play.google.com/apps/testing/com.youriptv.app
+
+Follow the Google Play installation link on that page, then open YourIPTV. Confirm the original collage icon and About version1.0.9/code50. If installation/update fails, report the message; do not delete an existing app or clear its data to force installation.
+
+Use the app throughout the test and remain opted in continuously for14 days. Please test:
+- Adding your own authorized HTTPS playlist or Xtream source and guide.
+- Live preview, fullscreen, channel switching and Back.
+- Movies and series, where provided by your source.
+- Phone touch controls or Android TV remote/D-pad navigation.
+- Background/return, closing/reopening, saved settings and useful error messages.
+- Fresh Settings opens without a Settings PIN. Only test optional Admin/parental PINs on a configuration you control.
+
+If you do not have a provider, these optional generated test patterns can exercise the player:
+Playlist: https://youriptv.us/review-media/playlist.m3u
+Guide: https://youriptv.us/review-media/epg.php
+They contain synthetic test content, not commercial channels or subscriptions. Xtream authentication, catch-up and provider-specific behaviour require your own authorized source.
+
+Send real feedback through the app's private Google Play test feedback or to admin@youriptv.us. Include device model, Android version, app version, steps, expected result and actual result. Report successful checks as well as problems. Never send passwords, private playlist URLs or exported backups.
+
+Stay in the CLOSED test for the continuous period. If you are still enrolled in the separate internal test, leave internal testing first, then join the closed test using the link above. Do not leave/rejoin the closed test during the continuous period.

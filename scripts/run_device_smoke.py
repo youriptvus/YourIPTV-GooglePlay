@@ -136,14 +136,18 @@ def main():
         command += [f'{TEST_PACKAGE}/com.youriptv.app.PlaySmokeInstrumentation']
         output = adb(*command, timeout=300 + args.soak_seconds)
         (evidence / 'instrumentation.txt').write_text(output, encoding='utf-8')
-        remote = f'/sdcard/Android/data/{PACKAGE}/files'
-        adb('pull', f'{remote}/play-smoke-results.json', evidence / 'play-smoke-results.json')
+        remote = 'files'
+        def pull_private(relative, destination):
+            data = subprocess.check_output([str(args.adb), '-s', args.serial, 'exec-out',
+                                            'run-as', PACKAGE, 'cat', relative], timeout=30)
+            destination.write_bytes(data)
+        pull_private(f'{remote}/play-smoke-results.json', evidence / 'play-smoke-results.json')
         report = json.loads((evidence / 'play-smoke-results.json').read_text(encoding='utf-8'))
         if report.get('runId') != run_id:
             raise RuntimeError('Instrumentation did not produce a fresh report for this run')
         args.screenshots.mkdir(parents=True, exist_ok=True)
         # Focused reruns copy only screenshots that their successful cases recaptured.
-        screenshots = adb('shell', 'ls', f'{remote}/screenshots').splitlines() if args.scope == 'full' else []
+        screenshots = adb('shell', 'run-as', PACKAGE, 'ls', f'{remote}/screenshots').splitlines() if args.scope == 'full' else []
         if args.scope == 'browser-and-settings' and any(
                 row['name'] == 'normal Settings UI opens directly without a PIN' and row['status'] == 'passed'
                 for row in report['results']):
@@ -152,7 +156,7 @@ def main():
         for filename in screenshots:
             if not re.fullmatch(r'(tv-onn|phone-samsung)-playtest-[a-z-]+\.png', filename):
                 raise RuntimeError('Unexpected screenshot filename; refusing arbitrary file copy')
-            adb('pull', f'{remote}/screenshots/{filename}', args.screenshots / filename)
+            pull_private(f'{remote}/screenshots/{filename}', args.screenshots / filename)
         if report['failures'] == 0:
             print('Checking actual test-process restart and same-version package replacement', flush=True)
             initial = play_policy()

@@ -12,6 +12,7 @@
         android:textSize="14sp" android:textColor="@color/text_dim" android:paddingTop="4dp" android:paddingBottom="8dp"
         android:maxLines="4" android:ellipsize="end" />
     <HorizontalScrollView
+        android:id="@+id/list_actions_scroll" android:visibility="gone"
         android:layout_width="match_parent" android:layout_height="wrap_content"
         android:fillViewport="true" android:scrollbars="horizontal" android:focusable="false">
         <LinearLayout

@@ -1,6 +1,8 @@
+> Current final delivery (November 18): GooglePlay-Release-Ready/START-HERE.md and Reports/Final-Delivery-Report.md are authoritative. Signed artifacts, current phone/TV/public HTTPS/ATF checks and public privacy verification passed; owner Console/signing/declarations/testing/approval gates remain. Earlier phase numbers and pending-hosting statements below are historical.
+
 # Play candidate test report
 
-> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. The latest final-completion request authorizes safe isolated checks; customer packages/data remain protected. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
 
 The current HTTPS-only secure candidate, production source `cc13ebe5bba6dfba1fd00d38e976ce2c1756e4f3`, is being prepared separately under `artifacts/code48-secure/`. Secure-source host results passed 414 JVM tests / 57 classes, focused 61 / 6 classes, verifier tests 6/6 and full lint (0 errors, 272 warnings); final signing/compiled-artifact results are pending. The 401-test HTTP-integrity build and first 81-check code 48 artifact audit predate this transport change and are intermediate/superseded. Root-level code 45 evidence remains historical. See [current secure status](CURRENT_STATUS.md).
 

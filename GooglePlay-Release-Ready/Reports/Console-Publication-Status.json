@@ -1,0 +1,226 @@
+{
+  "generatedUtc": "2026-11-20T19:43:23.579971+00:00",
+  "versionName": "1.0.9",
+  "versionCode": 50,
+  "appId": "com.youriptv.app",
+  "automaticProtection": true,
+  "originalIconRestored": true,
+  "internalRelease": "Available to internal testers; not reviewed",
+  "productionPublished": false,
+  "allSubmissionStepsComplete": false,
+  "dashboardSetupCompleted": 12,
+  "dashboardSetupTotal": 12,
+  "publishingReviewLocked": false,
+  "savedDeclarations": {
+    "privacyPolicy": "https://youriptv.us/privacy",
+    "appAccessRestricted": false,
+    "ads": false,
+    "category": "Video Players & Editors",
+    "support": "admin@youriptv.us",
+    "website": "https://youriptv.us",
+    "targetAudience": [
+      "13-15",
+      "16-17",
+      "18 and over"
+    ],
+    "contentRating": "IARC saved; North America Everyone, Brazil All Ages, other displayed regions 3+",
+    "governmentApp": false,
+    "financialFeatures": false,
+    "healthFeatures": false,
+    "appTraderStatus": "Non-trader app exception; developer account remains trader",
+    "advertisingIdUsed": false
+  },
+  "storeListing": {
+    "status": "Published to test listing; no pending changes shown in Publishing overview",
+    "originalCollageIcon": true,
+    "featureGraphic": true,
+    "phoneScreenshotsApplied": 2,
+    "tvScreenshotsApplied": 2,
+    "tvBannerApplied": true,
+    "pending": null,
+    "aiLabels": {
+      "originalCollageIcon": true,
+      "featureGraphic": true,
+      "tvBanner": true,
+      "phoneAndTvScreenshots": false
+    },
+    "originalIconAiProvenance": "Owner confirmed AI was used on November 19, 2026"
+  },
+  "dataSafety": {
+    "status": "Submitted changes published; no pending changes shown in Publishing overview",
+    "collectionOrSharing": true,
+    "encryptedInTransit": true,
+    "appAccountCreation": false,
+    "externalSourceAccounts": true,
+    "externalCreationMethod": "Out of app identification/service subscription",
+    "types": {
+      "User IDs": {
+        "collected": true,
+        "shared": true,
+        "ephemeral": false,
+        "optional": true,
+        "purposes": [
+          "App functionality"
+        ]
+      },
+      "App interactions": {
+        "collected": true,
+        "shared": true,
+        "ephemeral": false,
+        "optional": false,
+        "purposes": [
+          "App functionality"
+        ]
+      },
+      "Files and docs": {
+        "collected": true,
+        "shared": false,
+        "ephemeral": false,
+        "optional": true,
+        "purposes": [
+          "App functionality"
+        ],
+        "basis": "Explicit backup export may use a user-selected cloud document provider. Sharing exception is limited to the user-initiated export to the selected destination, not every app transfer."
+      }
+    },
+    "optionalDeletionClaim": "Unanswered; no unverified operational promise",
+    "pending": null,
+    "controlledWebsiteHosting": "iFastNet; owner confirmed",
+    "scope": "No embedded WebView, developer telemetry or configured remote-brand endpoint. Website URL is plain About text; privacy text is bundled offline. General website statistics are not an automatic app flow.",
+    "ipAssessment": "No app/SDK location inference or individual-device identifier implementation found. IP visibility to configured source servers remains disclosed in privacy policy; no ephemeral-processing claim is made."
+  },
+  "closedTesting": {
+    "track": "Alpha",
+    "trackId": "4700537065887660351",
+    "status": "Published active closed test",
+    "countriesTargeted": 178,
+    "countryScope": "All countries/regions offered by Console",
+    "testerList": "YourIPTV internal testers",
+    "selectedTesterCount": 12,
+    "feedback": "admin@youriptv.us",
+    "versionCode": 50,
+    "reviewErrors": [],
+    "explanation": "Closed release and minimum12 requirements checked complete;14-day requirement unchecked. No date, engagement or feedback fabricated.",
+    "eligibility": "After closed rollout, at least 12 real testers continuously opted in for 14 days, then production-access application and Google review.",
+    "optedInTestersObserved": 12,
+    "productionAccessGranted": false,
+    "webOptInUrl": "https://play.google.com/apps/testing/com.youriptv.app",
+    "testClock": "Keep at least12 real participants continuously opted in for14 days. Apply for production remains disabled.",
+    "testerRecruitment": "Owner resumed and reported all12 opted in; minimum12 requirement checked complete in Console",
+    "minimumTwelveConfirmed": true,
+    "minimumTwelveFirstObservedUtc": "2026-11-20T19:33:22Z",
+    "fourteenDaysComplete": false,
+    "approximateFourteenDayCheck": "2026-12-04; estimate based on first observed minimum12 confirmation, not a Google-provided eligibility timestamp",
+    "activeTestPlan": {
+      "checkedUtc": "2026-11-20T19:43:23.579971+00:00",
+      "versionCode": 50,
+      "closedRelease": "Available to selected testers",
+      "releaseTimeConsoleEastern": "2026-11-19 17:11",
+      "minimumTwelveConfirmed": true,
+      "fourteenDaysComplete": false,
+      "nextPhase": "Participants install from Google Play, exercise features, remain opted in and send real feedback",
+      "feedbackAddress": "admin@youriptv.us",
+      "consoleFeedbackRoute": "user-feedback/beta-feedback",
+      "feedbackObserved": "No participant feedback entries displayed in Console at this check",
+      "preLaunchConfiguration": "No developer-login credentials or custom script; no app account gate. No generated report available at the earlier same-day overview check.",
+      "sampleSourceCheck": {
+        "transport": "Verified HTTPS; no redirects",
+        "playlist": {
+          "url": "https://youriptv.us/review-media/playlist.m3u",
+          "status": 200,
+          "bytes": 691,
+          "items": 4,
+          "validM3u": true,
+          "allEntriesHttps": true
+        },
+        "guide": {
+          "url": "https://youriptv.us/review-media/epg.php",
+          "status": 200,
+          "bytes": 93207,
+          "root": "tv",
+          "channels": 2,
+          "programmes": 384
+        },
+        "scope": "Source availability/parser checks only; no claim of Play-delivered playback or provider-specific features"
+      },
+      "evidence": {
+        "release": "screen-193753966135.png",
+        "preLaunchSettings": "screen-193900454710.png",
+        "feedback": "screen-194220755298.png",
+        "directory": "D:\\APK\\work\\YourIPTV-Play-Console-20261119T185224Z"
+      },
+      "instructions": "GooglePlay-Release-Ready/Review/Tester-Instructions.txt",
+      "guide": "GooglePlay-Release-Ready/Review/Closed-Test-Guide.md",
+      "feedbackTemplate": "GooglePlay-Release-Ready/Review/Closed-Test-Feedback-Template.csv",
+      "participantInstallsVerified": false,
+      "participantFeedbackFabricated": false,
+      "messagesSent": false,
+      "consoleConfigurationChanged": false,
+      "githubAction": false,
+      "customerFilesChanged": false,
+      "protectionChanged": false
+    }
+  },
+  "androidTv": {
+    "formFactorAdded": true,
+    "sharedBundleAndMobileTrack": true,
+    "screenshotsAndBanner": "Submitted in store listing",
+    "optIn": "Active in Console form factors"
+  },
+  "evidence": {
+    "internal50": "screen-204719212015.png",
+    "enhanced50": "screen-204633268168.png",
+    "targetAudienceSaved": "screen-204849709580.png",
+    "governmentSaved": "screen-204952292173.png",
+    "financialSaved": "screen-205125841891.png",
+    "healthSaved": "screen-205300892374.png",
+    "nonTraderSaved": "screen-205456860970.png",
+    "listingDraftSaved": "screen-210244858700.png",
+    "tvBannerApplied": "screen-210137721082.png",
+    "dataSafetyDraftSaved": "screen-211407409605.png",
+    "closedCountries178": "screen-211941474867.png",
+    "closedTestersSaved": "screen-212123492682.png",
+    "closedReviewErrors": "screen-212633875971.png",
+    "dashboard10of12": "screen-213202924224.png",
+    "publishingReviewLocked": "screen-213125243306.png",
+    "directory": "D:\\APK\\work\\YourIPTV-Play-Console-20261119T185224Z",
+    "listingReady": "screen-214843324769.png",
+    "aiIconAndFeatureSelected": "screen-214737600947.png",
+    "aiTvBannerSelected": "screen-214752264105.png",
+    "dataSafetySaved": "screen-215425592866.png",
+    "dataSafetyPreview": "screen-215351375167.png",
+    "tvOptIn": "screen-215514276341.png",
+    "closedReleaseReady": "screen-215551273675.png",
+    "advertisingIdSaved": "screen-215751945904.png",
+    "checksCleared": "screen-215859774990.png",
+    "seventeenChangesSent": "screen-215941558918.png",
+    "closedTrackInReview": "screen-220011293581.png",
+    "closedOptInLink": "screen-220048192334.png",
+    "dashboardInReviewProductionInactive": "screen-220121974888.png",
+    "latestReleasesInReview": "screen-220536428124.png",
+    "protectionStillOn": "screen-220721022101.png",
+    "dashboardTwelveConfirmed": "screen-193322888508.png",
+    "publishingNoPendingChanges": "screen-193411742295.png",
+    "androidTvActive": "screen-193512911953.png",
+    "closedTwelveAddressList": "screen-191648555967.png"
+  },
+  "githubAction": false,
+  "customerRepositoryChanged": false,
+  "websiteDeployment": false,
+  "freshCode50DeviceTest": false,
+  "freshProtectedPlayDeliveryTest": false,
+  "dashboardSetupComplete": true,
+  "reviewSubmission": {
+    "status": "Submitted changes published; closed testing active",
+    "changes": 17,
+    "submittedUtc": "2026-11-19T21:59:41Z",
+    "lastPublishedConsoleDate": "2026-11-19"
+  },
+  "dashboardSetupCountBasis": "Previous 12-item setup blockers cleared; review accepted. Current dashboard replaces setup checklist with In review/Production inactive.",
+  "preLaunchReport": {
+    "status": "No generated report available",
+    "checkedDate": "2026-11-20",
+    "evidence": "screen-193438463057.png",
+    "passed": null
+  }
+}

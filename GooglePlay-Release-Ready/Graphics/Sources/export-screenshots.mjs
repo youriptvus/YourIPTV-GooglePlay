@@ -10,6 +10,7 @@ const sources=path.dirname(fileURLToPath(import.meta.url));
 const graphics=path.dirname(sources);
 const manifestPath=process.argv[2];
 if(!manifestPath)throw new Error('Usage: node export-screenshots.mjs <reviewed-captures.json>');
+const checkOnly=process.argv.includes('--check-only');
 const inputs=JSON.parse(fs.readFileSync(manifestPath,'utf8')).captures;
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -38,15 +39,20 @@ try{
   for(const item of inputs){
     if(!['phone','tv'].includes(item.device))throw new Error('Unsupported capture device');
     if(path.basename(item.filename)!==item.filename||!item.filename.endsWith('.png'))throw new Error('Unsafe capture filename');
+    if(typeof item.alt!=='string'||!item.alt.trim()||item.alt.length>140)throw new Error('Capture alt text must be1-140characters');
     const raw=fs.readFileSync(item.source),source=rgbPixels(raw);
-    const rawDir=path.join(sources,'Raw-Captures',item.device);fs.mkdirSync(rawDir,{recursive:true});
-    const rawTarget=path.join(rawDir,item.filename);fs.copyFileSync(item.source,rawTarget);
+    const rawDir=path.join(sources,'Raw-Captures',item.device);
+    const rawTarget=path.join(rawDir,item.filename);
+    if(!checkOnly){fs.mkdirSync(rawDir,{recursive:true});fs.copyFileSync(item.source,rawTarget);}
     let width=source.width,height=source.height,x=0,y=0,encoded=raw;
     if(item.device==='tv'){
       if(width*9!==height*16)throw new Error('TV capture must be original high-resolution16:9');
       if(width<1920||height<1080)throw new Error('TV capture resolution too small');
     }else if(Math.max(width,height)>2*Math.min(width,height)){
-      if(width>height)height=Math.ceil(width/2);else width=Math.ceil(height/2);
+      // Exact16:9/9:16 presentation meets the promotional recommendation too.
+      const landscape=width>height;
+      const unit=Math.ceil(Math.max((landscape?width:height)/16,(landscape?height:width)/9)/10)*10;
+      width=(landscape?16:9)*unit;height=(landscape?9:16)*unit;
       x=Math.floor((width-source.width)/2);y=Math.floor((height-source.height)/2);
       const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#0e1116"/><image href="data:image/png;base64,${raw.toString('base64')}" x="${x}" y="${y}" width="${source.width}" height="${source.height}" image-rendering="pixelated"/></svg>`;
       const expression=`(async()=>{const im=new Image();im.src=${JSON.stringify('data:image/svg+xml;base64,'+Buffer.from(svg).toString('base64'))};await im.decode();const c=document.createElement('canvas');c.width=${width};c.height=${height};c.getContext('2d',{alpha:false}).drawImage(im,0,0);return c.toDataURL('image/png').split(',')[1];})()`;
@@ -60,12 +66,20 @@ try{
     if(!region.equals(source.rgb))throw new Error('Export modified actual UI pixels');
     if(Math.max(width,height)>3840||Math.min(width,height)<320||Math.max(width,height)>2*Math.min(width,height))throw new Error('Store screenshot dimensions invalid');
     const relative=(item.device==='phone'?'Phone-Screenshots':'Android-TV-Screenshots')+'/'+item.filename;
-    const out=path.join(graphics,relative);fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,normalized);
+    const out=path.join(graphics,relative);
+    if(!checkOnly){fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,normalized);}
     report.captures.push({device:item.device,role:item.role,alt:item.alt,output:relative,width,height,bitDepth:normalized[24],colorType:normalized[25],bytes:normalized.length,sha256:sha(normalized),
       source:{path:path.relative(graphics,rawTarget).replaceAll('\\','/'),width:source.width,height:source.height,sha256:sha(raw),rgbPixelsSha256:sha(source.rgb)},
       formatting:{addedCanvasPixelsOnly:x!==0||y!==0,offsetX:x,offsetY:y,uiPixelScale:1,sourceRgbPixelsExactlyPreserved:true},captureProvenance:item.provenance});
   }
-  fs.writeFileSync(path.join(graphics,'Screenshots-Provenance.json'),JSON.stringify(report,null,2)+'\n');
-  console.log(JSON.stringify({captures:report.captures.length,uiPixelsExactlyPreserved:true,files:report.captures.map(item=>({file:item.output,width:item.width,height:item.height,colorType:item.colorType}))},null,2));
+  if(!checkOnly){
+    fs.writeFileSync(path.join(graphics,'Screenshots-Provenance.json'),JSON.stringify(report,null,2)+'\n');
+    const alt=['App-Icon.png: YourIPTV silver and gold wordmark on a dark background.',
+      'Feature-Graphic.png: YourIPTV authorized playlist player for phones, tablets and Android TV.',
+      'Android-TV-Banner.png: YourIPTV wordmark and Your authorized playlists tagline on a dark gold background.',
+      ...report.captures.map(item=>item.output+': '+item.alt)];
+    fs.writeFileSync(path.join(graphics,'Alt-Text.txt'),alt.join('\n')+'\n','utf8');
+  }
+  console.log(JSON.stringify({checkOnly,captures:report.captures.length,uiPixelsExactlyPreserved:true,files:report.captures.map(item=>({file:item.output,width:item.width,height:item.height,colorType:item.colorType}))},null,2));
   await command('Browser.close');
 }finally{if(ws)ws.close();browser.kill();}

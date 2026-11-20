@@ -1,0 +1,37 @@
+{
+  "verifiedUtc": "2026-11-18T22:36:34.606172+00:00",
+  "readOnly": true,
+  "checks": [
+    {
+      "name": "privacy",
+      "url": "https://youriptv.us/privacy",
+      "status": 200,
+      "bytes": 11824,
+      "sha256": "bcd2dda899f87d67b89c2ef3419674031831feb54dfe015607089693b7c66378",
+      "contentType": "text/html",
+      "hasPlaySection": true,
+      "hasContact": true
+    },
+    {
+      "name": "playlist",
+      "url": "https://youriptv.us/review-media/playlist.m3u",
+      "status": 200,
+      "bytes": 691,
+      "sha256": "b174c566989569bcc65a3bba75da6f15df2eb63994731d5c9559ca21e63b500d",
+      "contentType": "audio/x-mpegurl",
+      "entries": 4
+    },
+    {
+      "name": "guide",
+      "url": "https://youriptv.us/review-media/epg.php",
+      "status": 200,
+      "bytes": 93207,
+      "sha256": "5fc5c75059287655bf19bf42bcf5efdce566c708193b810902b57fb3cfd7d260",
+      "contentType": "application/xml; charset=utf-8",
+      "programmes": 384
+    }
+  ],
+  "policyParagraphsVerified": 29,
+  "policyParagraphsMissing": 0,
+  "scope": "Read-only same-site HTTPS public checks and policy paragraph comparison; no deployment or global reachability claim."
+}

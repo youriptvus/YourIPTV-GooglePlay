@@ -1,0 +1,131 @@
+{
+  "ownerCorrection": "Restore full original collage icon; November19",
+  "files": [
+    {
+      "path": "app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "sha256": "05a8f99e01073ee741f7ad90663a26ef70ad75916d53422e2683b12e79788f7f",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-television-mdpi/ic_launcher.png",
+      "sha256": "05a8f99e01073ee741f7ad90663a26ef70ad75916d53422e2683b12e79788f7f",
+      "origin": "app/src/main/res/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+      "path": "app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
+      "sha256": "05a8f99e01073ee741f7ad90663a26ef70ad75916d53422e2683b12e79788f7f",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-television-mdpi/ic_launcher_round.png",
+      "sha256": "05a8f99e01073ee741f7ad90663a26ef70ad75916d53422e2683b12e79788f7f",
+      "origin": "app/src/main/res/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+      "path": "app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png",
+      "sha256": "c07311c7fe8bd09e6dee08de8348f8c90f007961d7daa1dc600137e2b3dba6ad",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "sha256": "cdc68586905edebad3438d7f7284d707640ad58fa32e8bfae2a37548d556eb93",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-television-hdpi/ic_launcher.png",
+      "sha256": "cdc68586905edebad3438d7f7284d707640ad58fa32e8bfae2a37548d556eb93",
+      "origin": "app/src/main/res/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+      "path": "app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
+      "sha256": "cdc68586905edebad3438d7f7284d707640ad58fa32e8bfae2a37548d556eb93",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-television-hdpi/ic_launcher_round.png",
+      "sha256": "cdc68586905edebad3438d7f7284d707640ad58fa32e8bfae2a37548d556eb93",
+      "origin": "app/src/main/res/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+      "path": "app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png",
+      "sha256": "fc22100370dd5cb51a86d4aaeb3bcc4adc3d0d5cf9fb49e7a72692bd620356de",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "sha256": "5e9ebb0f6cb1686d16edb3bd68c624391321e1f252118411b4cdaa3d46e14ef9",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-television-xhdpi/ic_launcher.png",
+      "sha256": "5e9ebb0f6cb1686d16edb3bd68c624391321e1f252118411b4cdaa3d46e14ef9",
+      "origin": "app/src/main/res/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+      "path": "app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
+      "sha256": "5e9ebb0f6cb1686d16edb3bd68c624391321e1f252118411b4cdaa3d46e14ef9",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-television-xhdpi/ic_launcher_round.png",
+      "sha256": "5e9ebb0f6cb1686d16edb3bd68c624391321e1f252118411b4cdaa3d46e14ef9",
+      "origin": "app/src/main/res/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+      "path": "app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png",
+      "sha256": "26d947a3a9444f5697db7f9a572da4215286ea95318069f9496fceb857105514",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "sha256": "05d812ae2052c45a33677b1131c8da217b83ff7540341bb5337e22aab63d9708",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-television-xxhdpi/ic_launcher.png",
+      "sha256": "05d812ae2052c45a33677b1131c8da217b83ff7540341bb5337e22aab63d9708",
+      "origin": "app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+      "path": "app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
+      "sha256": "05d812ae2052c45a33677b1131c8da217b83ff7540341bb5337e22aab63d9708",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-television-xxhdpi/ic_launcher_round.png",
+      "sha256": "05d812ae2052c45a33677b1131c8da217b83ff7540341bb5337e22aab63d9708",
+      "origin": "app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+      "path": "app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png",
+      "sha256": "d5237472d30fa17e578dce4da811311609df1cc33b24503b9463ddbd76ed9a0c",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "sha256": "e6ed2d535ca97ed9641963e0d381ee90b71af4a7e823731456dfd0dc52575f48",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-television-xxxhdpi/ic_launcher.png",
+      "sha256": "e6ed2d535ca97ed9641963e0d381ee90b71af4a7e823731456dfd0dc52575f48",
+      "origin": "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+      "path": "app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
+      "sha256": "e6ed2d535ca97ed9641963e0d381ee90b71af4a7e823731456dfd0dc52575f48",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    },
+    {
+      "path": "app/src/main/res/mipmap-television-xxxhdpi/ic_launcher_round.png",
+      "sha256": "e6ed2d535ca97ed9641963e0d381ee90b71af4a7e823731456dfd0dc52575f48",
+      "origin": "app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+      "path": "app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png",
+      "sha256": "c6d81d190457d2e42b5ad7defb8cf9e0c29e8ce217329bbe116968416a20f11c",
+      "origin": "Existing official customer launcher; copied byte for byte"
+    }
+  ],
+  "storeSourceSha256": "f93a6a5fb8cc0218c41f11878906f9c475f3b9f624bb8ac89f1e20e8975b741a"
+}

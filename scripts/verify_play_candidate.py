@@ -208,28 +208,30 @@ BACKUP_DOMAINS = {"root", "file", "database", "sharedpref", "external"}
 DEVICE_BACKUP_DOMAINS = {"device_root", "device_file", "device_database", "device_sharedpref"}
 
 
-def inspect_backup_xml(documents: dict[str, ET.Element]) -> dict:
+def inspect_backup_xml(documents: dict[str, ET.Element], minimum_sdk: int = 23) -> dict:
     def excluded(node: ET.Element | None, domains: set[str]) -> bool:
         if node is None:
             return False
         entries = node.findall("exclude")
         return len(entries) == len(domains) and {(entry.get("domain"), entry.get("path")) for entry in entries} == {(domain, ".") for domain in domains}
 
-    legacy23 = documents["legacy23"]
-    legacy24 = documents["legacy24"]
-    modern = documents["modern"]
+    legacy23 = documents.get("legacy23")
+    legacy24 = documents.get("legacy24")
+    modern = documents.get("modern")
     all_domains = BACKUP_DOMAINS | DEVICE_BACKUP_DOMAINS
     checks = {
-        "api23_full_backup_root": legacy23.tag == "full-backup-content",
-        "api23_all_domains_excluded": excluded(legacy23, BACKUP_DOMAINS),
-        "api24_full_backup_root": legacy24.tag == "full-backup-content",
+        "api24_full_backup_root": legacy24 is not None and legacy24.tag == "full-backup-content",
         "api24_all_domains_excluded": excluded(legacy24, all_domains),
-        "api31_extraction_root": modern.tag == "data-extraction-rules",
-        "api31_cloud_domains_excluded": excluded(modern.find("cloud-backup"), all_domains),
-        "api31_device_transfer_domains_excluded": excluded(modern.find("device-transfer"), all_domains),
+        "api31_extraction_root": modern is not None and modern.tag == "data-extraction-rules",
+        "api31_cloud_domains_excluded": excluded(modern.find("cloud-backup") if modern is not None else None, all_domains),
+        "api31_device_transfer_domains_excluded": excluded(modern.find("device-transfer") if modern is not None else None, all_domains),
         "no_backup_includes": all(not root.findall(".//include") for root in documents.values()),
     }
-    return {"checks": checks, "excluded_domains": {key: sorted({entry.get("domain", "") for entry in root.findall(".//exclude")}) for key, root in documents.items()}}
+    if minimum_sdk <= 23:
+        checks["api23_full_backup_root"] = legacy23 is not None and legacy23.tag == "full-backup-content"
+        checks["api23_all_domains_excluded"] = excluded(legacy23, BACKUP_DOMAINS)
+    return {"checks": checks, "minimum_supported_sdk": minimum_sdk,
+            "excluded_domains": {key: sorted({entry.get("domain", "") for entry in root.findall(".//exclude")}) for key, root in documents.items()}}
 
 
 def apk_xml_resource_table(dump: str) -> dict:
@@ -251,10 +253,13 @@ def apk_xml_resource_table(dump: str) -> dict:
 
 def backup_resources(args: argparse.Namespace, evidence: dict) -> None:
     specifications = {
-        "legacy23": ("backup_rules", "", "base/res/xml/backup_rules.xml"),
         "legacy24": ("backup_rules", "v24", "base/res/xml-v24/backup_rules.xml"),
         "modern": ("data_extraction_rules", "", "base/res/xml/data_extraction_rules.xml"),
     }
+    # The resource shrinker removes the API23-only fallback when minSdk is24.
+    # Supported API24+ still must exclude every credential and device-protected domain.
+    if args.min_sdk <= 23:
+        specifications["legacy23"] = ("backup_rules", "", "base/res/xml/backup_rules.xml")
     documents = {}
     paths = {}
     for key, (_, _, entry) in specifications.items():
@@ -264,7 +269,7 @@ def backup_resources(args: argparse.Namespace, evidence: dict) -> None:
             raise ValueError("Cannot decode packaged AAB backup rule: " + key)
         documents[key] = ET.fromstring(result["stdout"])
         paths[key] = entry
-    aab = inspect_backup_xml(documents)
+    aab = inspect_backup_xml(documents, args.min_sdk)
     aab["resource_entries"] = paths
     refs = evidence["aab"]["manifest"]["backup_rule_references"]
     aab["checks"]["manifest_full_backup_reference_matches"] = refs["fullBackupContent"] == "@xml/backup_rules"
@@ -280,6 +285,10 @@ def backup_resources(args: argparse.Namespace, evidence: dict) -> None:
     for key, (name, qualifier, _) in specifications.items():
         variants = resources.get(name, {}).get("configurations", [])
         matches = [variant["path"] for variant in variants if variant["qualifier"] == qualifier]
+        # aapt2 promotes a sole v24 resource to the default configuration when
+        # minSdk >=24. Its decoded exclusions below must still all pass.
+        if key == "legacy24" and args.min_sdk >= 24 and not matches and len(variants) == 1 and variants[0]["qualifier"] == "":
+            matches = [variants[0]["path"]]
         if len(matches) != 1:
             raise ValueError("Cannot resolve exactly one packaged APK backup configuration: " + key)
         paths[key] = matches[0]
@@ -288,7 +297,7 @@ def backup_resources(args: argparse.Namespace, evidence: dict) -> None:
         if result["exit_code"] != 0:
             raise ValueError("Cannot decode packaged APK backup rule: " + key)
         documents[key] = parse_aapt_xml(result["stdout"])
-    apk = inspect_backup_xml(documents)
+    apk = inspect_backup_xml(documents, args.min_sdk)
     apk["resource_entries"] = paths
     refs = evidence["apk"]["manifest"]["backup_rule_references"]
     for attribute, name, check in (("fullBackupContent", "backup_rules", "manifest_full_backup_reference_matches"),
@@ -452,9 +461,9 @@ def main() -> int:
     parser.add_argument("--baseline-inventory", type=Path)
     parser.add_argument("--forbidden-plaintext-file", type=Path, help="Optional external UTF-8 token file. Values are never included in evidence.")
     parser.add_argument("--application-id", default="com.youriptv.app")
-    parser.add_argument("--version-code", type=int, default=48)
+    parser.add_argument("--version-code", type=int, default=50)
     parser.add_argument("--version-name", default="1.0.9")
-    parser.add_argument("--min-sdk", type=int, default=23)
+    parser.add_argument("--min-sdk", type=int, default=24)
     parser.add_argument("--target-sdk", type=int, default=36)
     parser.add_argument("--require-signed", action="store_true", help="Fail unless both artifact signatures verify; otherwise unsigned is reported accurately.")
     parser.add_argument("--expected-certificate-sha256", default=OFFICIAL_CERTIFICATE_SHA256,

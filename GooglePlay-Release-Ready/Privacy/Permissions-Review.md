@@ -1,6 +1,6 @@
 # Permissions and data-access review
 
-Application: com.youriptv.app, current source1.0.9/proposed48. Final bundled permissions/signing are recorded in the final Build-Report and release audit; source manifest alone is not the final authority.
+Application: com.youriptv.app, current source 1.0.9/proposed code 48. Final bundled permissions/signing are recorded in the final Build-Report and release audit; source manifest alone is not the final authority.
 
 | Permission/component | Purpose and boundary |
 |---|---|

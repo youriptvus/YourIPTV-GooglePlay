@@ -1,5 +1,7 @@
 # Data safety audit and declaration decisions
 
+> **Current answer sheet:** [Privacy/Data-Safety-Answers.md](../GooglePlay-Release-Ready/Privacy/Data-Safety-Answers.md) gives concrete Console answers and the genuinely recipient-specific checks. Brand/contact are now supplied; no blanket no-collection or universal sharing exemption is asserted. This older source inventory remains supporting evidence.
+
 Source inventory, not a submitted form. Owner is responsible for all active artifacts, SDK behavior and organizational services. Verify final dependency graph, packaged code and actual runtime traffic; no traffic-capture pass is claimed here.
 
 | Flow | Storage/recipient | Purpose/limits |

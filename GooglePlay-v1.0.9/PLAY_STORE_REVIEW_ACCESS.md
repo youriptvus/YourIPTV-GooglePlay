@@ -1,4 +1,8 @@
+> Current final delivery (November 18): GooglePlay-Release-Ready/START-HERE.md and Reports/Final-Delivery-Report.md are authoritative. Signed artifacts, current phone/TV/public HTTPS/ATF checks and public privacy verification passed; owner Console/signing/declarations/testing/approval gates remain. Earlier phase numbers and pending-hosting statements below are historical.
+
 # Reviewer access and legal demonstration
+
+> **Current reviewer package:** [Review/Reviewer-Instructions.md](../GooglePlay-Release-Ready/Review/Reviewer-Instructions.md) uses the new local Demo-Content package. Its planned https://youriptv.us/review-media/ location is not deployed/reachability-verified. The old loopback/private trials below are historical.
 
 App starts without bundled content/subscription. Fresh normal Settings requires no Settings PIN. Reviewer access must demonstrate real features using legal, persistent sources.
 

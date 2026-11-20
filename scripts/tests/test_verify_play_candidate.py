@@ -45,5 +45,28 @@ class CompiledTransportPolicyTest(unittest.TestCase):
             self.assertEqual(expected, result['checks']['network_security_config_present'])
 
 
+class SupportedSdkBackupPolicyTest(unittest.TestCase):
+    def protected_documents(self):
+        domains = verifier.BACKUP_DOMAINS | verifier.DEVICE_BACKUP_DOMAINS
+        excludes = ''.join('<exclude domain="' + domain + '" path="."/>' for domain in domains)
+        return {'legacy24': ET.fromstring('<full-backup-content>' + excludes + '</full-backup-content>'),
+                'modern': ET.fromstring('<data-extraction-rules><cloud-backup>' + excludes +
+                                       '</cloud-backup><device-transfer>' + excludes +
+                                       '</device-transfer></data-extraction-rules>')}
+
+    def test_pruned_api23_variant_is_allowed_only_when_api23_is_unsupported(self):
+        documents = self.protected_documents()
+        self.assertTrue(all(verifier.inspect_backup_xml(documents, minimum_sdk=24)['checks'].values()))
+        self.assertFalse(all(verifier.inspect_backup_xml(documents, minimum_sdk=23)['checks'].values()))
+
+    def test_api24_device_credentials_and_api31_transfer_cannot_be_reincluded(self):
+        for document, parent, domain in [('legacy24', None, 'device_database'),
+                                          ('modern', 'device-transfer', 'sharedpref')]:
+            documents = self.protected_documents()
+            node = documents[document] if parent is None else documents[document].find(parent)
+            node.remove(next(entry for entry in node.findall('exclude') if entry.get('domain') == domain))
+            self.assertFalse(all(verifier.inspect_backup_xml(documents, minimum_sdk=24)['checks'].values()))
+
+
 if __name__ == '__main__':
     unittest.main()

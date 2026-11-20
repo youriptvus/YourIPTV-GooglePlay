@@ -4,7 +4,7 @@ CURRENT LOCAL VERSION: 1.0.9 / proposed versionCode 48; owner must verify Consol
 CATEGORY RECOMMENDATION: Video Players & Editors.
 SUPPORT / PRIVACY EMAIL: admin@youriptv.us
 WEBSITE: https://youriptv.us
-PRIVACY URL: https://youriptv.us/privacy (reachable; publish the prepared Play-inclusive policy before submission).
+PRIVACY URL: https://youriptv.us/privacy (public Play-inclusive policy verified; see Reports/Public-ReadOnly-Verification.json).
 PRICE: Free. No in-app purchases, player subscription, paywall or payment SDK identified.
 ADS: Select No for the audited build; no ad SDK or ad display flow is present.
 APP ACCESS: The app itself has no YourIPTV login. Media features require authorized source setup. Give reviewers the working HTTPS demo/account and Review/Reviewer-Instructions.md; do not mark all media features reviewable while source access is missing. Use the restricted-access declaration if the supplied provider account restricts features.

@@ -20,7 +20,7 @@ def main():
         content = (folder/name).read_bytes()
         if not content or len(content) % 188 or content[0] != 0x47:
             raise RuntimeError('Expected generated MPEG-TS media is missing or invalid')
-    playlist = f'''#EXTM3U x-tvg-url="{base}epg.xml"
+    playlist = f'''#EXTM3U x-tvg-url="{base}epg.php"
 #EXTINF:-1 tvg-id="synthetic1" group-title="Authorized review content",Synthetic Channel One
 {base}channel1.ts
 #EXTINF:-1 tvg-id="synthetic2" group-title="Authorized review content",Synthetic Channel Two

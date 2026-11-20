@@ -1,8 +1,8 @@
 {
-  "generatedUtc": "2026-11-18T03:20:54.999842+00:00",
+  "localPackageChecked": true,
+  "publicReadOnlyVerification": "../../Reports/Public-ReadOnly-Verification.json",
   "publicBase": "https://youriptv.us/review-media/",
-  "deployed": false,
-  "reachabilityVerified": false,
+  "deploymentPerformedThisContinuation": false,
   "files": {
     "channel1.ts": {
       "bytes": 1513964,
@@ -13,8 +13,12 @@
       "sha256": "755a4f5c83a0763fe9148c45d28b7c43ec72bf72313ba7497173854e42772e93"
     },
     "demo-manifest.json": {
-      "bytes": 964,
-      "sha256": "9e081362774bdd5433d64362d257f1af52b174d3735b45f343285766989edf0b"
+      "bytes": 1108,
+      "sha256": "07dcc66041eb0895c8cef3d0541c9b537dcd91b4d44323fbf511ad8c78b4bf52"
+    },
+    "epg.php": {
+      "bytes": 1003,
+      "sha256": "36ef913c1b15806de626c951f2c45968cde113f87c0ae65c2c9fc083eef9f638"
     },
     "epg.xml": {
       "bytes": 24298,
@@ -22,15 +26,15 @@
     },
     "playlist.m3u": {
       "bytes": 691,
-      "sha256": "b56c8ced9e79e192669f68086c52abb59797a369a0e3fc5d6786492d44f2c986"
+      "sha256": "b174c566989569bcc65a3bba75da6f15df2eb63994731d5c9559ca21e63b500d"
     },
     "README.md": {
-      "bytes": 2301,
-      "sha256": "69bf2eb48426b602229adde944fafcc212d5bcaa285d0906d48c9e505c9422a6"
+      "bytes": 1573,
+      "sha256": "b724a100a7c5f15a411fdba163b1947fbf3838fcc3360279da7c64da12230f6d"
     },
     "Regenerate-Demo.py": {
-      "bytes": 3561,
-      "sha256": "a481fa5626594482590c8562ee9c173a83be2fbc0e4d07001acff95087f5e0ae"
+      "bytes": 3618,
+      "sha256": "bb3b61cdaa19d9503c563d6374f66c687f7e44440fbd63d8a5c662a61b6858d3"
     }
   }
 }
