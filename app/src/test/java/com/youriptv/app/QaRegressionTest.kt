@@ -196,6 +196,23 @@ class QaRegressionTest {
     }
 
     @Test
+    fun delayedCategoryFocusCannotReplaceAnExplicitGuideDestination() {
+        val main = ui("MainActivity.kt")
+        val focused = main.substringAfter("private fun onGroupFocused(").substringBefore("private fun showFocusedGroup")
+        assertTrue(focused.contains("if (explicitGuideOwnsNavigation()) return"))
+        val load = main.substringAfter("private fun showFocusedGroup()").substringBefore("private fun showLockedGroup")
+        assertTrue(load.contains("liveLevel != LiveLevel.CATEGORIES"))
+        assertTrue(load.contains("!groupsView.hasFocus()"))
+        assertTrue(load.contains("if (focused != pos) return"))
+        val owner = main.substringAfter("private fun explicitGuideOwnsNavigation()").substringBefore("private fun onGroupFocused")
+        assertTrue(owner.contains("owner != userInputGeneration"))
+        val level = main.substringAfter("private fun setLiveLevel(").substringBefore("private fun sizeContentColumn")
+        assertTrue(level.contains("if (target == LiveLevel.GUIDE) handler.removeCallbacks(loadFocusedGroup)"))
+        val nav = main.substringAfter("private fun onNav(").substringBefore("private fun unlockSettings")
+        assertTrue(nav.contains("explicitGuideInputGeneration = null"))
+    }
+
+    @Test
     fun guideIsMergedIntoLiveTv() {
         val main = ui("MainActivity.kt")
         assertFalse("the rail must not list a separate guide", main.contains("GUIDE(\"TV guide\")"))

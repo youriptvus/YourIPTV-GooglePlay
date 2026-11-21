@@ -48,7 +48,7 @@ class VodUiInstrumentation : Instrumentation() {
     private fun checkStep(name: String, action: () -> Unit) {
         try { action(); results.put(JSONObject().put("name", name).put("passed", true)) }
         catch (e: Throwable) { failed++; results.put(JSONObject().put("name", name).put("passed", false)
-            .put("type", e.javaClass.simpleName).put("message", e.message.orEmpty().take(400))
+            .put("type", e.javaClass.simpleName).put("message", e.message.orEmpty().take(1600))
             .put("stack", e.stackTrace.take(8).joinToString("\n"))) }
     }
     private fun launch(type: Class<out Activity>, item: MediaItem): Activity {
@@ -240,11 +240,34 @@ class VodUiInstrumentation : Instrumentation() {
             checkStep("returning from background preserves completed episode choices without replay") {
                 val taskId = screen.taskId
                 onMain { check(screen.moveTaskToBack(true)) }
-                SystemClock.sleep(700)
+                fun backgroundDiagnostic(): String {
+                    var value = ""
+                    onMain {
+                        val active = screen.findViewById<PlayerView>(R.id.player_view).player
+                        value = JSONObject().put("lifecycle", (screen as androidx.appcompat.app.AppCompatActivity).lifecycle.currentState.name)
+                            .put("focused", screen.hasWindowFocus()).put("finishing", screen.isFinishing).put("destroyed", screen.isDestroyed)
+                            .put("playerPresent", active != null).put("playbackState", active?.playbackState)
+                            .put("dialogPresent", dialog() != null).put("dialogShowing", dialog()?.isShowing == true)
+                            .put("taskId", screen.taskId).put("topWindowPackage", uiAutomation.rootInActiveWindow?.packageName?.toString()).toString()
+                    }
+                    return value
+                }
+                try {
+                    await { (screen as androidx.appcompat.app.AppCompatActivity).lifecycle.currentState <= androidx.lifecycle.Lifecycle.State.CREATED ||
+                        screen.findViewById<PlayerView>(R.id.player_view).player == null }
+                } catch (failure: Throwable) {
+                    capture("background-stop-failure")
+                    throw IllegalStateException("Background did not stop/dispose player: ${backgroundDiagnostic()}", failure)
+                }
+                val beforeForeground = backgroundDiagnostic()
                 val manager = targetContext.getSystemService(android.content.Context.ACTIVITY_SERVICE) as android.app.ActivityManager
                 val task = manager.appTasks.first { it.taskInfo.taskId == taskId }
                 onMain { task.moveToFront() }
-                await { dialog()?.isShowing == true }
+                try { await { dialog()?.isShowing == true } }
+                catch (failure: Throwable) {
+                    capture("background-dialog-failure")
+                    throw IllegalStateException("Before foreground=$beforeForeground; after=${backgroundDiagnostic()}", failure)
+                }
                 onMain { check(!player(screen).isPlaying); check(player(screen).currentMediaItem == null)
                     dialog()!!.getButton(android.content.DialogInterface.BUTTON_NEGATIVE).performClick() }
                 check(app.repo.watchProgress(episode)?.completed == true)

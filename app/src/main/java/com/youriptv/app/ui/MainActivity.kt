@@ -126,6 +126,7 @@ class MainActivity : RemoteActivity() {
     private var pendingGuidePlaylistId = 0L
     private var pendingGuideSourceIdentity = ""
     private var explicitGuideGeneration = 0L
+    private var explicitGuideInputGeneration: Long? = null
     private var returningFromPreviewPlayer = false
     private val previewObserver = {
         previewPanel.render(app.livePlayback)
@@ -393,6 +394,7 @@ class MainActivity : RemoteActivity() {
             return
         }
         if (!tvLevels()) return
+        if (explicitGuideOwnsNavigation() && !isInside(view, itemsView)) return
         when {
             navViews.values.any { it === view } -> setLiveLevel(LiveLevel.MENU)
             isInside(view, groupsView) -> setLiveLevel(LiveLevel.CATEGORIES)
@@ -603,6 +605,7 @@ class MainActivity : RemoteActivity() {
 
     private fun setLiveLevel(level: LiveLevel) {
         val target = if (section == Section.TV) level else LiveLevel.MENU
+        if (target == LiveLevel.GUIDE) handler.removeCallbacks(loadFocusedGroup)
         if (target == liveLevel) return
         if (target == LiveLevel.GUIDE) liveGrid.openAtNow()
         liveLevel = target
@@ -642,6 +645,7 @@ class MainActivity : RemoteActivity() {
     }
 
     private fun showCategories() {
+        explicitGuideInputGeneration = null
         if (groupEntries.isEmpty()) return
         setLiveLevel(LiveLevel.CATEGORIES)
         focusGroups()
@@ -664,16 +668,29 @@ class MainActivity : RemoteActivity() {
     }
 
     /** Moving through the categories re-filters the guide beside them after a short pause; it never tunes a channel. */
+    private fun explicitGuideOwnsNavigation(): Boolean {
+        val owner = explicitGuideInputGeneration ?: return false
+        if (section != Section.TV || owner != userInputGeneration) {
+            explicitGuideInputGeneration = null
+            return false
+        }
+        return true
+    }
+
     private fun onGroupFocused(pos: Int) {
         if (!tvLevels()) return
         handler.removeCallbacks(loadFocusedGroup)
+        if (explicitGuideOwnsNavigation()) return
         focusedGroup = pos
         if (pos != selectedGroup) handler.postDelayed(loadFocusedGroup, 250)
     }
 
     private fun showFocusedGroup() {
         val pos = focusedGroup
-        if (!tvLevels() || pos == selectedGroup) return
+        if (!tvLevels() || explicitGuideOwnsNavigation() || liveLevel != LiveLevel.CATEGORIES ||
+            !groupsView.hasFocus() || pos == selectedGroup) return
+        val focused = currentFocus?.let { groupsView.findContainingViewHolder(it)?.bindingAdapterPosition }
+        if (focused != pos) return
         val entry = groupEntries.getOrNull(pos) ?: return
         if (entry.special == null && app.settings.isGroupLocked(entry.info.name)) showLockedGroup(pos, entry)
         else selectGroup(pos, focusItems = false)
@@ -699,6 +716,7 @@ class MainActivity : RemoteActivity() {
      * Only Back from full screen ([openGuide]) returns to the playing channel.
      */
     private fun openGroupGuide(pos: Int) {
+        explicitGuideInputGeneration = null
         handler.removeCallbacks(loadFocusedGroup)
         liveGrid.openAtNow()
         if (pos == loadedGroup && loadJob?.isActive != true && liveGrid.items.isNotEmpty()) focusItemAt(0)
@@ -724,6 +742,7 @@ class MainActivity : RemoteActivity() {
             (requested != null && !url.isNullOrBlank() && (channel == null || channel.kind != ItemKind.LIVE ||
                 channel.isCatchup || app.settings.isGroupHidden(channel.group)))) {
             pendingGuide = null
+            explicitGuideInputGeneration = null
             clearGuideRequest()
             Dialogs.toast(this, "This channel is no longer available from its playlist.")
             return
@@ -733,6 +752,7 @@ class MainActivity : RemoteActivity() {
             app.settings.activePlaylistId = requested.id
             findViewById<TextView>(R.id.playlist_name).text = requested.name
         }
+        explicitGuideInputGeneration = userInputGeneration
         pendingGuide = (channel?.group ?: group) to url
         pendingGuidePlaylistId = requested?.id ?: 0L
         pendingGuideSourceIdentity = requested?.let(app.repo::sourceIdentity).orEmpty()
@@ -929,6 +949,7 @@ class MainActivity : RemoteActivity() {
     }
 
     private fun onNav(s: Section) {
+        explicitGuideInputGeneration = null
         if (pendingGuide != null || intent.hasExtra(EXTRA_GUIDE_CHANNEL)) {
             pendingGuide = null
             clearGuideRequest()
@@ -1070,6 +1091,7 @@ class MainActivity : RemoteActivity() {
                 }
                 lastSection = section
                 selectGroup(guideGroupPos(guide.first), focusItems = true, focusUrl = guide.second, onCancel = {
+                    explicitGuideInputGeneration = null
                     clearGuideRequest()
                     val fallback = groupEntries.indexOfFirst { it.special == SPECIAL_ALL }
                         .takeIf { it >= 0 } ?: groupEntries.indexOfFirst { it.special == SPECIAL_FAV }
@@ -1173,7 +1195,10 @@ class MainActivity : RemoteActivity() {
             }
             if (targetSection == Section.TV && focusUrl != null &&
                 intent.getStringExtra(EXTRA_GUIDE_CHANNEL) == focusUrl &&
-                intent.getLongExtra(EXTRA_GUIDE_PLAYLIST, 0L) == p.id) clearGuideRequest()
+                intent.getLongExtra(EXTRA_GUIDE_PLAYLIST, 0L) == p.id) {
+                handler.removeCallbacks(loadFocusedGroup)
+                clearGuideRequest()
+            }
             itemAdapter.submit(items, favs)
             if (section == Section.TV) liveGrid.submit(items, favs, at)
             (itemsView.layoutManager as? LinearLayoutManager)?.scrollToPositionWithOffset(at, 0)

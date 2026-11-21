@@ -45,7 +45,7 @@ class NavigationUiInstrumentation : Instrumentation() {
         catch (error: Throwable) {
             failed++
             results.put(JSONObject().put("name", name).put("passed", false).put("type", error.javaClass.simpleName)
-                .put("message", error.message.orEmpty().take(400)).put("stack", error.stackTrace.take(8).joinToString("\n")))
+                .put("message", error.message.orEmpty().take(1600)).put("stack", error.stackTrace.take(8).joinToString("\n")))
         }
     }
     private fun capture(name: String) {
@@ -178,8 +178,45 @@ class NavigationUiInstrumentation : Instrumentation() {
             opened.add(home)
             await { home.hasWindowFocus() }
             verify("cold guide request selects the requested source and channel at now instead of the browsing source or fullscreen") {
-                await { grid(home).items.any { it.playlistId == playlistId && it.url == live.url } &&
-                    app.settings.activePlaylistId == playlistId }
+                try {
+                    await { grid(home).items.any { it.playlistId == playlistId && it.url == live.url } &&
+                        app.settings.activePlaylistId == playlistId }
+                    SystemClock.sleep(1000)
+                    main {
+                        check(app.settings.activePlaylistId == playlistId &&
+                            grid(home).items.any { it.playlistId == playlistId && it.url == live.url })
+                        check(home.findViewById<RecyclerView>(R.id.items).hasFocus())
+                        val television = home.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_TYPE_MASK ==
+                            android.content.res.Configuration.UI_MODE_TYPE_TELEVISION
+                        if (television) check(MainActivity::class.java.getDeclaredField("liveLevel").let {
+                            it.isAccessible = true; it.get(home).toString() == "GUIDE" })
+                    }
+                } catch (failure: Throwable) {
+                    capture("cold-guide-failure")
+                    var diagnostic = ""
+                    main {
+                        fun field(name: String): Any? = runCatching { MainActivity::class.java.getDeclaredField(name).let {
+                            it.isAccessible = true; it.get(home) } }.getOrNull()
+                        diagnostic = JSONObject().put("requestedPlaylist", playlistId).put("browsingPlaylist", browsingId)
+                            .put("activePlaylist", app.settings.activePlaylistId).put("mainPlaylist", (field("playlist") as? Playlist)?.id)
+                            .put("section", field("section")?.toString()).put("pendingGuide", field("pendingGuide") != null)
+                            .put("pendingGuidePlaylist", field("pendingGuidePlaylistId"))
+                            .put("selectedGroup", field("selectedGroup") ?: JSONObject.NULL)
+                            .put("focusedGroup", field("focusedGroup") ?: JSONObject.NULL)
+                            .put("loadedGroup", field("loadedGroup") ?: JSONObject.NULL)
+                            .put("liveLevel", field("liveLevel")?.toString())
+                            .put("loadJobActive", (field("loadJob") as? kotlinx.coroutines.Job)?.isActive)
+                            .put("listLoadGeneration", field("listLoadGeneration"))
+                            .put("intentGuidePlaylist", home.intent.getLongExtra(MainActivity.EXTRA_GUIDE_PLAYLIST, 0L))
+                            .put("intentHasGuideChannel", home.intent.hasExtra(MainActivity.EXTRA_GUIDE_CHANNEL))
+                            .put("rowPlaylists", JSONArray(grid(home).items.map { it.playlistId }))
+                            .put("focusedRow", grid(home).focusedRow).put("focusTime", time(home, "focusTime"))
+                            .put("windowStart", time(home, "windowStart")).put("now", System.currentTimeMillis())
+                            .put("lifecycle", (home as androidx.appcompat.app.AppCompatActivity).lifecycle.currentState.name)
+                            .put("windowFocus", home.hasWindowFocus()).put("fullscreenOpens", coldMonitor.hits).toString()
+                    }
+                    throw IllegalStateException("Cold guide state: $diagnostic", failure)
+                }
                 main { check(grid(home).items[grid(home).focusedRow].let { it.playlistId == playlistId && it.url == live.url }) }
                 assertNow(home)
                 check(coldMonitor.hits == 0)
@@ -199,7 +236,18 @@ class NavigationUiInstrumentation : Instrumentation() {
                 SystemClock.sleep(500)
                 check(time(home, "focusTime") == future)
                 capture("guide-future-browsing")
-                nav(home, "Movies"); openGuide(home)
+                val playerMonitor = addMonitor(PlayerActivity::class.java.name, null, false)
+                try {
+                    main { home.startActivity(Intent(home, MainActivity::class.java).setAction(Intent.ACTION_MAIN)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        .putExtra(MainActivity.EXTRA_GUIDE_CHANNEL, live.url).putExtra(MainActivity.EXTRA_GUIDE_GROUP, live.group)
+                        .putExtra(MainActivity.EXTRA_GUIDE_PLAYLIST, playlistId)) }
+                    assertNow(home)
+                    SystemClock.sleep(1000)
+                    assertNow(home)
+                    check(playerMonitor.hits == 0)
+                    capture("warm-explicit-guide-now")
+                } finally { removeMonitor(playerMonitor) }
                 assertNow(home); capture("guide-reopened-now")
             }
             verify("past browsing is retained while active and explicit reopen returns to now") {
