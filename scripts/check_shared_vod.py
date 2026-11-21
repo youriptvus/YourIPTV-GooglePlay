@@ -7,7 +7,8 @@ COMMON = [JAVA + name for name in (
     "data/HistoryPolicy.kt", "data/EpisodePlaybackPolicy.kt", "data/PlaybackSessionPolicy.kt", "ui/StartupPlaybackPolicy.kt", "ui/SeriesWatchSummary.kt", "data/SecureTransport.kt", "data/XtreamUrls.kt", "data/SettingsLockPolicy.kt", "data/Models.kt", "data/Db.kt", "data/Repository.kt", "data/VodMetadata.kt", "data/WatchPolicy.kt", "data/WatchProgressStore.kt",
     "data/Backup.kt", "data/ContentLengthInputStream.kt", "ui/MainActivity.kt", "ui/Adapters.kt", "ui/MovieDetailsActivity.kt", "ui/SeriesActivity.kt",
     "ui/SeriesBrowseState.kt", "ui/SeriesEpisodeAdapters.kt", "ui/PlayerActivity.kt", "ui/RemoteActivity.kt", "ui/AudioDelayProcessor.kt",
-    "ui/CustomerSettingsPanel.kt", "ui/EpgSettingsPanel.kt")] + ["app/src/main/res/" + name for name in (
+    "ui/CustomerSettingsPanel.kt", "ui/EpgSettingsPanel.kt", "ui/GuideData.kt", "ui/GuideViews.kt", "ui/LiveGuideGrid.kt",
+    "ui/RemoteBack.kt", "ui/BackHoldGesture.kt")] + ["app/src/main/res/" + name for name in (
     "layout/series_activity.xml", "layout/series_episode_card.xml", "layout/vod_poster_item.xml", "layout/activity_movie_details.xml",
     "layout/activity_player.xml", "layout-port/activity_main.xml", "values/series_dimensions.xml", "values-port/series_dimensions.xml",
     "values/player_dimensions.xml", "values-port/player_dimensions.xml", "values/themes.xml", "values/mobile_strings.xml")]
@@ -24,6 +25,10 @@ def main():
     for name in COMMON:
         try:
             left, right = normalized(root/name), normalized(other/name)
+            if name == JAVA + "ui/RemoteBack.kt":
+                # The customer-only updater retains its own Back flow; Play has no updater Activity.
+                left = left.replace(" && activity !is AppUpdateActivity", "")
+                right = right.replace(" && activity !is AppUpdateActivity", "")
             checks[name] = left == right
             hashes[name] = hashlib.sha256(left.encode()).hexdigest()
         except OSError: checks[name] = False
@@ -33,6 +38,8 @@ def main():
     for p in (root, other):
         settings = normalized(p/(JAVA+"data/Settings.kt"))
         checks[p.name+": auto next defaults on"] = 'sp.getBoolean("auto_next_episode", true)' in settings
+        manifest = normalized(p/"app/src/main/AndroidManifest.xml")
+        checks[p.name+": held Back navigation compatibility"] = 'android:enableOnBackInvokedCallback="false"' in manifest
     versions = []
     for p in (root, other):
         build = normalized(p/"app/build.gradle.kts")

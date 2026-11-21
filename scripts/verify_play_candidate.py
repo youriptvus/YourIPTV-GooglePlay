@@ -178,6 +178,8 @@ def inspect_manifest(root: ET.Element, args: argparse.Namespace) -> dict:
         "minimum_sdk": integer(sdk.get(ANDROID + "minSdkVersion")) == args.min_sdk,
         "target_sdk": integer(sdk.get(ANDROID + "targetSdkVersion")) == args.target_sdk,
         "not_debuggable": not truth(app.get(ANDROID + "debuggable")),
+        "physical_back_key_delivery": app.get(ANDROID + "enableOnBackInvokedCallback") == "false" and
+            all(node.get(ANDROID + "enableOnBackInvokedCallback", "false") == "false" for node in app.findall("activity")),
         "android_backup_disabled": app.get(ANDROID + "allowBackup", "true").lower() == "false",
         "user_provided_http_enabled": app.get(ANDROID + "usesCleartextTraffic", "false").lower() == "true",
         "network_security_config_present": bool(app.get(ANDROID + "networkSecurityConfig", "").startswith("@")),

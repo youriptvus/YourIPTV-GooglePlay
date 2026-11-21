@@ -29,4 +29,6 @@
         android:targetPackage="com.youriptv.app.playtest" android:functionalTest="true" android:handleProfiling="false" />
     <instrumentation android:name="com.youriptv.app.SourceEditorInstrumentation"
         android:targetPackage="com.youriptv.app.playtest" android:functionalTest="true" android:handleProfiling="false" />
+    <instrumentation android:name="com.youriptv.app.NavigationUiInstrumentation"
+        android:targetPackage="com.youriptv.app.playtest" android:functionalTest="true" android:handleProfiling="false" />
 </manifest>

@@ -6,6 +6,8 @@ Thin green episode progress bars distinguish partial and completed episodes; unw
 
 Guide catch-up opens the archive player without losing the archive URL or flag. Launcher re-entry can resume the remembered live channel after leaving any app screen, respecting its remembered playlist and category restrictions. Explicit guide requests suppress automatic fullscreen resume.
 
+Held physical/remote Back returns to full-screen playback through the existing current-stream and parental checks. Android 16 uses its documented Back-key navigation compatibility mode for this shortcut; predictive Back animations are disabled for app-owned screens, while ordinary Back navigation remains available. Opening the guide resets its selected programme and visible time window to now; committed guide refreshes and active past/future browsing retain their selected time.
+
 The HTTP source compatibility repair remains included for M3U, Xtream, guides, artwork and playback. Explicit HTTP and HTTPS schemes are preserved, HTTPS certificates are validated and HTTPS-to-HTTP redirects remain blocked. Settings Lock defaults OFF while prior saved choices and independent Admin/parental controls remain. Google Play signing, automatic protection and Play-managed updates remain in place; the Play build has no direct APK self-installer.
 
 Validation records, exact APK/AAB hashes and the pinned source archive accompany the local artifacts. The isolated device package is separate from the production app; preserved production installations are checked before and after testing. Refer to the artifact release summary for measured results and remaining device limitations.

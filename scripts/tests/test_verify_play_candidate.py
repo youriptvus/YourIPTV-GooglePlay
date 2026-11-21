@@ -46,6 +46,17 @@ class CompiledTransportPolicyTest(unittest.TestCase):
 
 
 class SupportedSdkBackupPolicyTest(unittest.TestCase):
+    def test_held_back_compatibility_requires_compiled_application_and_activity_policy(self):
+        args = SimpleNamespace(application_id='com.youriptv.app', version_code=52, version_name='1.1.1', min_sdk=24, target_sdk=36)
+        for application, activity, expected in (
+            ('false', '', True), ('false', ' android:enableOnBackInvokedCallback="false"', True),
+            ('true', '', False), (None, '', False), ('false', ' android:enableOnBackInvokedCallback="true"', False),
+        ):
+            attribute = '' if application is None else ' android:enableOnBackInvokedCallback="' + application + '"'
+            xml = '<manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-sdk/><application' + attribute + '><activity' + activity + '/></application></manifest>'
+            result = verifier.inspect_manifest(ET.fromstring(xml), args)
+            self.assertEqual(expected, result['checks']['physical_back_key_delivery'])
+
     def protected_documents(self):
         domains = verifier.BACKUP_DOMAINS | verifier.DEVICE_BACKUP_DOMAINS
         excludes = ''.join('<exclude domain="' + domain + '" path="."/>' for domain in domains)

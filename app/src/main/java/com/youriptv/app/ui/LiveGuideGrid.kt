@@ -208,7 +208,7 @@ class LiveGuideGrid(
                 return true
             }
             KeyEvent.KEYCODE_PROG_RED -> {
-                if (down) { resetTime(); refresh() }
+                if (down) openAtNow()
                 return true
             }
         }
@@ -249,9 +249,7 @@ class LiveGuideGrid(
     }
 
     private fun resetTime() {
-        val now = System.currentTimeMillis()
-        state.windowStart = now - now % GuideNavigation.STEP_MS
-        state.focusTime = now
+        state.openAtNow(System.currentTimeMillis())
     }
 
     /** True when the focused cell is the programme on air now (or "now" itself on a channel without guide data). */
@@ -263,7 +261,17 @@ class LiveGuideGrid(
         else state.focusTime > now - GuideNavigation.STEP_MS && state.focusTime <= now + 60_000L
     }
 
-    fun jumpToNow() { navigationGeneration++; resetTime(); refresh() }
+    /** Explicit opening resets time; refresh and committed updates keep the user's current browsing position. */
+    fun openAtNow() {
+        navigationGeneration++
+        guideSearchJob?.cancel()
+        focusedLookup = null
+        leftHeld = false
+        resetTime()
+        refresh()
+    }
+
+    fun jumpToNow() = openAtNow()
 
     private fun minTime() = System.currentTimeMillis() - pastMs()
     private fun maxTime() = System.currentTimeMillis() + app.settings.epgFutureDays * 86_400_000L
@@ -282,7 +290,7 @@ class LiveGuideGrid(
     )
 
     private fun focusedProgram(channel: MediaItem): Program? =
-        selectedProgrammes(channel).firstOrNull { state.focusTime >= it.start && state.focusTime < it.end }
+        GuideNavigation.programAt(selectedProgrammes(channel), state.focusTime)
 
     private fun programsFor(channel: MediaItem): List<Program> {
         val result = cache.windowFor(channel, state.windowStart, state.windowStart + state.span)

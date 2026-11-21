@@ -20,6 +20,10 @@ live channel is reopened after checking the current playlist and parental restri
 to return to, Back keeps its normal behavior. Android's system screens and required update screen keep
 their own Back behavior.
 
+Android 16 uses the documented navigation compatibility setting so physical remote Back down/up
+events still reach the hold recognizer. Normal Back continues through the AndroidX dispatcher;
+predictive Back system animations are disabled. Play protection, signing and permissions are unchanged.
+
 The TV guide is part of the TV section (there is no separate guide item in the main menu). On
 the tested Google TV device, the remote's dedicated GUIDE key is intercepted by the system; use
 player options → TV guide instead.

@@ -123,6 +123,9 @@ class MainActivity : RemoteActivity() {
     private val loadFocusedGroup = Runnable { showFocusedGroup() }
     /** Category name and channel URL to open in the guide once the TV categories have loaded. */
     private var pendingGuide: Pair<String?, String?>? = null
+    private var pendingGuidePlaylistId = 0L
+    private var pendingGuideSourceIdentity = ""
+    private var explicitGuideGeneration = 0L
     private var returningFromPreviewPlayer = false
     private val previewObserver = {
         previewPanel.render(app.livePlayback)
@@ -284,9 +287,15 @@ class MainActivity : RemoteActivity() {
     private fun takeGuideRequest(intent: Intent) {
         val url = intent.getStringExtra(EXTRA_GUIDE_CHANNEL) ?: return
         val group = intent.getStringExtra(EXTRA_GUIDE_GROUP)
+        val sourceId = intent.getLongExtra(EXTRA_GUIDE_PLAYLIST, 0L)
+        openGuide(group, url, sourceId, intent.getStringExtra(EXTRA_GUIDE_SOURCE_IDENTITY))
+    }
+
+    private fun clearGuideRequest() {
         intent.removeExtra(EXTRA_GUIDE_CHANNEL)
         intent.removeExtra(EXTRA_GUIDE_GROUP)
-        openGuide(group, url)
+        intent.removeExtra(EXTRA_GUIDE_PLAYLIST)
+        intent.removeExtra(EXTRA_GUIDE_SOURCE_IDENTITY)
     }
 
     private var pendingResume = false
@@ -595,6 +604,7 @@ class MainActivity : RemoteActivity() {
     private fun setLiveLevel(level: LiveLevel) {
         val target = if (section == Section.TV) level else LiveLevel.MENU
         if (target == liveLevel) return
+        if (target == LiveLevel.GUIDE) liveGrid.openAtNow()
         liveLevel = target
         if (portrait) return
         root?.let { TransitionManager.beginDelayedTransition(it, ChangeBounds().setDuration(220)) }
@@ -690,6 +700,7 @@ class MainActivity : RemoteActivity() {
      */
     private fun openGroupGuide(pos: Int) {
         handler.removeCallbacks(loadFocusedGroup)
+        liveGrid.openAtNow()
         if (pos == loadedGroup && loadJob?.isActive != true && liveGrid.items.isNotEmpty()) focusItemAt(0)
         else selectGroup(pos, focusItems = true)
     }
@@ -699,15 +710,43 @@ class MainActivity : RemoteActivity() {
             ?: groupEntries.indexOfFirst { it.special == SPECIAL_ALL }
 
     /** Opens the Live TV guide on [url] in [group] (or All channels when that category is hidden or missing). */
-    private fun openGuide(group: String?, url: String?) {
-        if (playlist == null) return
-        if (section == Section.TV && loadJob?.isActive != true) {
-            val idx = liveGrid.items.indexOfFirst { it.url == url }
-            if (idx >= 0) { focusItemAt(idx); return }
-            val pos = guideGroupPos(group)
-            if (pos >= 0) { selectGroup(pos, focusItems = true, focusUrl = url); return }
+    private fun openGuide(group: String?, url: String?, sourceId: Long = playlist?.id ?: 0L, sourceIdentity: String? = null) {
+        ++explicitGuideGeneration
+        pendingResume = false
+        ++listLoadGeneration
+        ++groupSelectionGeneration
+        loadJob?.cancel()
+        handler.removeCallbacks(loadFocusedGroup)
+        val requested = if (sourceId > 0) app.repo.playlist(sourceId) else playlist
+        val channel = if (requested != null && !url.isNullOrBlank()) app.repo.itemByUrl(requested.id, url) else null
+        if ((sourceId > 0 && requested == null) || (!sourceIdentity.isNullOrBlank() &&
+                requested?.let(app.repo::sourceIdentity) != sourceIdentity) ||
+            (requested != null && !url.isNullOrBlank() && (channel == null || channel.kind != ItemKind.LIVE ||
+                channel.isCatchup || app.settings.isGroupHidden(channel.group)))) {
+            pendingGuide = null
+            clearGuideRequest()
+            Dialogs.toast(this, "This channel is no longer available from its playlist.")
+            return
         }
-        pendingGuide = group to url
+        if (requested != null) {
+            playlist = requested
+            app.settings.activePlaylistId = requested.id
+            findViewById<TextView>(R.id.playlist_name).text = requested.name
+        }
+        pendingGuide = (channel?.group ?: group) to url
+        pendingGuidePlaylistId = requested?.id ?: 0L
+        pendingGuideSourceIdentity = requested?.let(app.repo::sourceIdentity).orEmpty()
+        // Retain the exact destination through rotation while category IO or a parental PIN is pending.
+        intent.putExtra(EXTRA_GUIDE_CHANNEL, url).putExtra(EXTRA_GUIDE_GROUP, pendingGuide?.first)
+            .putExtra(EXTRA_GUIDE_PLAYLIST, pendingGuidePlaylistId)
+            .putExtra(EXTRA_GUIDE_SOURCE_IDENTITY, pendingGuideSourceIdentity)
+        // onCreate has not selected a playlist or reached STARTED yet. Keep the destination for onResume.
+        if (requested == null || !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+            section = Section.TV
+            return
+        }
+        liveGrid.openAtNow()
+        // Always reload the requested source; another playlist may contain the identical channel URL.
         showSection(Section.TV)
     }
 
@@ -754,6 +793,15 @@ class MainActivity : RemoteActivity() {
         val changed = active?.id != playlist?.id || active?.lastUpdated != playlist?.lastUpdated
         playlist = active
         if (active != null) app.settings.activePlaylistId = active.id
+        if (pendingGuide != null) {
+            section = Section.TV
+            if (pendingGuidePlaylistId == 0L && active != null) {
+                pendingGuidePlaylistId = active.id
+                pendingGuideSourceIdentity = app.repo.sourceIdentity(active)
+                intent.putExtra(EXTRA_GUIDE_PLAYLIST, active.id)
+                    .putExtra(EXTRA_GUIDE_SOURCE_IDENTITY, pendingGuideSourceIdentity)
+            }
+        }
         findViewById<TextView>(R.id.playlist_name).text = active?.name ?: "No playlist"
         updateSettingsLabel()
         // A changed restriction (PIN, locked groups, adult block, hiding) rebuilds the lists and drops the group unlocked earlier.
@@ -761,7 +809,7 @@ class MainActivity : RemoteActivity() {
         val restrictionsChanged = shownStamp != null && stamp != shownStamp
         shownStamp = stamp
         if (restrictionsChanged) lastSection = null
-        if (changed || restrictionsChanged || itemAdapter.itemCount == 0) showSection(section, requestFocus = itemAdapter.itemCount == 0)
+        if (changed || restrictionsChanged || itemAdapter.itemCount == 0 || pendingGuide != null) showSection(section, requestFocus = itemAdapter.itemCount == 0)
         else if (section == Section.RECORDINGS) refreshRecordingsInPlace()
         else if (section == Section.TV) liveGrid.refreshSettings()
         else if (vodMode()) refreshVodFavorites()
@@ -775,6 +823,7 @@ class MainActivity : RemoteActivity() {
         }
         // BACK from full screen lands on the channel now playing, even after zapping there.
         if (returningFromPreviewPlayer && section == Section.TV && !changed && !restrictionsChanged) {
+            liveGrid.openAtNow()
             val current = app.livePlayback.current
             val idx = liveGrid.items.indexOfFirst { current != null && it.playlistId == current.playlistId && it.url == current.url }
             if (idx >= 0 && (idx != liveGrid.focusedRow || currentFocus?.let { isInside(it, itemsView) } != true)) focusItemAt(idx)
@@ -880,6 +929,11 @@ class MainActivity : RemoteActivity() {
     }
 
     private fun onNav(s: Section) {
+        if (pendingGuide != null || intent.hasExtra(EXTRA_GUIDE_CHANNEL)) {
+            pendingGuide = null
+            clearGuideRequest()
+            ++explicitGuideGeneration
+        }
         when (s) {
             Section.TV -> if (tvLevels() && groupEntries.isNotEmpty() && loadJob?.isActive != true) showCategories()
                 else showSection(s, requestFocus = true)
@@ -980,6 +1034,7 @@ class MainActivity : RemoteActivity() {
 
     private fun loadGroups(p: Playlist, kind: ItemKind, allLabel: String?, requestFocus: Boolean) {
         val requestGeneration = ++listLoadGeneration
+        val requestSource = app.repo.sourceIdentity(p)
         val targetSection = section
         groupsView.visibility = View.VISIBLE
         loadJob?.cancel()
@@ -988,6 +1043,12 @@ class MainActivity : RemoteActivity() {
             val groups = withContext(Dispatchers.IO) { app.repo.groups(p.id, kind) }
             if (requestGeneration != listLoadGeneration) return@launch
             if (section != targetSection || playlist?.id != p.id) return@launch
+            if (app.repo.playlist(p.id)?.let(app.repo::sourceIdentity) != requestSource) {
+                if (pendingGuidePlaylistId == p.id) pendingGuide = null
+                clearGuideRequest()
+                showState("The playlist changed. Reopen the guide or category.", progress = false)
+                return@launch
+            }
             val s = app.settings
             val entries = ArrayList<GroupEntry>()
             entries.add(GroupEntry(GroupInfo("Favorites", -1), SPECIAL_FAV))
@@ -999,11 +1060,22 @@ class MainActivity : RemoteActivity() {
             if (allLabel != null) entries.add(GroupEntry(GroupInfo(allLabel, visible.sumOf { it.count }), SPECIAL_ALL))
             visible.forEach { entries.add(GroupEntry(it)) }
             groupEntries = entries
-            val guide = pendingGuide
-            pendingGuide = null
-            if (guide != null && kind == ItemKind.LIVE) {
+            val guide = pendingGuide.takeIf { kind == ItemKind.LIVE && pendingGuidePlaylistId == p.id }
+            if (guide != null) {
+                pendingGuide = null
+                if (pendingGuideSourceIdentity != requestSource) {
+                    clearGuideRequest()
+                    showState("The playlist changed. Reopen the guide.", progress = false)
+                    return@launch
+                }
                 lastSection = section
-                selectGroup(guideGroupPos(guide.first), focusItems = true, focusUrl = guide.second)
+                selectGroup(guideGroupPos(guide.first), focusItems = true, focusUrl = guide.second, onCancel = {
+                    clearGuideRequest()
+                    val fallback = groupEntries.indexOfFirst { it.special == SPECIAL_ALL }
+                        .takeIf { it >= 0 } ?: groupEntries.indexOfFirst { it.special == SPECIAL_FAV }
+                    selectGroup(fallback, focusItems = false)
+                    groupsView.post { focusGroups() }
+                })
                 return@launch
             }
             val initial = if (kind == ItemKind.LIVE && allLabel != null) 1 else entries.indexOfFirst { it.special == null }.coerceAtLeast(0)
@@ -1031,6 +1103,7 @@ class MainActivity : RemoteActivity() {
 
     private fun selectGroup(pos: Int, focusItems: Boolean, focusUrl: String? = null, onCancel: (() -> Unit)? = null) {
         val p = playlist ?: return
+        val requestSource = app.repo.sourceIdentity(p)
         val entry = groupEntries.getOrNull(pos) ?: return
         val selectionGeneration = ++groupSelectionGeneration
         val targetSection = section
@@ -1041,6 +1114,7 @@ class MainActivity : RemoteActivity() {
             // its original category by identity; its old position grants no permission.
             val currentPosition = groupEntries.indexOfFirst { groupKey(it) == selectedKey }
             if (selectionGeneration != groupSelectionGeneration || section != targetSection || playlist?.id != p.id ||
+                app.repo.playlist(p.id)?.let(app.repo::sourceIdentity) != requestSource ||
                 restrictionStamp != app.settings.restrictionStamp() || currentPosition < 0 ||
                 !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) return@select
             selectedGroup = currentPosition
@@ -1070,6 +1144,7 @@ class MainActivity : RemoteActivity() {
 
     private fun loadItems(requestFocus: Boolean, focusUrl: String? = null, query: () -> List<MediaItem>) {
         val p = playlist ?: return
+        val requestSource = app.repo.sourceIdentity(p)
         val requestGeneration = ++listLoadGeneration
         val targetSection = section
         val hadListFocus = currentFocus?.let { isInside(it, itemsView) } == true
@@ -1086,6 +1161,19 @@ class MainActivity : RemoteActivity() {
             }
             if (requestGeneration != listLoadGeneration) return@launch
             if (section != targetSection || playlist?.id != p.id) return@launch
+            if (app.repo.playlist(p.id)?.let(app.repo::sourceIdentity) != requestSource) {
+                clearGuideRequest()
+                showState("The playlist changed. Reopen the guide or category.", progress = false)
+                return@launch
+            }
+            if (targetSection == Section.TV && focusUrl != null && items.none { it.url == focusUrl }) {
+                clearGuideRequest()
+                showState("This channel is no longer available from its playlist.", progress = false)
+                return@launch
+            }
+            if (targetSection == Section.TV && focusUrl != null &&
+                intent.getStringExtra(EXTRA_GUIDE_CHANNEL) == focusUrl &&
+                intent.getLongExtra(EXTRA_GUIDE_PLAYLIST, 0L) == p.id) clearGuideRequest()
             itemAdapter.submit(items, favs)
             if (section == Section.TV) liveGrid.submit(items, favs, at)
             (itemsView.layoutManager as? LinearLayoutManager)?.scrollToPositionWithOffset(at, 0)
@@ -1368,6 +1456,8 @@ class MainActivity : RemoteActivity() {
     private fun maybeResumeLastChannel(p: Playlist) {
         if (!pendingResume) return
         pendingResume = false
+        val guideGeneration = explicitGuideGeneration
+        val activeAtStart = app.settings.activePlaylistId
         val url = app.settings.lastChannelUrl
         val rememberedPlaylist = app.settings.lastLivePlaylistId
         if (url.isBlank() || !app.settings.resumeLastChannel) return
@@ -1386,6 +1476,7 @@ class MainActivity : RemoteActivity() {
                 null
             } ?: return@launch
             if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) || isFinishing ||
+                guideGeneration != explicitGuideGeneration || activeAtStart != app.settings.activePlaylistId ||
                 !app.settings.resumeLastChannel || app.settings.lastChannelUrl != url ||
                 app.settings.lastLivePlaylistId != rememberedPlaylist) return@launch
             app.settings.activePlaylistId = target.first.id
@@ -1572,6 +1663,8 @@ class MainActivity : RemoteActivity() {
         private const val SPECIAL_HISTORY = "history"
         private const val SPECIAL_CONTINUE = "continue"
         const val EXTRA_GUIDE_GROUP = "guide_group"
+        const val EXTRA_GUIDE_PLAYLIST = "guide_playlist"
+        const val EXTRA_GUIDE_SOURCE_IDENTITY = "guide_source_identity"
         const val EXTRA_GUIDE_CHANNEL = "guide_channel"
         const val SEARCH_HINT = "Type to search channel names, guide programmes, movies, and series."
     }

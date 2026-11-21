@@ -1336,6 +1336,8 @@ class PlayerActivity : RemoteActivity() {
     private fun openGuide(item: MediaItem) {
         startActivity(
             Intent(this, MainActivity::class.java)
+                .putExtra(MainActivity.EXTRA_GUIDE_PLAYLIST, item.playlistId)
+                .putExtra(MainActivity.EXTRA_GUIDE_SOURCE_IDENTITY, app.repo.playlist(item.playlistId)?.let(app.repo::sourceIdentity))
                 .putExtra(MainActivity.EXTRA_GUIDE_GROUP, item.group)
                 .putExtra(MainActivity.EXTRA_GUIDE_CHANNEL, item.url)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)

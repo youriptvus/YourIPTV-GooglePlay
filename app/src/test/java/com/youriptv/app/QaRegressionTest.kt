@@ -184,8 +184,15 @@ class QaRegressionTest {
         val main = ui("MainActivity.kt")
         assertTrue(main.contains("opts.add(\"Show in TV guide\" to { openGuide(item.group, item.url) })"))
         val open = main.substringAfter("private fun openGuide(").substringBefore("private fun confirmExit")
-        assertTrue(open.contains("selectGroup(pos, focusItems = true, focusUrl = url)"))
-        assertTrue(open.contains("pendingGuide = group to url"))
+        assertTrue(open.contains("pendingGuide = (channel?.group ?: group) to url"))
+        assertTrue(open.indexOf("pendingGuide = (channel?.group ?: group) to url") < open.indexOf("!lifecycle.currentState.isAtLeast"))
+        assertTrue(open.contains("app.repo.playlist(sourceId)"))
+        assertTrue(open.contains("pendingResume = false"))
+        val groups = main.substringAfter("private fun loadGroups(").substringBefore("private var lastSection")
+        assertTrue(groups.contains("pendingGuidePlaylistId == p.id"))
+        assertTrue(groups.contains("pendingGuideSourceIdentity != requestSource"))
+        assertTrue(groups.contains("focusUrl = guide.second"))
+        assertTrue(ui("PlayerActivity.kt").contains(".putExtra(MainActivity.EXTRA_GUIDE_PLAYLIST, item.playlistId)"))
     }
 
     @Test
