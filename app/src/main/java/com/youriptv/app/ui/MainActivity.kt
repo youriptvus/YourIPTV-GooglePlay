@@ -260,10 +260,11 @@ class MainActivity : RemoteActivity() {
             }
         })
 
-        if (savedInstanceState == null) {
-            PlayerActivity.takeLeftWhileWatchingLive(this)
-            if (app.settings.resumeLastChannel) pendingResume = true
-        }
+        PlayerActivity.takeLeftWhileWatchingLive(this)
+        pendingResume = StartupPlaybackPolicy.onCreate(app.settings.resumeLastChannel,
+            app.claimFirstMainLaunch(), savedInstanceState != null,
+            savedInstanceState?.getBoolean("startup_resume_pending", false) == true,
+            intent.hasExtra(EXTRA_GUIDE_CHANNEL))
         takeGuideRequest(intent)
     }
 
@@ -273,8 +274,9 @@ class MainActivity : RemoteActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         if (!app.isTrustedBuild) return
-        if (intent.action == Intent.ACTION_MAIN && PlayerActivity.takeLeftWhileWatchingLive(this) &&
-            app.settings.resumeLastChannel) pendingResume = true
+        PlayerActivity.takeLeftWhileWatchingLive(this)
+        if (StartupPlaybackPolicy.onNewIntent(app.settings.resumeLastChannel,
+                intent.action == Intent.ACTION_MAIN, intent.hasExtra(EXTRA_GUIDE_CHANNEL))) pendingResume = true
         takeGuideRequest(intent)
     }
 
@@ -578,6 +580,7 @@ class MainActivity : RemoteActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("startup_resume_pending", pendingResume)
         if (app.isTrustedBuild && ::itemAdapter.isInitialized) {
             if (vodMode()) outState.putString("vod_section", section.name)
             outState.putBoolean("vod_grid_focus", vodMode() && (portrait || vodLevel == LiveLevel.GUIDE))
@@ -1366,15 +1369,28 @@ class MainActivity : RemoteActivity() {
         if (!pendingResume) return
         pendingResume = false
         val url = app.settings.lastChannelUrl
-        if (url.isBlank()) return
+        val rememberedPlaylist = app.settings.lastLivePlaylistId
+        if (url.isBlank() || !app.settings.resumeLastChannel) return
         lifecycleScope.launch {
-            val queue = withContext(Dispatchers.IO) {
-                val item = app.repo.itemByUrl(p.id, url) ?: return@withContext null
-                if (app.settings.isGroupLocked(item.group)) return@withContext null
-                app.repo.items(p.id, ItemKind.LIVE, item.group)
+            val target = withContext(Dispatchers.IO) {
+                val sources = if (rememberedPlaylist > 0) listOfNotNull(app.repo.playlist(rememberedPlaylist))
+                    else listOf(p) + app.repo.playlists().filter { it.id != p.id }
+                for (source in sources) {
+                    val item = app.repo.itemByUrl(source.id, url) ?: continue
+                    if (!StartupPlaybackPolicy.matches(item, url, rememberedPlaylist) ||
+                        app.settings.isGroupHidden(item.group) || app.settings.isGroupLocked(item.group)) continue
+                    val queue = app.repo.items(source.id, ItemKind.LIVE, item.group)
+                    val index = queue.indexOfFirst { it.url == url }
+                    if (index >= 0) return@withContext Triple(source, queue, index)
+                }
+                null
             } ?: return@launch
-            val idx = queue.indexOfFirst { it.url == url }
-            if (idx >= 0) { revealAfterResume = true; Nav.play(this@MainActivity, queue, idx) }
+            if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) || isFinishing ||
+                !app.settings.resumeLastChannel || app.settings.lastChannelUrl != url ||
+                app.settings.lastLivePlaylistId != rememberedPlaylist) return@launch
+            app.settings.activePlaylistId = target.first.id
+            revealAfterResume = true
+            Nav.play(this@MainActivity, target.second, target.third)
         }
     }
 

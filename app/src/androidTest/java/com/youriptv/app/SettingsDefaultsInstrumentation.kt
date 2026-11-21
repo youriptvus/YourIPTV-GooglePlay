@@ -10,6 +10,8 @@ import com.youriptv.app.data.PinCheck
 import com.youriptv.app.data.PinKind
 import com.youriptv.app.data.Settings
 import com.youriptv.app.data.SettingsLockPolicy
+import com.youriptv.app.data.ItemKind
+import com.youriptv.app.data.MediaItem
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -37,7 +39,8 @@ class SettingsDefaultsInstrumentation : Instrumentation() {
         fun checkStep(name: String, action: () -> Unit) {
             try { action(); results.put(JSONObject().put("name", name).put("passed", true)) }
             catch (error: Throwable) { failures++; results.put(JSONObject().put("name", name)
-                .put("passed", false).put("type", error.javaClass.simpleName)) }
+                .put("passed", false).put("type", error.javaClass.simpleName).put("message", error.message.orEmpty().take(400))
+                .put("stack", error.stackTrace.take(8).joinToString("\n"))) }
         }
         fun removeChoice(context: Context, removePlayInitialization: Boolean = true) {
             val edit = context.getSharedPreferences("settings", 0).edit().remove(SettingsLockPolicy.LOCAL_KEY)
@@ -45,6 +48,44 @@ class SettingsDefaultsInstrumentation : Instrumentation() {
             check(edit.commit())
         }
         try {
+            checkStep("remembered Live URL and playlist provenance persist as one tuple") {
+                val c = fixture("live_tuple")
+                val item = MediaItem(playlistId = 37, kind = ItemKind.LIVE, name = "Synthetic live", group = "QA",
+                    url = "https://startup-fixture.invalid/channel")
+                Settings(c).rememberLiveChannel(item)
+                val saved = Settings(c)
+                check(saved.lastChannelUrl == item.url && saved.lastLivePlaylistId == item.playlistId)
+                saved.rememberLiveChannel(item.copy(kind = ItemKind.MOVIE))
+                saved.rememberLiveChannel(item.copy(isCatchup = true))
+                saved.rememberLiveChannel(item.copy(isLocal = true))
+                check(saved.lastChannelUrl == item.url && saved.lastLivePlaylistId == item.playlistId)
+                saved.lastChannelUrl = "https://startup-fixture.invalid/legacy-import"
+                check(Settings(c).lastLivePlaylistId == 0L)
+            }
+            checkStep("fresh autoplay defaults ON without writing a user choice") {
+                val c = fixture("autoplay_fresh")
+                check(Settings(c).autoPlayNextEpisode)
+                check(!c.getSharedPreferences("settings", 0).contains("auto_next_episode"))
+                check(Settings(c).autoPlayNextEpisode)
+            }
+            checkStep("existing preferences without an autoplay choice default ON") {
+                val c = fixture("autoplay_existing")
+                check(c.getSharedPreferences("settings", 0).edit().putBoolean("resume_last", false).commit())
+                check(Settings(c).autoPlayNextEpisode)
+            }
+            checkStep("explicit autoplay OFF survives Settings reconstruction") {
+                val c = fixture("autoplay_off")
+                Settings(c).autoPlayNextEpisode = false
+                check(!Settings(c).autoPlayNextEpisode)
+                check(c.getSharedPreferences("settings", 0).contains("auto_next_episode"))
+                check(!Settings(c).autoPlayNextEpisode)
+            }
+            checkStep("autoplay ON survives reconstruction independently of Settings lock") {
+                val c = fixture("autoplay_on")
+                Settings(c).autoPlayNextEpisode = true
+                check(Settings(c).autoPlayNextEpisode)
+                check(!Settings(c).settingsLockEnabled)
+            }
             checkStep("fresh default is OFF and remains OFF after Settings reconstruction") {
                 val c = fixture("fresh")
                 check(!Settings(c).settingsLockEnabled)

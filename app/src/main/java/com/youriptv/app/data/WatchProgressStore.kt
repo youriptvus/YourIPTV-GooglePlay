@@ -56,10 +56,10 @@ internal class WatchProgressStore(private val database: () -> SQLiteDatabase, pr
         }
     }
 
-    @Synchronized fun entries(source: Playlist): List<WatchEntry> {
+    @Synchronized fun entries(source: Playlist, limit: Int? = 2000): List<WatchEntry> {
         val scope = WatchPolicy.scope(source)
         val values = LinkedHashMap<String, WatchEntry>()
-        if (source.id !in clearing) database().rawQuery("SELECT content_key,media,position,duration,completed,updated FROM watch_progress WHERE playlist_id=? AND scope=? ORDER BY updated DESC LIMIT 2000",
+        if (source.id !in clearing) database().rawQuery("SELECT content_key,media,position,duration,completed,updated FROM watch_progress WHERE playlist_id=? AND scope=? ORDER BY updated DESC" + (limit?.let { " LIMIT ${it.coerceAtLeast(0)}" } ?: ""),
             arrayOf(source.id.toString(), scope)).use { c -> while (c.moveToNext()) {
             runCatching { WatchEntry(c.getString(0), decode(source.id, c.getString(1)), WatchProgress(c.getLong(2), c.getLong(3), c.getInt(4) != 0, c.getLong(5))) }
                 .getOrNull()?.let { values[it.key] = it }

@@ -262,7 +262,7 @@ class QaRegressionTest {
         val step = player.substringAfter("private fun stepEpisode").substringBefore("\n    }")
         assertTrue("episode changes must go through switchTo so parental checks in startItem apply", step.contains("switchTo(index + delta)"))
         assertTrue(player.contains("KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_CHANNEL_UP, KeyEvent.KEYCODE_PAGE_UP -> 1"))
-        assertTrue(player.contains("private fun canStepEpisode(delta: Int) = current?.kind == ItemKind.EPISODE"))
+        assertTrue(player.contains("EpisodePlaybackPolicy.adjacentIndex(queue, index, delta) >= 0"))
         val options = player.substringAfter("private fun showOptions()").substringBefore("Dialogs.choose(")
         assertTrue("the onn remote has no CH/media keys, so the menu must offer episode navigation", options.contains("\"Next episode: "))
         assertTrue(options.contains("\"Previous episode: "))
@@ -282,7 +282,8 @@ class QaRegressionTest {
         val onNew = main.substringAfter("override fun onNewIntent(intent: Intent) {").substringBefore("\n    }")
         assertTrue(onNew.contains("intent.action == Intent.ACTION_MAIN"))
         assertTrue(onNew.contains("PlayerActivity.takeLeftWhileWatchingLive(this)"))
-        assertTrue("must still honour the setting", onNew.contains("app.settings.resumeLastChannel) pendingResume = true"))
+        assertTrue("must still honour the setting", onNew.contains("StartupPlaybackPolicy.onNewIntent(app.settings.resumeLastChannel,"))
+        assertTrue("explicit guide requests retain their destination", onNew.contains("intent.hasExtra(EXTRA_GUIDE_CHANNEL)"))
         val player = ui("PlayerActivity.kt")
         val onStop = player.substringAfter("override fun onStop() {").substringBefore("\n    }")
         assertTrue("BACK (finishing) must not count as leaving while watching",
@@ -291,7 +292,7 @@ class QaRegressionTest {
         assertTrue(onStart.contains("setLeftWhileWatchingLive(this, false)"))
         // The resume path keeps the parental check, so a locked last channel never restarts on its own.
         val resume = main.substringAfter("private fun maybeResumeLastChannel").substringBefore("private fun maybeAutoRefresh")
-        assertTrue(resume.contains("if (app.settings.isGroupLocked(item.group)) return@withContext null"))
+        assertTrue(resume.contains("app.settings.isGroupHidden(item.group) || app.settings.isGroupLocked(item.group)) continue"))
     }
 
     @Test

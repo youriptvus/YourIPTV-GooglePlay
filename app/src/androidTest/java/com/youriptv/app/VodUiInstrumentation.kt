@@ -23,6 +23,9 @@ class VodUiInstrumentation : Instrumentation() {
     private val opened = ArrayList<Activity>()
     private var failed = 0
     private fun capture(name: String) {
+        waitForIdleSync()
+        SystemClock.sleep(400) // Let the compositor present the state just verified on the main thread.
+        waitForIdleSync()
         val bitmap = uiAutomation.takeScreenshot() ?: return
         val directory = java.io.File(targetContext.getExternalFilesDir(null), "vod-qa").apply { mkdirs() }
         java.io.File(directory, "$name.png").outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
@@ -44,7 +47,9 @@ class VodUiInstrumentation : Instrumentation() {
     }
     private fun checkStep(name: String, action: () -> Unit) {
         try { action(); results.put(JSONObject().put("name", name).put("passed", true)) }
-        catch (e: Throwable) { failed++; results.put(JSONObject().put("name", name).put("passed", false).put("type", e.javaClass.simpleName)) }
+        catch (e: Throwable) { failed++; results.put(JSONObject().put("name", name).put("passed", false)
+            .put("type", e.javaClass.simpleName).put("message", e.message.orEmpty().take(400))
+            .put("stack", e.stackTrace.take(8).joinToString("\n"))) }
     }
     private fun launch(type: Class<out Activity>, item: MediaItem): Activity {
         return startActivitySync(Intent(targetContext, type).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -96,7 +101,11 @@ class VodUiInstrumentation : Instrumentation() {
         waitForIdleSync()
         val app = YourIptvApp.instance
         var pid = 0L
-        val oldAuto = app.settings.autoPlayNextEpisode
+        var browsePid = 0L
+        val preferences = targetContext.getSharedPreferences("settings", android.content.Context.MODE_PRIVATE)
+        val preservedKeys = listOf("auto_next_episode", "active_playlist", "last_channel", "last_live_playlist", "resume_last")
+        val oldPreferences = preservedKeys.associateWith { preferences.all[it] }
+        val oldQueue = YourIptvApp.playQueue
         try {
             // Recover only this harness's exact synthetic fixtures after an interrupted test run.
             app.repo.playlists().filter { it.name.startsWith("VOD UI QA ") && it.type == SourceType.XTREAM &&
@@ -157,11 +166,14 @@ class VodUiInstrumentation : Instrumentation() {
             checkStep("explicit movie restart starts near zero") { onMain { player(screen).pause(); check(player(screen).currentPosition < 1500) } }
             finishScreen(screen)
             checkStep("movie watched and clear actions update Continue Watching") {
+                await { movieDetails.findViewById<Button>(R.id.movie_watched).text.toString() == "Mark watched" }
                 onMain { movieDetails.findViewById<Button>(R.id.movie_watched).performClick() }
-                check(app.repo.watchProgress(movie)?.completed == true)
-                check(app.repo.continueWatching(pid, ItemKind.MOVIE).isEmpty())
+                await { app.repo.watchProgress(movie)?.completed == true &&
+                    movieDetails.findViewById<Button>(R.id.movie_watched).text.toString() == "Mark unwatched" }
+                await { app.repo.continueWatching(pid, ItemKind.MOVIE).isEmpty() }
                 onMain { movieDetails.findViewById<Button>(R.id.movie_clear).performClick() }
-                check(app.repo.resumePosition(movie) == 0L && app.repo.watchProgress(movie)?.completed == false)
+                await { app.repo.resumePosition(movie) == 0L && app.repo.watchProgress(movie)?.completed == false &&
+                    movieDetails.findViewById<Button>(R.id.movie_watched).text.toString() == "Mark watched" }
             }
             finishScreen(movieDetails)
             val details = app.repo.seriesDetails(app.repo.playlist(pid)!!, series)
@@ -175,6 +187,25 @@ class VodUiInstrumentation : Instrumentation() {
                 onMain { check(seriesDetails.findViewById<TextView>(R.id.series_metadata).text.contains("2 seasons")) }
                 capture("series-resume")
             }
+            checkStep("visible episode cards have accurate partial green progress and no unwatched line") {
+                val seasons = seriesDetails.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.series_seasons)
+                onMain { seasons.scrollToPosition(0) }
+                await { seasons.findViewHolderForAdapterPosition(0) != null }
+                val rail = seasons.findViewHolderForAdapterPosition(0)!!.itemView
+                    .findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.series_episode_rail)
+                onMain { rail.scrollToPosition(0) }
+                await {
+                    val first = rail.findViewHolderForAdapterPosition(0)?.itemView
+                    val second = rail.findViewHolderForAdapterPosition(1)?.itemView
+                    if (first == null || second == null) false else {
+                        val blank = first.findViewById<android.widget.ProgressBar>(R.id.episode_watch_progress)
+                        val partial = second.findViewById<android.widget.ProgressBar>(R.id.episode_watch_progress)
+                        blank.visibility == android.view.View.INVISIBLE && partial.visibility == android.view.View.VISIBLE &&
+                            partial.progress in 410..420 && partial.progressTintList?.defaultColor == android.graphics.Color.parseColor("#FF43D17A")
+                    }
+                }
+                capture("episode-green-progress")
+            }
             checkStep("D-pad switches seasons and restores each rail selection") {
                 sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_DPAD_DOWN)
                 await { seriesDetails.findViewById<TextView>(R.id.series_selected).text.contains("Season 2 · Episode 1") }
@@ -182,8 +213,10 @@ class VodUiInstrumentation : Instrumentation() {
                 await { seriesDetails.findViewById<TextView>(R.id.series_selected).text.contains("Season 1 · Episode 2") }
                 sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_DPAD_LEFT)
                 await { seriesDetails.findViewById<TextView>(R.id.series_selected).text.contains("Season 1 · Episode 1") }
+                await { seriesDetails.findViewById<TextView>(R.id.series_watch_status).text.contains("Last watched: S1 E2") }
                 sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_DPAD_RIGHT)
                 await { seriesDetails.findViewById<TextView>(R.id.series_selected).text.contains("Season 1 · Episode 2") }
+                capture("series-header-after-focus")
             }
             screen = playClick(seriesDetails, R.id.series_continue); ready(screen)
             checkStep("episode resumes exact episode with next-season queue available") {
@@ -257,9 +290,229 @@ class VodUiInstrumentation : Instrumentation() {
                     finishScreen(resumed)
                 } finally { removeMonitor(playMonitor); finishScreen(reopened) }
             }
+            fun openEpisode(index: Int): Activity {
+                val monitor = addMonitor(PlayerActivity::class.java.name, null, false)
+                onMain { Nav.play(seriesDetails, queue, index, fromBeginning = true) }
+                return try { (waitForMonitorWithTimeout(monitor, 10_000) ?: error("Episode player did not open")).also {
+                    opened.add(it); ready(it)
+                } } finally { removeMonitor(monitor) }
+            }
+            checkStep("completed episode card displays a full green progress line") {
+                val seasons = seriesDetails.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.series_seasons)
+                onMain { seasons.scrollToPosition(0) }
+                await { seasons.findViewHolderForAdapterPosition(0) != null }
+                val rail = seasons.findViewHolderForAdapterPosition(0)!!.itemView
+                    .findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.series_episode_rail)
+                onMain { rail.scrollToPosition(1) }
+                await {
+                    rail.findViewHolderForAdapterPosition(1)?.itemView?.findViewById<android.widget.ProgressBar>(R.id.episode_watch_progress)
+                        ?.let { it.visibility == android.view.View.VISIBLE && it.progress == 1000 } == true
+                }
+                capture("episode-completed-green-progress")
+            }
+            checkStep("unfinished episode progress keeps priority over an earlier completed episode") {
+                check(app.repo.watchProgress(queue[2])?.resume ?: 0 > 0)
+                await { seriesDetails.findViewById<Button>(R.id.series_continue).text.toString() == "Resume S2 E1" &&
+                    seriesDetails.findViewById<Button>(R.id.series_next).text.toString() == "Next: S2 E2" }
+                capture("unfinished-episode-priority")
+            }
+            checkStep("autoplay OFF returns after natural end without launching another episode") {
+                app.settings.autoPlayNextEpisode = false
+                // Isolate completed-history navigation from the earlier partial S2E1 resume test.
+                app.repo.markWatched(queue[0], true)
+                app.repo.clearWatchProgress(queue[2])
+                app.repo.clearWatchProgress(queue[3])
+                val manual = openEpisode(1)
+                onMain { player(manual).seekTo(player(manual).duration - 250); player(manual).play() }
+                await { manual.isFinishing || manual.isDestroyed }
+                check(app.repo.watchProgress(queue[1])?.completed == true)
+            }
+            checkStep("the series Next action names and opens the first episode after completed history without skipping it") {
+                await { seriesDetails.findViewById<Button>(R.id.series_next).text.toString() == "Next: S2 E1" }
+                val next = playClick(seriesDetails, R.id.series_next)
+                ready(next)
+                onMain { check(player(next).currentMediaItem?.mediaId == queue[2].url) }
+                finishScreen(next)
+            }
+            checkStep("manual Next remains available while autoplay is OFF") {
+                app.settings.autoPlayNextEpisode = false
+                val manual = openEpisode(0)
+                onMain {
+                    val controls = manual.findViewById<PlayerView>(R.id.player_view).player!!
+                    check(controls.hasNextMediaItem()); controls.seekToNextMediaItem()
+                }
+                await { player(manual).currentMediaItem?.mediaId == queue[1].url && player(manual).playbackState == Player.STATE_READY }
+                finishScreen(manual)
+            }
+            checkStep("final episode completion returns without wrapping to the first episode") {
+                app.settings.autoPlayNextEpisode = true
+                val final = openEpisode(queue.lastIndex)
+                onMain { check(!final.findViewById<PlayerView>(R.id.player_view).player!!.hasNextMediaItem())
+                    player(final).seekTo(player(final).duration - 250); player(final).play() }
+                await { final.isFinishing || final.isDestroyed }
+                check(app.repo.watchProgress(queue.last())?.completed == true)
+            }
+            checkStep("guide catch-up opens the archive player without losing its URL or archive flag") {
+                val now = System.currentTimeMillis()
+                val live = movie.copy(kind = ItemKind.LIVE, remoteId = "1", name = "Synthetic archive source", catchupDays = 2)
+                val program = Program("fixture", now - 120_000, now - 60_000, "Synthetic archive programme")
+                val archive = app.repo.catchupItem(live, program, now) ?: error("Archive was unavailable")
+                val playerMonitor = addMonitor(PlayerActivity::class.java.name, null, false)
+                val movieMonitor = addMonitor(MovieDetailsActivity::class.java.name, null, false)
+                try {
+                    onMain { Nav.open(seriesDetails, archive, listOf(archive)) }
+                    val archiveScreen = waitForMonitorWithTimeout(playerMonitor, 10_000) ?: error("Archive player did not open")
+                    opened.add(archiveScreen)
+                    check(movieMonitor.hits == 0)
+                    check(YourIptvApp.playQueue.single().let { it.isCatchup && it.url == archive.url })
+                    checkStep("archive playback decodes real frames from the exact catch-up URL") {
+                        ready(archiveScreen)
+                        await { player(archiveScreen).videoDecoderCounters?.let {
+                            it.ensureUpdated(); it.renderedOutputBufferCount > 0 } == true }
+                        onMain { check(player(archiveScreen).currentMediaItem?.mediaId == archive.url) }
+                        capture("catchup-decoded-frame")
+                    }
+                    checkStep("catch-up account changes block stale archive replay on foreground and retry") {
+                        val source = app.repo.playlist(pid)!!
+                        try {
+                            val taskId = archiveScreen.taskId
+                            onMain { check(archiveScreen.moveTaskToBack(true)) }
+                            SystemClock.sleep(700)
+                            app.repo.savePlaylist(source.copy(password = "changed-fixture-account"))
+                            val manager = targetContext.getSystemService(android.content.Context.ACTIVITY_SERVICE) as android.app.ActivityManager
+                            val task = manager.appTasks.first { it.taskInfo.taskId == taskId }
+                            onMain { task.moveToFront() }
+                            val expected = "The playlist account changed. Reopen this programme from the guide."
+                            await { archiveScreen.findViewById<TextView>(R.id.message).let {
+                                it.visibility == android.view.View.VISIBLE && it.text.toString() == expected }
+                            }
+                            onMain { check(archiveScreen.findViewById<PlayerView>(R.id.player_view).player?.isPlaying != true) }
+                            sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_DPAD_CENTER)
+                            await { archiveScreen.findViewById<TextView>(R.id.message).text.toString() == expected }
+                            onMain { check(archiveScreen.findViewById<PlayerView>(R.id.player_view).player?.isPlaying != true) }
+                            check(app.repo.watchProgress(archive) == null)
+                            capture("catchup-source-edit-blocked")
+                        } finally { app.repo.savePlaylist(source) }
+                    }
+                    finishScreen(archiveScreen)
+                } finally { removeMonitor(playerMonitor); removeMonitor(movieMonitor) }
+            }
             finishScreen(seriesDetails)
+            checkStep("Settings to Home to launcher resumes the remembered live source without a fullscreen marker") {
+                check(!app.settings.settingsLockEnabled) { "The isolated fixture must have ordinary Settings access" }
+                app.settings.resumeLastChannel = false
+                val live = movie.copy(kind = ItemKind.LIVE, remoteId = "startup-live", name = "Synthetic remembered live",
+                    url = movie.url + "?startup_live=1")
+                Db(targetContext).use { it.writableDatabase.insertOrThrow("items", null, Db.itemValues(live)) }
+                checkStep("a fresh guide-request Activity stays in the guide rather than resuming fullscreen live") {
+                    app.settings.activePlaylistId = pid
+                    app.settings.rememberLiveChannel(live)
+                    app.settings.resumeLastChannel = true
+                    val playerMonitor = addMonitor(PlayerActivity::class.java.name, null, false)
+                    try {
+                        val guide = startActivitySync(Intent(targetContext, MainActivity::class.java)
+                            .setAction(Intent.ACTION_MAIN).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .putExtra(MainActivity.EXTRA_GUIDE_CHANNEL, live.url)
+                            .putExtra(MainActivity.EXTRA_GUIDE_GROUP, live.group))
+                        opened.add(guide)
+                        await { guide.hasWindowFocus() }
+                        SystemClock.sleep(1500)
+                        onMain { check(guide.hasWindowFocus() && playerMonitor.hits == 0) }
+                        capture("fresh-guide-request")
+                        finishScreen(guide)
+                    } finally { removeMonitor(playerMonitor) }
+                    onMain { app.livePlayback.stop() }
+                }
+                app.settings.resumeLastChannel = false
+                browsePid = app.repo.savePlaylist(Playlist(name = "VOD UI QA browsing ${System.nanoTime()}",
+                    type = SourceType.M3U, url = "https://startup-fixture.invalid/browsing", refreshHours = 0))
+                app.settings.activePlaylistId = browsePid
+                val main = startActivitySync(Intent(targetContext, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                opened.add(main)
+                await { main.hasWindowFocus() }
+                val settingsMonitor = addMonitor(SettingsActivity::class.java.name, null, false)
+                val settingsScreen = try {
+                    onMain { main.startActivity(Intent(main, SettingsActivity::class.java)) }
+                    waitForMonitorWithTimeout(settingsMonitor, 10_000) ?: error("Settings did not open")
+                } finally { removeMonitor(settingsMonitor) }
+                opened.add(settingsScreen)
+                await { settingsScreen.hasWindowFocus() }
+                app.settings.rememberLiveChannel(live)
+                app.settings.resumeLastChannel = true
+                check(!PlayerActivity.takeLeftWhileWatchingLive(targetContext))
+                // Shell input uses the real HOME key. The next intent is what an Android launcher sends.
+                uiAutomation.executeShellCommand("input keyevent KEYCODE_HOME").close()
+                await { !settingsScreen.hasWindowFocus() }
+                val playerMonitor = addMonitor(PlayerActivity::class.java.name, null, false)
+                try {
+                    uiAutomation.executeShellCommand("am start -W -n ${targetContext.packageName}/com.youriptv.app.ui.MainActivity " +
+                        "-a android.intent.action.MAIN -c android.intent.category.LAUNCHER").use { output ->
+                        java.io.FileInputStream(output.fileDescriptor).bufferedReader().use { it.readText() }
+                    }
+                    val resumed = waitForMonitorWithTimeout(playerMonitor, 15_000) ?: error("Launcher did not resume live playback")
+                    opened.add(resumed); ready(resumed)
+                    onMain { check(player(resumed).currentMediaItem?.mediaId == live.url) }
+                    check(YourIptvApp.playQueue.all { it.playlistId == pid && it.kind == ItemKind.LIVE })
+                    check(app.settings.activePlaylistId == pid)
+                    capture("launcher-remembered-live")
+                    finishScreen(resumed)
+                } finally { removeMonitor(playerMonitor) }
+                app.settings.resumeLastChannel = false
+                finishScreen(main)
+            }
+            checkStep("main History groups series once beside individual movies and opens series progress") {
+                app.settings.resumeLastChannel = false
+                app.settings.activePlaylistId = pid
+                app.repo.saveWatchProgress(movie, 1500, 6024)
+                app.repo.saveWatchProgress(queue[0], 1250, 6024)
+                app.repo.saveWatchProgress(queue[1], 6024, 6024, ended = true)
+                val saved = (queue + movie).associate { it.url to app.repo.watchProgress(it) }
+                val main = startActivitySync(Intent(targetContext, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                opened.add(main)
+                await { main.hasWindowFocus() }
+                fun nav(label: String) = onMain {
+                    val container = main.findViewById<android.widget.LinearLayout>(R.id.nav_container)
+                    (0 until container.childCount).map { container.getChildAt(it) }.filterIsInstance<TextView>()
+                        .single { it.text.toString() == label }.performClick()
+                }
+                val items = main.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.items)
+                nav("History")
+                await { main.findViewById<android.view.View>(R.id.state_container).visibility != android.view.View.VISIBLE &&
+                    (items.adapter as? ItemAdapter)?.items?.let { rows ->
+                    rows.count { it.kind == ItemKind.SERIES && it.url == series.url } == 1 &&
+                        rows.count { it.kind == ItemKind.MOVIE && it.url == movie.url } == 1 &&
+                        rows.none { it.kind == ItemKind.EPISODE } } == true }
+                capture("main-grouped-history")
+                nav("Shows")
+                val groups = main.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.groups)
+                await { (groups.adapter?.itemCount ?: 0) >= 3 }
+                onMain { groups.scrollToPosition(2) }
+                await { groups.findViewHolderForAdapterPosition(2) != null }
+                onMain { groups.findViewHolderForAdapterPosition(2)!!.itemView.performClick() }
+                await { main.findViewById<android.view.View>(R.id.state_container).visibility != android.view.View.VISIBLE &&
+                    (items.adapter as? ItemAdapter)?.let {
+                    it.posterMode && it.items.size == 1 && it.items.single().kind == ItemKind.SERIES &&
+                        it.items.single().url == series.url } == true }
+                onMain { items.scrollToPosition(0) }
+                await { items.findViewHolderForAdapterPosition(0) != null }
+                capture("series-history-one-parent-poster")
+                val seriesMonitor = addMonitor(SeriesActivity::class.java.name, null, false)
+                try {
+                    onMain { items.findViewHolderForAdapterPosition(0)!!.itemView.performClick() }
+                    val reopened = waitForMonitorWithTimeout(seriesMonitor, 10_000) ?: error("History parent did not open series details")
+                    opened.add(reopened)
+                    await { reopened.findViewById<Button>(R.id.series_continue).text.toString() == "Resume S1 E1" }
+                    capture("history-parent-series-progress")
+                    finishScreen(reopened)
+                } finally { removeMonitor(seriesMonitor) }
+                check((queue + movie).all { app.repo.watchProgress(it) == saved[it.url] })
+                finishScreen(main)
+            }
+            val progressBeforeRefresh = app.repo.watchProgress(episode)
             app.repo.refresh(app.repo.playlist(pid)!!, {})
-            checkStep("catalogue refresh preserves watch progress") { check(app.repo.watchProgress(episode)?.completed == true) }
+            checkStep("catalogue refresh preserves watch progress") { check(app.repo.watchProgress(episode) == progressBeforeRefresh) }
             val originalSource = app.repo.playlist(pid)!!
             checkStep("an edited account revokes stale movie details") {
                 val stale = launch(MovieDetailsActivity::class.java, movie)
@@ -278,11 +531,23 @@ class VodUiInstrumentation : Instrumentation() {
             }
             app.repo.savePlaylist(originalSource)
         } catch (e: Throwable) {
-            failed++; results.put(JSONObject().put("name", "UI fixture execution").put("passed", false).put("type", e.javaClass.simpleName))
+            failed++; results.put(JSONObject().put("name", "UI fixture execution").put("passed", false)
+                .put("type", e.javaClass.simpleName).put("message", e.message.orEmpty().take(400))
+                .put("stack", e.stackTrace.take(8).joinToString("\n")))
         } finally {
-            onMain { opened.asReversed().filter { !it.isDestroyed }.forEach { it.finish() }; app.settings.autoPlayNextEpisode = oldAuto }
+            onMain { opened.asReversed().filter { !it.isDestroyed }.forEach { it.finish() }
+                app.livePlayback.stop(); YourIptvApp.playQueue = oldQueue }
             waitForIdleSync()
             if (pid != 0L) app.repo.deletePlaylist(pid)
+            if (browsePid != 0L) app.repo.deletePlaylist(browsePid)
+            val editor = preferences.edit()
+            oldPreferences.forEach { (key, value) -> when (value) {
+                null -> editor.remove(key)
+                is String -> editor.putString(key, value)
+                is Boolean -> editor.putBoolean(key, value)
+                is Long -> editor.putLong(key, value)
+            } }
+            check(editor.commit())
         }
         finish(if (failed == 0) Activity.RESULT_OK else Activity.RESULT_CANCELED, Bundle().apply {
             putString("results", results.toString()); putInt("failures", failed)

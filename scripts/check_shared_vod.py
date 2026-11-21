@@ -4,7 +4,7 @@ import argparse, hashlib, json, re
 
 JAVA = "app/src/main/java/com/youriptv/app/"
 COMMON = [JAVA + name for name in (
-    "data/SecureTransport.kt", "data/XtreamUrls.kt", "data/SettingsLockPolicy.kt", "data/Models.kt", "data/Db.kt", "data/Repository.kt", "data/VodMetadata.kt", "data/WatchPolicy.kt", "data/WatchProgressStore.kt",
+    "data/HistoryPolicy.kt", "data/EpisodePlaybackPolicy.kt", "data/PlaybackSessionPolicy.kt", "ui/StartupPlaybackPolicy.kt", "ui/SeriesWatchSummary.kt", "data/SecureTransport.kt", "data/XtreamUrls.kt", "data/SettingsLockPolicy.kt", "data/Models.kt", "data/Db.kt", "data/Repository.kt", "data/VodMetadata.kt", "data/WatchPolicy.kt", "data/WatchProgressStore.kt",
     "data/Backup.kt", "data/ContentLengthInputStream.kt", "ui/MainActivity.kt", "ui/Adapters.kt", "ui/MovieDetailsActivity.kt", "ui/SeriesActivity.kt",
     "ui/SeriesBrowseState.kt", "ui/SeriesEpisodeAdapters.kt", "ui/PlayerActivity.kt", "ui/RemoteActivity.kt", "ui/AudioDelayProcessor.kt",
     "ui/CustomerSettingsPanel.kt", "ui/EpgSettingsPanel.kt")] + ["app/src/main/res/" + name for name in (
@@ -32,7 +32,7 @@ def main():
         checks["Nav: " + start.strip()] = signature(nav[0], start, end) == signature(nav[1], start, end)
     for p in (root, other):
         settings = normalized(p/(JAVA+"data/Settings.kt"))
-        checks[p.name+": auto next defaults off"] = 'sp.getBoolean("auto_next_episode", false)' in settings
+        checks[p.name+": auto next defaults on"] = 'sp.getBoolean("auto_next_episode", true)' in settings
     versions = []
     for p in (root, other):
         build = normalized(p/"app/build.gradle.kts")

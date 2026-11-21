@@ -2,6 +2,12 @@
 
 ## 1.1.1 (version code 52)
 
+- Group episode history under one parent-series entry while retaining every episode resume point; movie history remains individual.
+- Show green episode progress bars and the last-watched episode alongside the resume target.
+- Autoplay Next Episode defaults ON unless explicitly configured; a public Playback switch preserves saved OFF choices. Finished series never wrap to episode one.
+- Play channel catch-up directly through the archive player and restore the last live channel on launcher re-entry from any screen, including across playlist browsing.
+
+
 - Accept explicit HTTP and HTTPS M3U, Xtream and guide addresses without silently rewriting the provider scheme.
 - Fix Play imports, artwork and playback for user-selected HTTP sources. HTTPS certificate validation and downgrade-redirect protection remain enabled.
 - Validate source addresses before saving, with matching URL handling in both distributions. Existing playlists, Settings PIN choices and watch progress are retained.
