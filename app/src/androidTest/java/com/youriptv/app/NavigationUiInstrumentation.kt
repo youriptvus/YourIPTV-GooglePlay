@@ -197,6 +197,9 @@ class NavigationUiInstrumentation : Instrumentation() {
                     main {
                         fun field(name: String): Any? = runCatching { MainActivity::class.java.getDeclaredField(name).let {
                             it.isAccessible = true; it.get(home) } }.getOrNull()
+                        val items = home.findViewById<RecyclerView>(R.id.items)
+                        val holder = items.findViewHolderForAdapterPosition(grid(home).focusedRow)?.itemView
+                        val focused = home.currentFocus
                         diagnostic = JSONObject().put("requestedPlaylist", playlistId).put("browsingPlaylist", browsingId)
                             .put("activePlaylist", app.settings.activePlaylistId).put("mainPlaylist", (field("playlist") as? Playlist)?.id)
                             .put("section", field("section")?.toString()).put("pendingGuide", field("pendingGuide") != null)
@@ -210,10 +213,22 @@ class NavigationUiInstrumentation : Instrumentation() {
                             .put("intentGuidePlaylist", home.intent.getLongExtra(MainActivity.EXTRA_GUIDE_PLAYLIST, 0L))
                             .put("intentHasGuideChannel", home.intent.hasExtra(MainActivity.EXTRA_GUIDE_CHANNEL))
                             .put("rowPlaylists", JSONArray(grid(home).items.map { it.playlistId }))
+                            .put("currentFocusClass", focused?.javaClass?.simpleName).put("currentFocusId", focused?.id)
+                            .put("itemsInTouchMode", items.isInTouchMode).put("itemsLaidOut", items.isLaidOut)
+                            .put("itemsLayoutRequested", items.isLayoutRequested).put("itemsWindowFocus", items.hasWindowFocus())
+                            .put("itemsHasFocus", items.hasFocus()).put("holderPresent", holder != null)
+                            .put("holderLaidOut", holder?.isLaidOut).put("holderFocusable", holder?.isFocusable)
+                            .put("holderFocusableInTouchMode", holder?.isFocusableInTouchMode).put("holderShown", holder?.isShown)
+                            .put("inputGeneration", field("userInputGeneration"))
+                            .put("gridNavigationGeneration", LiveGuideGrid::class.java.getDeclaredField("navigationGeneration").let {
+                                it.isAccessible = true; it.getLong(grid(home)) })
                             .put("focusedRow", grid(home).focusedRow).put("focusTime", time(home, "focusTime"))
                             .put("windowStart", time(home, "windowStart")).put("now", System.currentTimeMillis())
                             .put("lifecycle", (home as androidx.appcompat.app.AppCompatActivity).lifecycle.currentState.name)
                             .put("windowFocus", home.hasWindowFocus()).put("fullscreenOpens", coldMonitor.hits).toString()
+                        // Probe only after saving the failing state/capture. It never changes the cold-case verdict.
+                        diagnostic = JSONObject(diagnostic).put("lateFocusRequest", holder?.requestFocus())
+                            .put("lateItemsHasFocus", items.hasFocus()).toString()
                     }
                     throw IllegalStateException("Cold guide state: $diagnostic", failure)
                 }

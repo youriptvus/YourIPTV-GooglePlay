@@ -243,6 +243,8 @@ class MainActivity : RemoteActivity() {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                liveGrid.cancelPendingFocus()
+                explicitGuideInputGeneration = null
                 val f = currentFocus
                 when {
                     vodMode() && !portrait && playlist != null -> when (vodLevel) {
@@ -645,6 +647,7 @@ class MainActivity : RemoteActivity() {
     }
 
     private fun showCategories() {
+        liveGrid.cancelPendingFocus()
         explicitGuideInputGeneration = null
         if (groupEntries.isEmpty()) return
         setLiveLevel(LiveLevel.CATEGORIES)
@@ -652,6 +655,7 @@ class MainActivity : RemoteActivity() {
     }
 
     private fun showMenu() {
+        liveGrid.cancelPendingFocus()
         handler.removeCallbacks(loadFocusedGroup)
         setLiveLevel(LiveLevel.MENU)
         navViews[Section.TV]?.requestFocus()
@@ -949,6 +953,7 @@ class MainActivity : RemoteActivity() {
     }
 
     private fun onNav(s: Section) {
+        liveGrid.cancelPendingFocus()
         explicitGuideInputGeneration = null
         if (pendingGuide != null || intent.hasExtra(EXTRA_GUIDE_CHANNEL)) {
             pendingGuide = null

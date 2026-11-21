@@ -166,14 +166,37 @@ class VodUiInstrumentation : Instrumentation() {
             checkStep("explicit movie restart starts near zero") { onMain { player(screen).pause(); check(player(screen).currentPosition < 1500) } }
             finishScreen(screen)
             checkStep("movie watched and clear actions update Continue Watching") {
-                await { movieDetails.findViewById<Button>(R.id.movie_watched).text.toString() == "Mark watched" }
-                onMain { movieDetails.findViewById<Button>(R.id.movie_watched).performClick() }
-                await { app.repo.watchProgress(movie)?.completed == true &&
-                    movieDetails.findViewById<Button>(R.id.movie_watched).text.toString() == "Mark unwatched" }
-                await { app.repo.continueWatching(pid, ItemKind.MOVIE).isEmpty() }
-                onMain { movieDetails.findViewById<Button>(R.id.movie_clear).performClick() }
-                await { app.repo.resumePosition(movie) == 0L && app.repo.watchProgress(movie)?.completed == false &&
-                    movieDetails.findViewById<Button>(R.id.movie_watched).text.toString() == "Mark watched" }
+                fun actionState(): String {
+                    val button = movieDetails.findViewById<Button>(R.id.movie_watched)
+                    val saved = app.repo.watchProgress(movie)
+                    val foreground = MovieDetailsActivity::class.java.getDeclaredField("foreground").let {
+                        it.isAccessible = true; it.getBoolean(movieDetails) }
+                    return JSONObject().put("lifecycle", (movieDetails as androidx.appcompat.app.AppCompatActivity).lifecycle.currentState.name)
+                        .put("windowFocus", movieDetails.hasWindowFocus()).put("foreground", foreground)
+                        .put("buttonShown", button.isShown).put("buttonEnabled", button.isEnabled).put("buttonListener", button.hasOnClickListeners())
+                        .put("buttonLabel", button.text.toString()).put("completed", saved?.completed).put("position", saved?.position)
+                        .put("continueMovies", app.repo.continueWatching(pid, ItemKind.MOVIE).size).toString()
+                }
+                var before = ""
+                try {
+                    await {
+                        val button = movieDetails.findViewById<Button>(R.id.movie_watched)
+                        (movieDetails as androidx.appcompat.app.AppCompatActivity).lifecycle.currentState == androidx.lifecycle.Lifecycle.State.RESUMED &&
+                            movieDetails.hasWindowFocus() && button.isShown && button.isEnabled && button.text.toString() == "Mark watched"
+                    }
+                    onMain { before = actionState(); movieDetails.findViewById<Button>(R.id.movie_watched).performClick() }
+                    await { app.repo.watchProgress(movie)?.completed == true &&
+                        movieDetails.findViewById<Button>(R.id.movie_watched).text.toString() == "Mark unwatched" }
+                    await { app.repo.continueWatching(pid, ItemKind.MOVIE).isEmpty() }
+                    onMain { movieDetails.findViewById<Button>(R.id.movie_clear).performClick() }
+                    await { app.repo.resumePosition(movie) == 0L && app.repo.watchProgress(movie)?.completed == false &&
+                        movieDetails.findViewById<Button>(R.id.movie_watched).text.toString() == "Mark watched" }
+                } catch (failure: Throwable) {
+                    var after = ""
+                    onMain { after = actionState() }
+                    capture("movie-watched-action-failure")
+                    throw IllegalStateException("Watched action before=$before; after=$after", failure)
+                }
             }
             finishScreen(movieDetails)
             val details = app.repo.seriesDetails(app.repo.playlist(pid)!!, series)
