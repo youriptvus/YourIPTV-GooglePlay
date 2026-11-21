@@ -20,6 +20,7 @@ import org.json.JSONObject
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class VodUiInstrumentation : Instrumentation() {
     private val results = JSONArray()
+    private val diagnostics = JSONObject()
     private val opened = ArrayList<Activity>()
     private var failed = 0
     private fun capture(name: String) {
@@ -88,7 +89,9 @@ class VodUiInstrumentation : Instrumentation() {
         return value as ExoPlayer
     }
     private fun ready(screen: Activity) = await { player(screen).let {
-        val ready = it.playbackState == Player.STATE_READY && it.duration > 0 && it.playerError == null
+        val ready = it.playbackState == Player.STATE_READY && it.duration > 0 && it.playerError == null &&
+            (screen as androidx.appcompat.app.AppCompatActivity).lifecycle.currentState == androidx.lifecycle.Lifecycle.State.RESUMED &&
+            screen.hasWindowFocus() && screen.findViewById<PlayerView>(R.id.player_view).isShown
         if (ready) it.pause() // Inspect the resume position before test-runner scheduling can advance a short fixture.
         ready
     } }
@@ -296,13 +299,69 @@ class VodUiInstrumentation : Instrumentation() {
                 check(app.repo.watchProgress(episode)?.completed == true)
             }
             // Restart through the same explicit user action and let the normal END event drive the transition.
-            onMain { Nav.play(screen, queue, 1, fromBeginning = true) }; ready(screen)
+            fun autoplayState(): JSONObject {
+                var result = JSONObject()
+                onMain {
+                    fun field(name: String): Any? = PlayerActivity::class.java.getDeclaredField(name).let {
+                        it.isAccessible = true; it.get(screen) }
+                    val media = screen.findViewById<PlayerView>(R.id.player_view).player
+                    val playerQueue = (field("queue") as List<*>).filterIsInstance<MediaItem>()
+                    val current = playerQueue.getOrNull(field("index") as Int)
+                    val ended = field("endedItem") as? MediaItem
+                    val token = field("progressSessionToken") as? WatchSessionToken
+                    val source = current?.let { app.repo.playlist(it.playlistId) }
+                    val tokenAuthorized = runCatching {
+                        if (token == null || current == null || !app.repo.sameWatchSessionItem(token, current)) false else {
+                            val store = Repository::class.java.getDeclaredField("watchStore").let { it.isAccessible = true; it.get(app.repo) }
+                            synchronized(store) {
+                                fun tokenField(name: String): Any? = token.javaClass.getDeclaredField(name).let {
+                                    it.isAccessible = true; it.get(token) }
+                                val revisions = store.javaClass.getDeclaredField("revisions").let {
+                                    it.isAccessible = true; it.get(store) as Map<*, *> }
+                                val revision = revisions[tokenField("scope") to tokenField("key")]
+                                revision != null && revision.javaClass.getDeclaredField("value").let {
+                                    it.isAccessible = true; it.get(revision) == tokenField("revision") }
+                            }
+                        }
+                    }.getOrNull()
+                    result = JSONObject().put("lifecycle", (screen as androidx.appcompat.app.AppCompatActivity).lifecycle.currentState.name)
+                        .put("windowFocus", screen.hasWindowFocus()).put("viewShown", screen.findViewById<PlayerView>(R.id.player_view).isShown)
+                        .put("finishing", screen.isFinishing).put("destroyed", screen.isDestroyed).put("autoplay", app.settings.autoPlayNextEpisode)
+                        .put("playerState", media?.playbackState).put("playing", media?.isPlaying).put("position", media?.currentPosition)
+                        .put("duration", media?.duration).put("mediaMatchesS1E2", media?.currentMediaItem?.mediaId == queue[1].url)
+                        .put("mediaMatchesS2E1", media?.currentMediaItem?.mediaId == queue[2].url).put("queueIndex", field("index"))
+                        .put("endedS1E2", ended?.url == queue[1].url).put("endedS2E1", ended?.url == queue[2].url)
+                        .put("dialogPresent", dialog() != null).put("dialogShowing", dialog()?.isShowing == true)
+                        .put("dialogTitle", dialog()?.findViewById<TextView>(androidx.appcompat.R.id.alertTitle)?.text?.toString())
+                        .put("countdownPresent", field("nextTick") != null).put("progressTokenPresent", token != null)
+                        .put("tokenMatchesItemIdentity", current != null && app.repo.sameWatchSessionItem(token, current))
+                        .put("tokenRevisionAuthorized", tokenAuthorized ?: JSONObject.NULL)
+                        .put("sourcePresent", source != null).put("scopeMatches", current != null && source != null &&
+                            (current.watchScope.isBlank() || current.watchScope == WatchPolicy.scope(source)))
+                        .put("s1e2Completed", app.repo.watchProgress(queue[1])?.completed)
+                        .put("s1e2Position", app.repo.watchProgress(queue[1])?.position)
+                        .put("s2e1Completed", app.repo.watchProgress(queue[2])?.completed)
+                        .put("s2e1Position", app.repo.watchProgress(queue[2])?.position)
+                }
+                return result
+            }
+            onMain { Nav.play(screen, queue, 1, fromBeginning = true) }
+            diagnostics.put("crossSeasonBeforeReady", autoplayState())
+            ready(screen)
+            diagnostics.put("crossSeasonBeforeSeek", autoplayState())
             onMain { player(screen).seekTo(player(screen).duration - 250); player(screen).play() }
             checkStep("auto next crosses from season one to season two after countdown") {
-                await(20_000) {
-                    val ready = player(screen).currentMediaItem?.mediaId == queue[2].url && player(screen).playbackState == Player.STATE_READY
-                    if (ready) player(screen).pause()
-                    ready
+                try {
+                    await(20_000) {
+                        val ready = player(screen).currentMediaItem?.mediaId == queue[2].url && player(screen).playbackState == Player.STATE_READY
+                        if (ready) player(screen).pause()
+                        ready
+                    }
+                } catch (failure: Throwable) {
+                    val state = autoplayState()
+                    diagnostics.put("crossSeasonFailure", state)
+                    capture("cross-season-autoplay-failure")
+                    throw IllegalStateException("Cross-season state: $state", failure)
                 }
                 onMain { player(screen).pause(); player(screen).seekTo(2000) }
             }
@@ -596,7 +655,7 @@ class VodUiInstrumentation : Instrumentation() {
             check(editor.commit())
         }
         finish(if (failed == 0) Activity.RESULT_OK else Activity.RESULT_CANCELED, Bundle().apply {
-            putString("results", results.toString()); putInt("failures", failed)
+            putString("results", results.toString()); putString("diagnostics", diagnostics.toString()); putInt("failures", failed)
         })
     }
 }
