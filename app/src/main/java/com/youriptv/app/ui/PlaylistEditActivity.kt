@@ -193,8 +193,8 @@ class PlaylistEditActivity : RemoteActivity() {
         btnXtream.isActivated = t == SourceType.XTREAM
         btnM3u.isActivated = t == SourceType.M3U
         xtreamFields.visibility = if (t == SourceType.XTREAM) View.VISIBLE else View.GONE
-        urlLabel.text = if (t == SourceType.XTREAM) "Server URL (for example https://provider.example:443)" else "M3U / M3U Plus playlist URL"
-        url.hint = if (t == SourceType.XTREAM) "https://provider.example:443" else "https://provider.example/playlist.m3u"
+        urlLabel.text = if (t == SourceType.XTREAM) "Server URL (HTTP or HTTPS)" else "M3U / M3U Plus playlist URL (HTTP or HTTPS)"
+        url.hint = if (t == SourceType.XTREAM) "http://provider.example:8080" else "http://provider.example/playlist.m3u"
     }
 
     private fun save() {
@@ -226,8 +226,8 @@ class PlaylistEditActivity : RemoteActivity() {
             XtreamUrls.parseLogin(server)?.let { login -> server = login.base; username = login.username; password = login.password }
             server = XtreamUrls.normalizeBase(server)
             if (username.isEmpty() || password.isEmpty()) { status.text = "Enter the username and password from your IPTV provider."; return }
-        } else if (!server.startsWith("http://", true) && !server.startsWith("https://", true)) {
-            server = "https://$server"
+        } else if (!server.contains("://")) {
+            server = "http://$server"
         }
         val displayName = name.text.toString().trim().ifEmpty {
             runCatching { java.net.URI(server).host }.getOrNull() ?: "Playlist"
@@ -244,13 +244,13 @@ class PlaylistEditActivity : RemoteActivity() {
     private fun savePlaylist(p: Playlist) {
         if (busy || isFinishing || !authorization.isAuthorized || !flow.isCurrentPolicy(visitPolicy)) return
         if (inheritedSettings && !flow.isAuthorized(this)) return
-        if (!SecureTransport.isHttpsUrl(p.url)) {
-            status.text = SecureTransport.HTTPS_REQUIRED
+        if (!SecureTransport.isNetworkUrl(p.url)) {
+            status.text = SecureTransport.NETWORK_URL_REQUIRED
             url.requestFocus()
             return
         }
-        if (p.epgUrl.isNotBlank() && !SecureTransport.isHttpsUrl(p.epgUrl)) {
-            status.text = "The guide URL must use HTTPS. Ask your provider for a secure guide address."
+        if (p.epgUrl.isNotBlank() && !SecureTransport.isNetworkUrl(p.epgUrl)) {
+            status.text = "Enter a valid HTTP or HTTPS guide address, or leave it empty."
             epg.requestFocus()
             return
         }

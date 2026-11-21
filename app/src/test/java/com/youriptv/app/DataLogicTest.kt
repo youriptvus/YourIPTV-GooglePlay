@@ -17,14 +17,14 @@ class DataLogicTest {
 
     @Test
     fun xtreamBaseNormalisation() {
-        assertEquals("https://host:8080", XtreamUrls.normalizeBase("host:8080/"))
+        assertEquals("http://host:8080", XtreamUrls.normalizeBase("host:8080/"))
         assertEquals("http://host:8080", XtreamUrls.normalizeBase("http://host:8080/player_api.php"))
         assertEquals("https://h", XtreamUrls.normalizeBase(" https://h/get.php?x=1 "))
     }
 
     @Test
     fun xtreamStreamUrlsEncodeCredentials() {
-        assertEquals("https://h/live/u%40x/p%26w/5.ts", XtreamUrls.live("h", "u@x", "p&w", "5"))
+        assertEquals("http://h/live/u%40x/p%26w/5.ts", XtreamUrls.live("h", "u@x", "p&w", "5"))
         assertEquals("http://h/movie/u/p/7.mkv", XtreamUrls.movie("http://h/", "u", "p", "7", "mkv"))
         assertEquals("http://h/series/u/p/9.mp4", XtreamUrls.episode("http://h", "u", "p", "9", ""))
         assertTrue(XtreamUrls.api("h", "u", "p", "get_live_streams").endsWith("&action=get_live_streams"))

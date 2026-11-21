@@ -1,5 +1,11 @@
 # YourIPTV release notes
 
+## 1.1.1 (version code 52)
+
+- Accept explicit HTTP and HTTPS M3U, Xtream and guide addresses without silently rewriting the provider scheme.
+- Fix Play imports, artwork and playback for user-selected HTTP sources. HTTPS certificate validation and downgrade-redirect protection remain enabled.
+- Validate source addresses before saving, with matching URL handling in both distributions. Existing playlists, Settings PIN choices and watch progress are retained.
+
 ## 1.1.0 (version code 51)
 
 - Settings Lock defaults off in both distributions. Existing explicit on/off choices, an existing Settings PIN and legacy Settings restrictions are preserved; Admin and parental protection remain independent.

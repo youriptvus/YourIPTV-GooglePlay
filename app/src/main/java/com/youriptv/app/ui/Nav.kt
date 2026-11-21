@@ -162,7 +162,7 @@ object Nav {
 
     fun externalPlayer(a: Activity, url: String, title: String) {
         if (!com.youriptv.app.data.SecureTransport.canHandOffMedia(url)) {
-            Dialogs.toast(a, com.youriptv.app.data.SecureTransport.HTTPS_REQUIRED)
+            Dialogs.toast(a, com.youriptv.app.data.SecureTransport.NETWORK_URL_REQUIRED)
             return
         }
         val intent = Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse(url), "video/*").putExtra("title", title)

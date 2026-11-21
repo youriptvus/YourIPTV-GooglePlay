@@ -175,7 +175,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 for (forbidden in listOf("REQUEST_INSTALL_PACKAGES", "UPDATE_PACKAGES_WITHOUT_USER_ACTION", "SYSTEM_ALERT_WINDOW"))
                     check("android.permission.$forbidden" !in permissions)
             }
-            execute("isolated QA permits literal loopback cleartext and blocks remote cleartext") {
+            execute("isolated QA matches production user-provided HTTP support") {
                 if (android.os.Build.VERSION.SDK_INT < 24)
                     throw IllegalStateException("Host-specific network-policy QA requires API 24 or newer.")
                 val policy = NetworkSecurityPolicy.getInstance()
@@ -185,8 +185,8 @@ class PlaySmokeInstrumentation : Instrumentation() {
                 networkSecurityStats.put("remoteCleartextAllowed", remoteAllowed)
                     .put("literalLoopbackAllowed", loopbackAllowed)
                     .put("loopbackLookalikeAllowed", lookalikeAllowed)
-                    .put("scope", "Actual isolated QA NetworkSecurityPolicy; production packaging is audited separately and has no loopback exception")
-                check(!remoteAllowed && loopbackAllowed && !lookalikeAllowed)
+                    .put("scope", "Actual isolated QA NetworkSecurityPolicy; production packaging is audited separately with the same HTTP source support")
+                check(remoteAllowed && loopbackAllowed && lookalikeAllowed)
             }
             // Repeated QA runs contain a saved synthetic channel. Keep browser UI checks
             // in the browser instead of triggering the app's legitimate startup resume.

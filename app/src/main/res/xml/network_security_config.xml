@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Provider credentials and media requests require encrypted transport. -->
-    <base-config cleartextTrafficPermitted="false" />
+    <!-- User-supplied sources may explicitly use HTTP. HTTPS retains platform trust validation. -->
+    <base-config cleartextTrafficPermitted="true" />
 </network-security-config>

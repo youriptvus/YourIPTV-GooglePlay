@@ -1,3 +1,5 @@
+> Current1.1.1/code52 source compatibility correction: user-provided HTTP and HTTPS playlist, Xtream, guide, artwork and media addresses are supported. The exact explicit source scheme is preserved. Platform HTTPS certificate validation and HTTPS-to-HTTP redirect blocking remain. Earlier HTTPS-only descriptions apply to code51 and older Play builds, not this candidate. Play automatic protection/signing remain unchanged. Privacy/Data safety must describe actual HTTP handling before publication; no all-traffic-encrypted claim is justified.
+
 # Independent maintenance and release
 
 > **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](../GooglePlay-v1.0.9/CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. The latest final-completion request authorizes safe isolated checks; customer packages/data remain protected. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.

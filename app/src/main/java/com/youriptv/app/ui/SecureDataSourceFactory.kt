@@ -11,14 +11,13 @@ import com.youriptv.app.data.SecureTransport
 @OptIn(UnstableApi::class)
 internal class SecureDataSourceFactory(
     private val delegate: DataSource.Factory,
-    private val allowLoopbackHttp: Boolean,
 ) : DataSource.Factory {
     override fun createDataSource(): DataSource {
         val source = delegate.createDataSource()
         return object : DataSource by source {
             override fun open(dataSpec: DataSpec): Long {
-                if (!SecureTransport.canLoadMedia(dataSpec.uri.toString(), allowLoopbackHttp))
-                    throw InsecureTransportException(SecureTransport.HTTPS_REQUIRED)
+                if (!SecureTransport.canLoadMedia(dataSpec.uri.toString()))
+                    throw InsecureTransportException(SecureTransport.NETWORK_URL_REQUIRED)
                 return source.open(dataSpec)
             }
         }

@@ -33,7 +33,7 @@ object StreamDiagnosis {
         PROVIDER_ERROR,
         /** The server accepted the connection, then closed or reset it without an HTTP answer. */
         CONNECTION_DROPPED,
-        /** The configured source or a redirect violates the Play HTTPS requirement. */
+        /** The configured source or a redirect uses an unsupported transport or downgrades HTTPS. */
         SECURE_TRANSPORT_REQUIRED,
     }
 
@@ -48,7 +48,7 @@ object StreamDiagnosis {
             when (error) {
                 is InsecureTransportException -> return Result(Kind.SECURE_TRANSPORT_REQUIRED, host, 0,
                     if (error.message == SecureTransport.SECURE_REDIRECT_REQUIRED) SecureTransport.SECURE_REDIRECT_REQUIRED
-                    else SecureTransport.HTTPS_REQUIRED)
+                    else SecureTransport.NETWORK_URL_REQUIRED)
                 is EOFException -> return Result(Kind.CONNECTION_DROPPED, host, 0, "the server closed the connection without answering")
                 is ProtocolException -> return Result(Kind.CONNECTION_DROPPED, host, 0, "the server sent an invalid answer")
                 is SocketException -> if (error !is ConnectException && error !is NoRouteToHostException)
@@ -105,7 +105,7 @@ object StreamDiagnosis {
         var current = url
         var host = hostOf(url)
         try {
-            SecureTransport.requireHttps(url)
+            SecureTransport.requireNetworkUrl(url)
             repeat(6) {
                 host = hostOf(current)
                 val conn = URL(current).openConnection() as HttpURLConnection
@@ -154,7 +154,7 @@ object StreamDiagnosis {
         val where = if (r.host.isNotBlank()) " (${r.host})" else ""
         return when (r.kind) {
             Kind.SECURE_TRANSPORT_REQUIRED -> if (r.detail == SecureTransport.SECURE_REDIRECT_REQUIRED)
-                SecureTransport.SECURE_REDIRECT_REQUIRED else SecureTransport.HTTPS_REQUIRED
+                SecureTransport.SECURE_REDIRECT_REQUIRED else SecureTransport.NETWORK_URL_REQUIRED
             Kind.NETWORK_FILTER ->
                 "Your network blocked $server$where: a web page" +
                     (if (r.detail.isNotBlank()) " (\"${r.detail}\")" else "") +

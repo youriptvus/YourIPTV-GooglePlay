@@ -37,7 +37,7 @@
     <application
         android:name=".YourIptvApp"
         android:allowBackup="false"
-        android:usesCleartextTraffic="false"
+        android:usesCleartextTraffic="true"
         android:fullBackupContent="@xml/backup_rules"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:banner="@drawable/banner"

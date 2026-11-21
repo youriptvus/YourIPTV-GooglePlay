@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Isolated synthetic QA only. Production has no cleartext exception. -->
-    <base-config cleartextTrafficPermitted="false" />
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">127.0.0.1</domain>
-    </domain-config>
+    <!-- Same user-provided source transport as production. -->
+    <base-config cleartextTrafficPermitted="true" />
 </network-security-config>

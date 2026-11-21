@@ -1,3 +1,5 @@
+> Current1.1.1/code52 source compatibility correction: user-provided HTTP and HTTPS playlist, Xtream, guide, artwork and media addresses are supported. The exact explicit source scheme is preserved. Platform HTTPS certificate validation and HTTPS-to-HTTP redirect blocking remain. Earlier HTTPS-only descriptions apply to code51 and older Play builds, not this candidate. Play automatic protection/signing remain unchanged. Privacy/Data safety must describe actual HTTP handling before publication; no all-traffic-encrypted claim is justified.
+
 > Current final delivery (November 18): GooglePlay-Release-Ready/START-HERE.md and Reports/Final-Delivery-Report.md are authoritative. Signed artifacts, current phone/TV/public HTTPS/ATF checks and public privacy verification passed; owner Console/signing/declarations/testing/approval gates remain. Earlier phase numbers and pending-hosting statements below are historical.
 
 # Implemented candidate policy and security audit
