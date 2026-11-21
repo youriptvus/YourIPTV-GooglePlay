@@ -42,8 +42,13 @@ class Repository(context: Context) : java.io.Closeable {
 
     fun watchProgress(item: MediaItem): WatchProgress? = watchProgress(listOf(item))[item.url]
 
-    fun saveWatchProgress(item: MediaItem, position: Long, duration: Long, ended: Boolean = false) =
-        watchStore.save(item, position, duration, ended)
+    fun beginWatchSession(item: MediaItem): WatchSessionToken? = watchStore.beginSession(item)
+
+    fun sameWatchSessionItem(token: WatchSessionToken?, item: MediaItem): Boolean = watchStore.sameSessionItem(token, item)
+
+    fun saveWatchProgress(item: MediaItem, position: Long, duration: Long, ended: Boolean = false,
+                          sessionToken: WatchSessionToken? = null, observedAt: Long? = null) =
+        watchStore.save(item, position, duration, ended, sessionToken = sessionToken, observedAt = observedAt)
 
     fun markWatched(item: MediaItem, watched: Boolean) {
         val old = watchProgress(item)

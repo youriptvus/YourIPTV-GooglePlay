@@ -3,6 +3,7 @@
 ## 1.1.1 (version code 52)
 
 - Group episode history under one parent-series entry while retaining every episode resume point; movie history remains individual.
+- Preserve explicit watched/unwatched/reset actions against stale player checkpoints and keep playback observations in their original order.
 - Show green episode progress bars and the last-watched episode alongside the resume target.
 - Autoplay Next Episode defaults ON unless explicitly configured; a public Playback switch preserves saved OFF choices. Finished series never wrap to episode one.
 - Play channel catch-up directly through the archive player and restore the last live channel on launcher re-entry from any screen, including across playlist browsing.

@@ -50,6 +50,7 @@ import com.youriptv.app.data.Catchup
 import com.youriptv.app.data.StreamDiagnosis
 import com.youriptv.app.data.ItemKind
 import com.youriptv.app.data.MediaItem
+import com.youriptv.app.data.WatchSessionToken
 import com.youriptv.app.refresh.RefreshGeneration
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.Dispatchers
@@ -106,6 +107,8 @@ class PlayerActivity : RemoteActivity() {
     }
     private val commitNumber = Runnable { commitDigits() }
     private var progressItem: MediaItem? = null
+    private var progressSessionToken: WatchSessionToken? = null
+    private var watchSessionToken: WatchSessionToken? = null
     private var progressReady = false
     private var progressGeneration = 0L
     private var fromBeginning = false
@@ -295,6 +298,8 @@ class PlayerActivity : RemoteActivity() {
 
     private fun loadIntent(i: Intent) {
         cancelNextCountdown()
+        // An explicit playback launch owns a new watch session; lifecycle/recovery does not.
+        watchSessionToken = null
         catchupSourceIdentity = i.getStringExtra(EXTRA_CATCHUP_SOURCE_IDENTITY).orEmpty()
         fromBeginning = i.getBooleanExtra("vod_from_beginning", false)
         i.removeExtra("vod_from_beginning")
@@ -401,6 +406,7 @@ class PlayerActivity : RemoteActivity() {
         } else if (item.kind == ItemKind.EPISODE && endedItem?.url == item.url) {
             // Backgrounding cancels auto-next. Returning must not silently restart a completed episode.
             progressItem = null
+            progressSessionToken = null
             progressReady = false
             if (allowedOrPrompt(item)) showEpisodeEndChoices(item, autoNext = false)
         } else startItem()
@@ -528,6 +534,7 @@ class PlayerActivity : RemoteActivity() {
         }
         player = null
         sharedPlayer = false
+        progressSessionToken = null
     }
 
     fun onRecordingTookConnection() {
@@ -602,6 +609,7 @@ class PlayerActivity : RemoteActivity() {
         val progressRequest = ++progressGeneration
         cancelNextCountdown()
         progressItem = null
+        progressSessionToken = null
         progressReady = false
         endedItem = null
         val item = refreshCurrentCatalogItem() ?: return
@@ -626,6 +634,11 @@ class PlayerActivity : RemoteActivity() {
         val restart = fromBeginning
         fromBeginning = false
         if (restart) app.repo.clearWatchProgress(item)
+        val sameWatchSession = app.repo.sameWatchSessionItem(watchSessionToken, item)
+        if (restart || !sameWatchSession) {
+            watchSessionToken = app.repo.beginWatchSession(item)
+        }
+        val sessionToken = watchSessionToken
         lifecycleScope.launch {
             val resumeAt = if (item.kind == ItemKind.LIVE || restart) 0L else withContext(Dispatchers.IO) { app.repo.resumePosition(item) }
             if (player !== p || current != item) return@launch
@@ -635,6 +648,7 @@ class PlayerActivity : RemoteActivity() {
             if (!allowedOrPrompt(item)) return@launch
             p.setMediaItem(PlaybackFactory.mediaItem(item), resumeAt)
             progressItem = item
+            progressSessionToken = sessionToken
             p.prepare()
             p.playWhenReady = true
             if (resumeAt > 0) Dialogs.toast(this@PlayerActivity, "Resuming from ${Format.duration(resumeAt)}")
@@ -688,9 +702,14 @@ class PlayerActivity : RemoteActivity() {
         if (endedItem == item) return
         val p = player ?: return
         endedItem = item
-        app.repo.saveWatchProgress(item, p.currentPosition, p.duration, ended = true)
+        val sessionToken = progressSessionToken
+        val position = p.currentPosition
+        val duration = p.duration
+        val observedAt = System.currentTimeMillis()
+        if (sessionToken != null && progressItem?.playlistId == item.playlistId && progressItem?.url == item.url)
+            app.repo.saveWatchProgress(item, position, duration, ended = true, sessionToken = sessionToken, observedAt = observedAt)
         if (item.kind != ItemKind.EPISODE) { finish(); return }
-        val completed = com.youriptv.app.data.WatchPolicy.completed(p.currentPosition, p.duration, ended = true)
+        val completed = com.youriptv.app.data.WatchPolicy.completed(position, duration, ended = true)
         val nextIndex = com.youriptv.app.data.EpisodePlaybackPolicy.adjacentIndex(queue, index, 1)
         val autoNext = app.settings.autoPlayNextEpisode
         if (com.youriptv.app.data.EpisodePlaybackPolicy.endAction(completed, autoNext, nextIndex >= 0) ==
@@ -746,10 +765,14 @@ class PlayerActivity : RemoteActivity() {
 
     private fun savePosition() {
         val item = progressItem ?: return
+        val sessionToken = progressSessionToken ?: return
         val p = player ?: return
-        if (item.kind == ItemKind.LIVE || !progressReady || current?.url != item.url) return
+        if (item.kind == ItemKind.LIVE || !progressReady || current?.url != item.url || current?.playlistId != item.playlistId) return
         // Read Media3 only on its main looper; the store owns persistence beyond this Activity.
-        app.repo.saveWatchProgress(item, p.currentPosition, p.duration, endedItem == item)
+        val position = p.currentPosition
+        val duration = p.duration
+        val observedAt = System.currentTimeMillis()
+        app.repo.saveWatchProgress(item, position, duration, endedItem == item, sessionToken = sessionToken, observedAt = observedAt)
     }
 
     // ---------------- Errors ----------------
@@ -893,6 +916,13 @@ class PlayerActivity : RemoteActivity() {
             if (item != null && item.kind == ItemKind.LIVE && !item.isCatchup) {
                 if (allowedOrPrompt(item)) sessionRestart(it, item)
             } else {
+                // Retry is an explicit replay. Passive recoveries retain their original revision instead.
+                if (item != null) {
+                    watchSessionToken = app.repo.beginWatchSession(item)
+                    progressItem = item
+                    progressSessionToken = watchSessionToken
+                    endedItem = null
+                }
                 if (it.playbackState == Player.STATE_ENDED) it.seekToDefaultPosition()
                 it.prepare()
                 it.playWhenReady = true

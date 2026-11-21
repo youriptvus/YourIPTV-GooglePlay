@@ -137,6 +137,151 @@ class VodProgressInstrumentation : Instrumentation() {
                         repo.resumePosition(legacy2) == 65_000L
                 }
             } finally { repo.deletePlaylist(m3uId) }
+            val revisionId = repo.savePlaylist(Playlist(name = "Watch revision QA ${System.nanoTime()}", type = SourceType.XTREAM,
+                url = "https://revision-fixture.invalid", username = "fixture", refreshHours = 0))
+            var otherRevisionId = 0L
+            try {
+                val probe = MediaItem(playlistId = revisionId, kind = ItemKind.MOVIE, name = "Revision fixture", group = "QA",
+                    url = "https://revision-fixture.invalid/movie/77.mp4", remoteId = "77")
+                val other = probe.copy(name = "Other revision fixture", url = "https://revision-fixture.invalid/movie/78.mp4", remoteId = "78")
+                Db(targetContext).use { helper ->
+                    helper.writableDatabase.insertOrThrow("items", null, Db.itemValues(probe))
+                    helper.writableDatabase.insertOrThrow("items", null, Db.itemValues(other))
+                }
+                fun begin(item: MediaItem) = checkNotNull(repo.beginWatchSession(item))
+                var oldSession = begin(probe)
+                repo.saveWatchProgress(probe, 1300, 6000, sessionToken = oldSession)
+                repo.markWatched(probe, true)
+                val watched = repo.watchProgress(probe)
+                android.os.SystemClock.sleep(3)
+                repo.saveWatchProgress(probe, 1500, 6000, sessionToken = oldSession)
+                repo.saveWatchProgress(probe, 6000, 6000, ended = true, sessionToken = oldSession)
+                verify("manual watched state rejects both stale stopping checkpoints and stale END events") {
+                    watched?.completed == true && repo.watchProgress(probe) == watched &&
+                        repo.continueWatching(revisionId, ItemKind.MOVIE).isEmpty()
+                }
+                val replay = begin(probe)
+                repo.saveWatchProgress(probe, 2200, 6000, sessionToken = replay)
+                verify("a fresh intentional playback session can replay and persist after manual watched") {
+                    repo.resumePosition(probe) == 2200L && repo.watchProgress(probe)?.completed == false
+                }
+                oldSession = begin(probe)
+                repo.saveWatchProgress(probe, 2300, 6000, sessionToken = oldSession)
+                repo.markWatched(probe, false)
+                val unwatched = repo.watchProgress(probe)
+                repo.saveWatchProgress(probe, 2500, 6000, sessionToken = oldSession)
+                repo.saveWatchProgress(probe, 6000, 6000, ended = true, sessionToken = oldSession)
+                verify("manual unwatched state is not undone by an old player checkpoint or END") {
+                    repo.watchProgress(probe) == unwatched && repo.resumePosition(probe) == 0L && unwatched?.completed == false
+                }
+                oldSession = begin(probe)
+                repo.saveWatchProgress(probe, 2400, 6000, sessionToken = oldSession)
+                repo.clearWatchProgress(probe)
+                val cleared = repo.watchProgress(probe)
+                repo.saveWatchProgress(probe, 2700, 6000, sessionToken = oldSession)
+                repo.saveWatchProgress(probe, 6000, 6000, ended = true, sessionToken = oldSession)
+                verify("individual clear rejects stale checkpoint and END without reviving resume or history") {
+                    repo.watchProgress(probe) == cleared && repo.resumePosition(probe) == 0L &&
+                        repo.continueWatching(revisionId, ItemKind.MOVIE).isEmpty()
+                }
+                oldSession = begin(probe)
+                repo.saveWatchProgress(probe, 2600, 6000, sessionToken = oldSession)
+                repo.clearHistory(revisionId)
+                repo.saveWatchProgress(probe, 2900, 6000, sessionToken = oldSession)
+                repo.saveWatchProgress(probe, 6000, 6000, ended = true, sessionToken = oldSession)
+                repo.close(); repo = Repository(targetContext)
+                verify("whole history clear invalidates active sessions and remains cleared after SQLite restart") {
+                    repo.resumePosition(probe) == 0L && repo.history(revisionId).isEmpty()
+                }
+                val previousPlayer = begin(probe)
+                val currentPlayer = begin(probe)
+                repo.saveWatchProgress(probe, 3100, 6000, sessionToken = currentPlayer)
+                repo.saveWatchProgress(probe, 1000, 6000, sessionToken = previousPlayer)
+                repo.saveWatchProgress(probe, 6000, 6000, ended = true, sessionToken = previousPlayer)
+                verify("a newer session for the same content rejects an older player's checkpoint and END") {
+                    repo.resumePosition(probe) == 3100L && repo.watchProgress(probe)?.completed == false
+                }
+                val itemSession = begin(probe)
+                repo.saveWatchProgress(other, 1000, 6000, sessionToken = itemSession)
+                verify("a session token cannot write another content item") { repo.watchProgress(other) == null }
+                val otherItemSession = begin(other)
+                repo.saveWatchProgress(other, 1000, 6000, sessionToken = otherItemSession)
+                repo.markWatched(other, true)
+                repo.saveWatchProgress(probe, 2800, 6000, sessionToken = itemSession)
+                verify("manual actions on a different item preserve the active session for this item") {
+                    repo.resumePosition(probe) == 2800L && repo.watchProgress(other)?.completed == true
+                }
+                otherRevisionId = repo.savePlaylist(Playlist(name = "Other source revision QA", type = SourceType.XTREAM,
+                    url = "https://revision-fixture.invalid", username = "fixture", refreshHours = 0))
+                val anotherSource = probe.copy(playlistId = otherRevisionId)
+                val otherSourceSession = begin(anotherSource)
+                repo.saveWatchProgress(anotherSource, 1000, 6000, sessionToken = otherSourceSession)
+                repo.clearWatchProgress(anotherSource)
+                repo.saveWatchProgress(probe, 3400, 6000, sessionToken = itemSession)
+                repo.saveWatchProgress(anotherSource, 1900, 6000, sessionToken = otherSourceSession)
+                repo.saveWatchProgress(anotherSource, 2900, 6000, sessionToken = itemSession)
+                verify("source-local manual actions and session tokens cannot alter another playlist's progress") {
+                    repo.resumePosition(probe) == 3400L && repo.resumePosition(anotherSource) == 0L
+                }
+                repo.close(); repo = Repository(targetContext)
+                repo.saveWatchProgress(probe, 5000, 6000, sessionToken = itemSession)
+                verify("session results persist in SQLite and tokens from a closed repository cannot resume writing") {
+                    repo.resumePosition(probe) == 3400L && repo.watchProgress(other)?.completed == true &&
+                        repo.resumePosition(anotherSource) == 0L
+                }
+                val parent = probe.copy(kind = ItemKind.SERIES, name = "Revision show", remoteId = "90",
+                    url = "https://revision-fixture.invalid/series/90")
+                val firstEpisode = probe.copy(kind = ItemKind.EPISODE, remoteId = "91", url = "https://revision-fixture.invalid/series/91.mp4",
+                    seriesKey = "revision-show", seriesName = parent.name, seriesUrl = parent.url, seriesRemoteId = "90", season = 1, episode = 1)
+                val secondEpisode = firstEpisode.copy(remoteId = "92", url = "https://revision-fixture.invalid/series/92.mp4", episode = 2)
+                Db(targetContext).use { it.writableDatabase.insertOrThrow("items", null, Db.itemValues(parent)) }
+                val firstEpisodeSession = begin(firstEpisode)
+                val secondEpisodeSession = begin(secondEpisode)
+                val observed = System.currentTimeMillis() - 5000
+                repo.saveWatchProgress(secondEpisode, 2500, 6000, sessionToken = secondEpisodeSession, observedAt = observed + 2000)
+                android.os.SystemClock.sleep(3)
+                repo.saveWatchProgress(firstEpisode, 1800, 6000, sessionToken = firstEpisodeSession, observedAt = observed)
+                verify("a later stale episode emission preserves the genuinely newer episode in Continue Watching and series history") {
+                    repo.continueWatching(revisionId, ItemKind.SERIES).single().url == secondEpisode.url &&
+                        repo.history(revisionId).single { it.kind == ItemKind.SERIES }.episode == 2 &&
+                        repo.resumePosition(firstEpisode) == 1800L && repo.resumePosition(secondEpisode) == 2500L
+                }
+                val orderedSession = begin(probe)
+                val observedBase = System.currentTimeMillis() - 5000
+                repo.saveWatchProgress(probe, 2800, 6000, sessionToken = orderedSession, observedAt = observedBase + 2000)
+                repo.saveWatchProgress(probe, 1000, 6000, sessionToken = orderedSession, observedAt = observedBase + 1000)
+                val checkpointPreserved = repo.resumePosition(probe) == 2800L
+                repo.saveWatchProgress(probe, 6000, 6000, ended = true, sessionToken = orderedSession, observedAt = observedBase + 3000)
+                val completedSnapshot = repo.watchProgress(probe)
+                repo.saveWatchProgress(probe, 1500, 6000, sessionToken = orderedSession, observedAt = observedBase + 2000)
+                verify("same-session older observations cannot roll back a newer checkpoint or completed END") {
+                    checkpointPreserved && completedSnapshot?.completed == true && repo.watchProgress(probe) == completedSnapshot
+                }
+                val restartedSession = begin(probe)
+                repo.saveWatchProgress(probe, 700, 6000, sessionToken = restartedSession, observedAt = observedBase + 500)
+                verify("a fresh intentional session resets observation ordering instead of inheriting the previous playback clock") {
+                    repo.resumePosition(probe) == 700L && repo.watchProgress(probe)?.completed == false &&
+                        repo.watchProgress(probe)?.updated == observedBase + 500
+                }
+                val refreshedSession = begin(probe)
+                repo.saveWatchProgress(probe, 1200, 6000, sessionToken = refreshedSession)
+                repo.markWatched(probe, true)
+                val manualAfterRefresh = repo.watchProgress(probe)
+                val refreshedMovie = probe.copy(id = 999, name = "Refreshed revision fixture",
+                    url = "https://cdn-revision-fixture.invalid/changed/77.mkv")
+                android.os.SystemClock.sleep(3)
+                repo.saveWatchProgress(refreshedMovie, 3300, 6000, sessionToken = refreshedSession)
+                repo.saveWatchProgress(refreshedMovie, 6000, 6000, ended = true, sessionToken = refreshedSession)
+                verify("catalogue URL refresh keeps session identity without granting an invalidated session permission to write") {
+                    repo.sameWatchSessionItem(refreshedSession, refreshedMovie) &&
+                        !repo.sameWatchSessionItem(refreshedSession, other) &&
+                        !repo.sameWatchSessionItem(refreshedSession, anotherSource) &&
+                        manualAfterRefresh?.completed == true && repo.watchProgress(probe) == manualAfterRefresh
+                }
+            } finally {
+                if (otherRevisionId != 0L) repo.deletePlaylist(otherRevisionId)
+                repo.deletePlaylist(revisionId)
+            }
             val acquired = java.util.concurrent.CountDownLatch(1)
             val release = java.util.concurrent.CountDownLatch(1)
             val blocker = Thread {

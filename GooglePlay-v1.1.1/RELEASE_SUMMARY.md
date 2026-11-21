@@ -2,6 +2,8 @@
 
 Series history now presents one parent series entry with its poster and last watched episode. Selecting it opens seasons and episodes with their saved progress; movies remain separate history entries. Continue Watching and the series Continue action retain episode-level resume positions, prioritize the most recently watched unfinished episode and offer the next available episode after completion. Existing viewing records are preserved without destructive migration.
 
+Explicit watched/unwatched and reset actions take precedence over old player checkpoints, including delayed completion writes. Playback observations retain their captured timestamps and ordering. These guards are process-local; the existing database schema and saved history remain intact.
+
 Thin green episode progress bars distinguish partial and completed episodes; unwatched episodes have no line. Resume and Play From Start use the same per-episode progress records. Autoplay Next Episode defaults ON only when no choice has been saved, preserves saved OFF and is available in normal Playback settings without the Admin PIN. Confirmed completion advances after a cancellable countdown through available episodes and seasons. Autoplay OFF and the final available episode return to the existing caller without wrapping to the first episode. Manual Next remains available. One application continues to support phone touch and Android TV remote navigation.
 
 Guide catch-up opens the archive player without losing the archive URL or flag. Launcher re-entry can resume the remembered live channel after leaving any app screen, respecting its remembered playlist and category restrictions. Explicit guide requests suppress automatic fullscreen resume.

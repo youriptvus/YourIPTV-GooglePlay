@@ -10,6 +10,28 @@ import java.io.InputStream
 
 /** Source-level guards for defects found during the full QA pass (UI behaviour is verified on the device). */
 class QaRegressionTest {
+    @Test
+    fun playerCheckpointsRetainTheirStartBoundWatchSession() {
+        val player = ui("PlayerActivity.kt")
+        val start = player.substringAfter("private fun startItem()").substringBefore("private fun switchTo")
+        assertTrue(start.indexOf("if (restart) app.repo.clearWatchProgress(item)") < start.indexOf("app.repo.beginWatchSession(item)"))
+        assertTrue(start.indexOf("val sessionToken = watchSessionToken") < start.indexOf("lifecycleScope.launch"))
+        assertTrue(start.contains("if (restart || !sameWatchSession)"))
+        assertTrue(start.contains("val sameWatchSession = app.repo.sameWatchSessionItem(watchSessionToken, item)"))
+        assertTrue(start.contains("progressSessionToken = sessionToken"))
+        val checkpoint = player.substringAfter("private fun savePosition()").substringBefore("// ---------------- Errors")
+        assertTrue(checkpoint.contains("val sessionToken = progressSessionToken ?: return"))
+        assertTrue(checkpoint.contains("sessionToken = sessionToken"))
+        assertTrue(checkpoint.contains("val observedAt = System.currentTimeMillis()"))
+        assertTrue(checkpoint.contains("observedAt = observedAt"))
+        assertFalse(checkpoint.contains("beginWatchSession"))
+        val stopped = player.substringAfter("override fun onStop()").substringBefore("// ---------------- Auto frame rate")
+        assertFalse(stopped.contains("beginWatchSession"))
+        val ended = player.substringAfter("private fun onEnded()").substringBefore("private fun showEpisodeEndChoices")
+        assertTrue(ended.contains("sessionToken = sessionToken"))
+        assertTrue(ended.contains("observedAt = observedAt"))
+    }
+
     private fun ui(name: String) = listOf(
         File("src/main/java/com/youriptv/app/ui/$name"),
         File("app/src/main/java/com/youriptv/app/ui/$name"),
