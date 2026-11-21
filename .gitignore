@@ -45,3 +45,6 @@ __pycache__/
 /YourIPTV-GooglePlay/
 /GooglePlay-v1.0.9/artifacts/
 /GooglePlay-v1.1.0/artifacts/
+
+# Keep all future local release binaries and source bundles outside Git history.
+/GooglePlay-v*/artifacts/
