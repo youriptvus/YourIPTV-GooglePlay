@@ -17,7 +17,6 @@ import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.extractor.ts.DefaultTsPayloadReaderFactory
-import com.youriptv.app.BuildConfig
 import com.youriptv.app.YourIptvApp
 import com.youriptv.app.data.Http
 import com.youriptv.app.data.ItemKind
@@ -39,8 +38,7 @@ object PlaybackFactory {
             .setAllowCrossProtocolRedirects(false)
             .setConnectTimeoutMs(15_000)
             .setReadTimeoutMs(20_000)
-        val dataSource = SecureDataSourceFactory(DefaultDataSource.Factory(appContext, http),
-            allowLoopbackHttp = BuildConfig.BUILD_TYPE == "isolatedTest")
+        val dataSource = SecureDataSourceFactory(DefaultDataSource.Factory(appContext, http))
         val extractors = LiveTsExtractorsFactory(
             DefaultTsPayloadReaderFactory.FLAG_ALLOW_NON_IDR_KEYFRAMES or DefaultTsPayloadReaderFactory.FLAG_DETECT_ACCESS_UNITS
         )

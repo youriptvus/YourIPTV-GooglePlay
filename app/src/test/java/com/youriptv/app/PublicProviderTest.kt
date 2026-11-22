@@ -11,14 +11,14 @@ import org.junit.Test
 import java.io.File
 
 class PublicProviderTest {
-    @Test fun schemeLessNewProvidersPreferHttpsAndExplicitHttpIsPreserved() {
-        assertEquals("https://provider.example:8080", XtreamUrls.normalizeBase("provider.example:8080/"))
+    @Test fun schemeLessProvidersMatchCustomerAndExplicitHttpsIsPreserved() {
+        assertEquals("http://provider.example:8080", XtreamUrls.normalizeBase("provider.example:8080/"))
         assertEquals("http://provider.example:8080", XtreamUrls.normalizeBase("http://provider.example:8080/"))
         assertEquals("https://provider.example", XtreamUrls.normalizeBase("https://provider.example/player_api.php"))
     }
 
     @Test fun userSuppliedCredentialsAreEncodedForProviderRequests() {
-        assertEquals("https://provider.example/player_api.php?username=user%2Bname&password=p%26word&action=get_live_streams",
+        assertEquals("http://provider.example/player_api.php?username=user%2Bname&password=p%26word&action=get_live_streams",
             XtreamUrls.api("provider.example", "user+name", "p&word", "get_live_streams"))
     }
 
@@ -34,14 +34,14 @@ class PublicProviderTest {
         assertTrue(BackupKeys.sanitize(attempted).isEmpty())
     }
 
-    @Test fun productionEditorContainsNoBundledProviderShortcutOrHttpBypass() {
+    @Test fun productionEditorValidatesGenericSourcesWithoutBundledProviderShortcuts() {
         val main = listOf(File("src/main"), File("app/src/main")).first { it.exists() }
         val editor = File(main, "java/com/youriptv/app/ui/PlaylistEditActivity.kt").readText()
         assertFalse(File(main, "java/com/youriptv/app/ui/YourIptvLogin.kt").exists())
         assertFalse(editor.contains("yourIptvMode"))
         assertFalse(editor.contains("insecureConfirmedFor"))
         assertFalse(editor.contains("Continue with HTTP"))
-        assertTrue(editor.contains("!SecureTransport.isHttpsUrl(p.url)"))
-        assertTrue(editor.contains("p.epgUrl.isNotBlank() && !SecureTransport.isHttpsUrl(p.epgUrl)"))
+        assertTrue(editor.contains("!SecureTransport.isNetworkUrl(p.url)"))
+        assertTrue(editor.contains("p.epgUrl.isNotBlank() && !SecureTransport.isNetworkUrl(p.epgUrl)"))
     }
 }

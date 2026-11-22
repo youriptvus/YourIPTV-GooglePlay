@@ -1,26 +1,23 @@
-# Source baseline
+# Source baseline and current release
 
-> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](GooglePlay-v1.0.9/CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. No `.150` testing/reinstall without a new explicit owner request. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+Current maintained local candidate: **YourIPTV 1.1.1 / code 52**, `com.youriptv.app`, minimum SDK 24 and target/compile SDK 36. Source/build identities for this amendment must come from its final refreshed commit/artifact sidecars; the original import commit below is provenance, not the current source binding.
 
-- Original repository: https://github.com/youriptvus/YourIPTV
-- Intended PRIVATE independent project: https://github.com/youriptvus/YourIPTV-GooglePlay
-- Official release: v1.0.9.
-- Exact original commit: `0612c0acb500f096da5cfb766f6e7f0a012c4ba8` (0612c0a).
-- Original: com.youriptv.app, versionName1.0.9, versionCode44.
-- Imported November16,2026 (America/New_York).
-- Provenance: clean customer tracked source read without modification. Public latest release, main and tag verified at the same commit.234 tracked files copied; original Git history, signing material, local credentials/configuration, caches/build output excluded.
-- Independent history: no fork, branch, submodule or attached worktree.
+## Original independent import
 
-## Preserved baseline
+The independent Play project was imported on November 16, 2026 from the official customer 1.0.9/code44 source at recorded commit `0612c0acb500f096da5cfb766f6e7f0a012c4ba8`. The historical record states 234 tracked source files were copied without customer Git history, signing material, credentials, local configuration, caches or build output. The project retains separate Git history and release packaging; it is not an attached customer worktree/submodule. Earlier remote-release observations do not establish today's remote state or canonical tag.
 
-Shared Media3 playback; faster first clean-ended fullscreen live MPEG-TS recovery; later retries/backoff and switching guards; Right previous-channel recall within current fullscreen live queue and Info label; parental restrictions/provider limits; generic Xtream/M3U/M3U Plus/XMLTV; favorites, supported catch-up/VOD/Series, recording/reminders with existing limits, import/export, previews and refresh.
+Customer repository identity: `youriptvus/YourIPTV`. Independent Play project identity: `youriptvus/YourIPTV-GooglePlay`. These names identify intended projects; this local update makes no GitHub request or current visibility/content assertion. Publication/push remains manual.
 
-EPG keeps7 past/up to7 supplied future days. Playlist refresh keeps16-hour default and explicit intervals. Startup shows cache and requests guide work. Play connectivity is not a playback prerequisite. Current test evidence defines validation scope.
+## Maintained feature and distribution boundaries
 
-## Intentional Play differences
+Both requested release variants retain shared player/navigation/history behavior: grouped series history with parent artwork and last-watched episode, episode-level resume/Continue Watching, thin green progress, manual watched/reset precedence, finite autoplay across seasons, catch-up/source guards, remembered live startup, held Back fullscreen return and guide current-time entry. Existing history is preserved without a schema migration.
 
-Settings Lock OFF for reliably fresh state; ambiguous migration retains protection. Local Admin enrollment replaces universal embedded master on fresh installs; proven legacy security has guarded migration. Parental gates independent. Direct APK installer/customer update endpoints and preset customer provider removed. Phone/tablet orientation adapts. About/privacy/release management describe Play. Production package/shared player retained.
+Settings Lock defaults OFF while saved choices/security remain respected. Autoplay defaults ON only when unconfigured, retains explicit OFF and is available in normal Playback settings. Admin and parental controls remain independent.
 
-## Status
+The Play build uses external signing configuration, Play-managed updates and no APK self-installer/customer update endpoints or bundled customer-provider shortcut. One app/AAB supports phone/tablet/TV. User-entered HTTP and HTTPS sources preserve their schemes; TLS certificate validation and HTTPS-to-HTTP downgrade protection remain. The historical HTTPS-only transport description is superseded for code 52.
 
-Recorded candidate 1.0.9 / code 45 is historical. Any future compatible production code must exceed the known diagnostic code 47 and be unused across all Console tracks/upload history; 48 is locally proposed, pending unused Console-history verification. After selecting the next version/code, rebuild, test, verify signatures and hashes. No Play submission or GitHub Release publication authorized. Initial/final independent commits, remote status/visibility, artifacts/hashes and actual tests are in final handoff/test report. Intended URL does not establish remote existence/privacy. No Google approval claimed.
+## Current evidence and outstanding publication facts
+
+Final isolated-device QA reports 185 checks passed across Moto API 36 and onn. TV API 34, with production identities preserved; see `D:\APK\work\YourIPTV-history-device-qa-20261121T163606Z\watch-guard-final\final-summary.json` and [build/test guidance](docs/PLAY_BUILD_AND_TEST.md) for provenance and limitations. Use final build sidecars for release hashes, test totals and pinned source binding.
+
+Before owner publication, verify unused code 52 across current Console history, app-signing compatibility, privacy/Data safety, real protected delivery, current tester/production gates and remote canonical source/tag. No approval or publication is claimed. The prior baseline/status wording is preserved as [dated history](docs/history/2026-11-21-pre-1.1.1-refresh/SOURCE_BASELINE.md).

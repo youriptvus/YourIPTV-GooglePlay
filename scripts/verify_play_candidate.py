@@ -178,8 +178,10 @@ def inspect_manifest(root: ET.Element, args: argparse.Namespace) -> dict:
         "minimum_sdk": integer(sdk.get(ANDROID + "minSdkVersion")) == args.min_sdk,
         "target_sdk": integer(sdk.get(ANDROID + "targetSdkVersion")) == args.target_sdk,
         "not_debuggable": not truth(app.get(ANDROID + "debuggable")),
+        "physical_back_key_delivery": app.get(ANDROID + "enableOnBackInvokedCallback") == "false" and
+            all(node.get(ANDROID + "enableOnBackInvokedCallback", "false") == "false" for node in app.findall("activity")),
         "android_backup_disabled": app.get(ANDROID + "allowBackup", "true").lower() == "false",
-        "android_cleartext_traffic_disabled": app.get(ANDROID + "usesCleartextTraffic", "true").lower() == "false",
+        "user_provided_http_enabled": app.get(ANDROID + "usesCleartextTraffic", "false").lower() == "true",
         "network_security_config_present": bool(app.get(ANDROID + "networkSecurityConfig", "").startswith("@")),
         "explicit_legacy_backup_rules_present": bool(app.get(ANDROID + "fullBackupContent", "").startswith("@")),
         "explicit_device_transfer_rules_present": bool(app.get(ANDROID + "dataExtractionRules", "").startswith("@")),
@@ -311,8 +313,8 @@ def backup_resources(args: argparse.Namespace, evidence: dict) -> None:
 def inspect_network_security_xml(documents: dict[str, ET.Element]) -> dict:
     return {"checks": {
         "network_security_roots": bool(documents) and all(root.tag == "network-security-config" for root in documents.values()),
-        "all_base_configs_explicitly_forbid_cleartext": bool(documents) and all(
-            len(root.findall("base-config")) == 1 and root.find("base-config").get("cleartextTrafficPermitted") == "false"
+        "all_base_configs_explicitly_allow_user_provided_http": bool(documents) and all(
+            len(root.findall("base-config")) == 1 and root.find("base-config").get("cleartextTrafficPermitted") == "true"
             for root in documents.values()),
         "no_production_domain_exceptions": all(not root.findall(".//domain-config") for root in documents.values()),
         "no_production_debug_overrides": all(not root.findall(".//debug-overrides") for root in documents.values()),

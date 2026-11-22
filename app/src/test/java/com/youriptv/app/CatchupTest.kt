@@ -32,6 +32,6 @@ class CatchupTest {
     fun timeshiftUrlUsesServerTime() {
         // 2027-01-15 12:45 UTC
         val start = 1_800_017_100_000L
-        assertEquals("https://h/timeshift/u/p/45/2027-01-15:12-45/71.ts", XtreamUrls.timeshift("h", "u", "p", "71", start, 45))
+        assertEquals("http://h/timeshift/u/p/45/2027-01-15:12-45/71.ts", XtreamUrls.timeshift("h", "u", "p", "71", start, 45))
     }
 }

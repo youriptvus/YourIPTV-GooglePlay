@@ -1,82 +1,33 @@
-> Current final delivery (November 18): GooglePlay-Release-Ready/START-HERE.md and Reports/Final-Delivery-Report.md are authoritative. Signed artifacts, current phone/TV/public HTTPS/ATF checks and public privacy verification passed; owner Console/signing/declarations/testing/approval gates remain. Earlier phase numbers and pending-hosting statements below are historical.
+# Current Google Play candidate policy and security record
 
-# Implemented candidate policy and security audit
+Updated November 21, 2026 for local **1.1.1 / code 52**. This records implemented behavior and measured scope; it is not Google approval or a guarantee of future policy acceptance. Historical candidate audits are preserved in [the dated archive](history/2026-11-21-pre-1.1.1-refresh/PLAY_POLICY_AUDIT.md).
 
-> **Current status, November 17:** [Active Play 1.0.9 / proposed code 48](../GooglePlay-v1.0.9/CURRENT_STATUS.md) is owner-approved local preparation, pending unused Console-history verification. Code 45 artifacts are historical. The latest final-completion request authorizes safe isolated checks; customer packages/data remain protected. The owner attributes the separate playback issue to the server; no encoder/decoder changes are included.
+## Application and delivery
 
-The audit below describes the historical code 45 build and its named test scope. Its passing checks do not establish new device validation. The owner now attributes the separate playback issue to the server; no encoder/decoder change is included, and the separate historical hold record remains outside Play scope.
+Production package `com.youriptv.app` uses one shared phone/tablet/Android TV implementation and AAB, minSdk 24 and target/compile SDK 36. The `.playtest` package is isolated QA only. Existing Google Play automatic protection, signing compatibility and Play-managed updates remain unchanged. The Play project has no direct APK self-installer/customer updater. Verify the final compiled manifest, DEX and AAB with the artifact audit and refreshed sidecars; historical artifacts do not establish the current candidate's exact permissions or hash.
 
-Audit date November 16, 2026. Source, final release AAB/APK and scoped runtime evidence were inspected from this independent project. Final artifact verification passed 77 checks. The test report records device scope and retained failures; this is not Google approval or complete device QA.
+Physical held Back uses the documented Android 16 navigation compatibility setting `enableOnBackInvokedCallback=false` so the app receives down/up duration. Normal Back uses its existing AndroidX handlers; predictive Back system animations are disabled. This is navigation routing, not a change to Play protection, signing, TLS or permissions. See [Android's target-36 behavior documentation](https://developer.android.com/about/versions/16/behavior-changes-16#predictive-back).
 
-## Identity, SDK and form factors
+## Sources, privacy and local data
 
-Merged release manifest: com.youriptv.app, versionName1.0.9, proposedCode45, min23,target36. Compile36 in Gradle. One app module and one production release AAB; isolated .playtest debug configuration is QA only. Both MAIN/LAUNCHER and LEANBACK_LAUNCHER present. Leanback, touchscreen and landscape features optional; no required touchscreen excludes TV. Banner/icons declared. Main/child activity fixed-landscape manifest entries removed; RemoteActivity applies landscape for TV UI mode and system-bar/cutout/IME insets for shared screens. PlayerActivity resizeable/PiP. Static adaptation is implemented; current test report owns phone/tablet/TV runtime scope and remaining checks.
+User-entered HTTP and HTTPS playlist, Xtream, XMLTV, artwork and playback URLs are accepted, preserving the explicit scheme. HTTP traffic is not encrypted by TLS. HTTPS retains platform certificate/hostname validation; HTTPS-to-HTTP redirects remain blocked. No permissive TLS verifier, hidden HTTPS fallback or provider preset is introduced. The earlier HTTPS-only rule describes previous candidates and must not be used for current setup or privacy claims.
 
-API36 meets current mobile requirement (Aug31,2026). Minimum23 meets TV requirement<=31. Final artifacts verify banner/icon declarations and absence of native libraries. Scoped TV focus/Back/fullscreen checks pass; remaining hardware, accessibility, media-key and Console quality checks retain their limits in the test report.
+External providers can receive IP addresses, account credentials and content requests; user-selected exports can contain credentials. Absence of a developer telemetry SDK does not establish absence of collection by external services. Public privacy policy and Data safety answers must match these actual flows and HTTP handling before publication. Current organizational/host logging practices and final Console answers remain owner-verification items. No all-traffic-encrypted or automatic-deletion claim is made.
 
-## Permissions and component exposure
+Provider credentials remain in app-private local storage; this is not database encryption. Manual backup/export intentionally carries sensitive provider configuration and must remain user-controlled. Retain disabled Android automatic backup and scoped document access; do not introduce broad storage access or copy private configurations into source, reports or release archives.
 
-Generated merged release uses INTERNET, ACCESS_NETWORK_STATE, WAKE_LOCK and app signature permission com.youriptv.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION. WAKE_LOCK is library-merged; signature permission protects AndroidX receiver compatibility. No REQUEST_INSTALL_PACKAGES, UPDATE_PACKAGES_WITHOUT_USER_ACTION, SYSTEM_ALERT_WINDOW, broad storage, location, contact, microphone, camera, notification, exact-alarm or boot permissions in inspected manifest.
+## Access and playback state
 
-MainActivity is exported solely for launch entry. Other app activities, including Settings/player/provider editor/Privacy, are nonexported. RefreshJobService is nonexported and requires BIND_JOB_SERVICE. AndroidX InitializationProvider is nonexported. AndroidX ProfileInstallReceiver is exported but requires system DUMP permission; INSTALL_PROFILE refers to runtime optimization profiles, not APK installation. Do not misclassify or remove that library receiver as an APK updater. No public app content provider or exported installer/update receiver exists in inspected manifest.
+Settings Lock defaults OFF unless an existing choice/security state must be retained. Admin enrollment and parental controls remain independent; autoplay is a normal Playback setting available without an Admin PIN. Autoplay is ON only for unconfigured preferences, preserves saved OFF, follows finite same-series/source episode queues and does not wrap. Source/account guards apply to archived and current playback; no catch-up item is converted into an ordinary catalog movie or written as watch progress.
 
-Package visibility uses narrow video VIEW schemes and document picker actions, not QUERY_ALL_PACKAGES. Source SettingsFlow screen-off receiver uses RECEIVER_NOT_EXPORTED. No PendingIntent path identified in app source, so no app-created mutable PendingIntent was found; dependency/runtime behavior is not thereby fully certified.
+Watch history preserves existing records without schema migration. Manual watched/unwatched, item reset and playlist-history clear invalidate earlier process-local playback sessions. Passive checkpoints and completion writes carry their original source/content session and observation time. Stable content identity, rather than a title, row ID or raw rotating URL, determines session reuse. New intentional replay may create a fresh session; automatic recovery/lifecycle cannot bypass manual invalidation.
 
-## Background work and lifecycle
+## Signing and release boundaries
 
-Refresh uses JobScheduler/RefreshJobService with cancellable coroutines and application coordinator, not a foreground service or persisted boot receiver. No FGS type/permission/declaration required by current implementation. Preserve network/power scheduling limitations and overdue startup reconciliation; exact intervals cannot be guaranteed by Android. Recording/reminders remain existing app-running functionality; do not market stopped-app scheduling. Lifecycle/PiP/background video must be checked on devices; source presence is not an endurance/TV quality pass.
+Expected public certificate SHA-256: `4aef8798d4038bb8b20486b96b50af0870bca9d9b244a541a8973f76cecd0539`. Verify actual final APK/AAB signatures and current Console app-signing certificate/lineage. Upload signing and installed-app signing are distinct roles. Signing configuration/key files stay external; no new key or enrollment change is part of this amendment. Source, release and backup archives must exclude private keys, credentials, databases and sensitive diagnostics.
 
-## Play update channel
+## Evidence and remaining gates
 
-Direct APK updater/UI/install classes and executable update configuration are removed by Play changes. No installer permissions/components in merged snapshot. Normal Google Play delivery needs no Play connection to watch configured sources and no phone-only in-app update dependency. TV support is not dependent on unsupported in-app update APIs. Final source/DEX/AAB checks found no old executable installer identifiers or customer update routes; see test report. Customer updater remains unchanged elsewhere.
+The final isolated-device record reports **185/185 checks passed**: Moto g (2025), API 36, 93; onn. Streaming Device 4K Pro, API 34, 92. Production identities remained unchanged. Canonical local evidence is `D:\APK\work\YourIPTV-history-device-qa-20261121T163606Z\watch-guard-final\final-summary.json`; the suite-specific test APK and unchanged isolated app identities are recorded there. Generated video was decoded; Samsung authorization, private-provider/reference-series testing, physical tablet coverage and sound confirmation were unavailable/not performed. Sound was assumed. This evidence does not certify code-52 protected Play delivery.
 
-## Sources and transport
-
-Generic Xtream/M3U/M3U Plus/XMLTV is retained; the customer preset shortcut is removed. The current secure Play candidate requires HTTPS for provider, playlist, XMLTV, media and artwork connections. Explicit HTTP source/EPG input is rejected, production manifest/network configuration disables cleartext, and insecure downgrade redirects are blocked. Existing HTTP-only sources need working HTTPS addresses from their provider. Final source/test/compiled-artifact verification is pending.
-
-Platform HTTPS certificate/hostname verification is retained; no permissive TrustManager/HostnameVerifier or TLS bypass is introduced. The owner must confirm the final app/SDK/organizational transfer inventory for Data safety, including external playback/export recipients. HTTPS transport does not encrypt the local SQLite database or manual JSON exports, and does not guarantee a chosen provider's practices.
-
-No bundled subscriptions or rights to third-party catalogues. Reviewer fixture/demo needs verified licensing and stable public access. Actual external services may log IP/content/account requests. Source logs use error/status metadata; StreamDiagnosis logs a host, so support logs can still reveal provider information. Do not upload raw logs/screenshots containing private sources/credentials.
-
-## Credentials and local security
-
-App-private SQLite stores provider passwords/credential URLs; database is not encrypted at rest. JSON backup/export intentionally includes credentials, with sensitive-file warning. Android automatic backup disabled. Imported or exported external documents remain subject to user-chosen provider/storage protection. No broad permission is required for scoped app storage/document picker.
-
-Fresh empty settings prefs=>OFF. Preexisting settings prefs=>retain explicit lock or conservatively ON when absent. Initialize once, not per restart. Admin enrollment uses salted local PIN6-8 digits with lockout; proven legacy state accepts digest-verified old master until authenticated local enrollment. No plaintext universal secret in fresh Play code, and no unauthenticated reset bypass. These are local convenience gates, not database encryption or external identity assurance. Parental PIN/restrictions/lockouts remain independent; data-source/player limit behavior retained. Host tests cover both migration branches; scoped device On/Off and actual restart/same-code replacement checks pass.
-
-## System backup and device transfer
-
-Automatic backup update: `allowBackup=false` is retained, with explicit `fullBackupContent` and `dataExtractionRules` resources. API23 rules exclude the five normal storage domains; an API24+override adds four device-protected domains. Android 12+cloud and D2D sections each exclude all nine domains recursively. No include rules or custom backup agent reopens that boundary. This addresses the Android 12+OEM transfer behavior without changing the database, local Settings migration or manual JSON export. Host parsed-resource and actual compiled AAB/APK rule checks pass; actual OEM backup/transfer is unperformed. [Official Android backup configuration](https://developer.android.com/identity/data/autobackup).
-
-## Signing and native code
-
-OfficialSigning pins official public certificateSHA2564aef8798d4038bb8b20486b96b50af0870bca9d9b244a541a8973f76cecd0539 for production runtime. Play enrollment must use compatible certificate/lineage; an incompatible newly generated Play signing key would fail both Android update compatibility and the runtime gate. Upload key alone is not the installed APK signer. Debug QA bypass is intentionally restricted to nonproduction builds.
-
-External signing properties and key paths enforced outside repository; no implicit customer-directory dependency. No key generated/replaced/enrolled. Both final artifacts verify the official signature. No native source/NDK is declared and actual final AAB/APK scans found no packaged .so libraries. TV32/64-bit/16KB rules apply; Java/Kotlin-only artifacts satisfy architecture/page rules without bundling native variants, subject to runtime testing.
-
-## Libraries and privacy
-
-Pinned AGP9.5.0/Gradle9.8.1/Java17/API36 compatible per official AGP table. Media3 official stable1.11.1 matches source. Runtime declared AndroidX core1.17.0,appcompat1.7.1,recyclerview1.4.0,lifecycle2.10.0; coroutines1.10.2; Media3 ExoPlayer/HLS/UI1.11.1. No ads/analytics/cloud account/automatic crash SDK declared. Inspect resolved graph/final artifact; no claim every dependency is vulnerability-free.
-
-Offline PrivacyActivity via public About renders bundled policy, no browser required on TV. Public website still owner prerequisite. Data safety draft maps providers/IP/credentials/images/export/transfers and does not infer no collection merely from no developer telemetry. Owner must confirm actual organizational practices/content-rating/ads/audience, publish policy and finish declarations.
-
-## Remaining gates
-
-A private GitHub repository is an owner repository preference, not a Google Play submission requirement; workspace GitHub access remains prohibited.
-
-Actual submission gates: Console package/proposed code 48 history; compatible app-signing enrollment; public legal privacy/contact; stable legal reviewer sources; final screenshot/artwork approval; unresolved full-TV private catalog EOF; prolonged playback/abrupt network interruption/production migration/tablet/accessibility; Play internal/closed testing and TV/device review. Unperformed checks stay unpassed. No submission/publication/approval claimed.
-
-Official references:
-
-- API: https://support.google.com/googleplay/android-developer/answer/11926878?hl=en-en
-- TV: https://developer.android.com/develop/adaptive-apps/quality-guidelines/tv-app-quality
-- In-app update scope: https://developer.android.com/guide/playcore/in-app-updates
-- Installer policy: https://support.google.com/googleplay/android-developer/answer/12085295?hl=en
-- FGS: https://developer.android.com/develop/background-work/services/fgs/service-types
-- Native/page sizes: https://developer.android.com/guide/practices/page-sizes
-- AGP: https://developer.android.com/build/releases/agp-9-5-0-release-notes
-- Media3: https://developer.android.com/jetpack/androidx/releases/media3
-- Data safety: https://support.google.com/googleplay/android-developer/answer/10787469?hl=en
-- Signing: https://support.google.com/googleplay/android-developer/answer/9842756?hl=en
-
-See also GooglePlay-v1.0.9/PLAY_POLICY_AUDIT.md for policy research and dated distinctions.
+Use refreshed final build/test/artifact sidecars for JVM totals, lint results, source binding and release hashes. Recheck current target/device policy, unused code 52 across all uploads, public privacy/contact and Data safety, lawful reviewer access/assets, current closed-test/production eligibility and Google review at submission. The live timer/counter, remote canonical tag and final code-52 Play-delivered behavior have not been reverified by this local documentation update. See [PUBLICATION-REQUIREMENTS.md](../GooglePlay-v1.1.1/PUBLICATION-REQUIREMENTS.md) and [current handoff](../HANDOFF.md).
