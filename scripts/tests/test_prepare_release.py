@@ -5,6 +5,8 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+import warnings
+import zipfile
 from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -47,6 +49,23 @@ class ReleasePreparationTests(unittest.TestCase):
         self.assertIn('bundleRelease', plan['buildCommands']['play'])
         self.assertNotIn('bundleRelease', plan['buildCommands']['customer'])
         self.assertFalse(self.args.output_root.exists())
+
+    def test_android_resource_case_is_preserved_without_extracting(self):
+        archive = self.home / 'case-sensitive.apk'
+        with zipfile.ZipFile(archive, 'w') as stream:
+            stream.writestr('res/a.png', b'first fixture')
+            stream.writestr('res/A.png', b'second fixture')
+        self.assertTrue(release.artifact_payload_audit(archive, ['violetwidget'])['passed'])
+
+    def test_exact_duplicate_archive_member_is_rejected(self):
+        archive = self.home / 'duplicate.apk'
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', UserWarning)
+            with zipfile.ZipFile(archive, 'w') as stream:
+                stream.writestr('res/a.png', b'first fixture')
+                stream.writestr('res/a.png', b'second fixture')
+        with self.assertRaises(release.ReleaseError):
+            release.artifact_payload_audit(archive, ['violetwidget'])
 
     def test_published_baseline_is_rejected_before_any_build(self):
         self.args.version = '1.1.1'

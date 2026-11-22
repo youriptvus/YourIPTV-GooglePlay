@@ -213,9 +213,12 @@ def artifact_payload_audit(path, terms):
         seen = set()
         for index, item in enumerate(infos):
             name = item.filename.replace("\\", "/")
-            require(not name.startswith("/") and ".." not in name.split("/") and name.casefold() not in seen,
+            # ZIP/APK resource names are case-sensitive; aapt2 may intentionally
+            # shorten different resources to names differing only in case. We
+            # read ZipInfo payloads directly and never extract them onto Windows.
+            require(not name.startswith("/") and ".." not in name.split("/") and name not in seen,
                     "Release archive contains unsafe or duplicate members.")
-            seen.add(name.casefold())
+            seen.add(name)
             require((item.external_attr >> 16) & 0o170000 != 0o120000, "Release archive contains a linked member.")
             require(not any(term.casefold() in name.casefold() for term in terms), "Release archive contains a restricted member.")
             require(not name.casefold().endswith((".jks", ".keystore", ".p12", ".pfx", ".key", ".pem")) and
