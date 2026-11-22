@@ -1,5 +1,16 @@
 # YourIPTV release notes
 
+## Unreleased development
+
+- Establish one shared phone/TV source with selected Play and customer delivery hooks, controlled one-way source export and explicitly authorized local dual release preparation.
+- These source changes have not been packaged or published; the existing 1.1.1/code52 release and closed test remain unchanged.
+
+## 1.1.2 (version code 53)
+
+- Hide the Playback options touch button when the Live information banner or movie/episode controls auto-hide. Tapping the video restores the controls and options together on phones.
+- Keep the touch-only button hidden on Android TV, in picture-in-picture and while the channel list is open. Remote playback options remain accessible.
+- Preserve the same package, signing identity, playlists, saved settings and watch progress. This is an update to the existing closed-testing track; testers, groups and opt-in links stay unchanged.
+
 ## 1.1.1 (version code 52)
 
 - Group episode history under one parent-series entry while retaining every episode resume point; movie history remains individual.
@@ -143,7 +154,7 @@ Parental PINs, stored restrictions and reset policy are unchanged; About stays p
 If the guide storage window changes during an import, its outdated publication is rejected and
 the previous committed guide is kept. A later manual or scheduled retry uses the current window.
 
-Initial 1.0.7 validation: **394 tests / 55 classes**, **142 isolated native SQLite/policy checks**, and **43 offline archived-updater checks** passed. The final signed APK retains the official certificate and exact existing permissions. On 192.168.1.150, an in-place ADB retest preserved data and pulled installed bytes matched. Scoped menu/logo, public About/parental, protected EPG wording and 7/7 picker, background relock, master-authorized Off/combined/On and real provider guide-refresh checks passed. The Settings lock was restored **On**. Sound is assumed. No fresh phone, actual automatic download/install/success-popup, seven elapsed days of retention or uninterrupted long-duration playback pass is claimed. Publication remains with the owner.
+Initial 1.0.7 validation: **394 tests / 55 classes**, **142 isolated native SQLite/policy checks**, and **43 offline archived-updater checks** passed. The final signed APK retains the official certificate and exact existing permissions. On the authorized test device, an in-place ADB retest preserved data and pulled installed bytes matched. Scoped menu/logo, public About/parental, protected EPG wording and 7/7 picker, background relock, master-authorized Off/combined/On and real provider guide-refresh checks passed. The Settings lock was restored **On**. Sound is assumed. No fresh phone, actual automatic download/install/success-popup, seven elapsed days of retention or uninterrupted long-duration playback pass is claimed. Publication remains with the owner.
 
 The final TV-caption cleanup reran all **394 tests / 55 classes** and **43 offline archived-updater checks**. The exact signed revision was installed without clearing data; three fresh TV checks cover the visible logo without its caption, public Settings, the protected PIN prompt and public About. The earlier 142 native checks and 13 broader TV checks are prior-candidate evidence, reused with byte-identical executable DEX and all 22 native fixture data-source files unchanged; they were not rerun for this layout-only change.
 
@@ -234,7 +245,7 @@ branding-centralization failure; it was corrected before the fresh complete pass
 reports remain preserved separately. The official package/signing identity, seven permissions,
 update routes, public About, Settings/parental restrictions and provider limits remain.
 
-The owner restricted physical testing to 192.168.1.150. All three TV connection attempts,
+The owner restricted physical testing to the authorized test device. All three TV connection attempts,
 including an owner-ready retry, failed with Windows socket error 10013; independent TCP
 connection also failed. No 1.0.4 device installation, live shortcut login, navigation/playback,
 automatic download/install or successful-update popup was tested. Phone tests were not performed

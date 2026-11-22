@@ -1,5 +1,6 @@
 package com.youriptv.app.data
 
+import com.youriptv.app.BuildConfig
 import java.security.MessageDigest
 import java.security.SecureRandom
 
@@ -26,10 +27,15 @@ sealed class PinCheck {
 /**
  * Stores the parental PIN and optional custom Settings PIN as salted SHA-256 hashes.
  * Those stored PINs must differ. Admin authentication uses a separate per-installation
- * salted PIN. A digest-only legacy verifier is limited to proven customer-app upgrades.
+ * salted PIN on Play. Customer delivery retains its existing master verifier; Play
+ * accepts that verifier only for proven customer-app upgrades.
  * After [MAX_ATTEMPTS] wrong entries a PIN is refused for an increasing time; the counter is persisted so restarting the app does not reset it.
  */
-class PinVault(private val store: StringStore, private val clock: () -> Long = System::currentTimeMillis) {
+class PinVault(
+    private val store: StringStore,
+    private val customerDistribution: Boolean = BuildConfig.IS_CUSTOMER_DISTRIBUTION,
+    private val clock: () -> Long = System::currentTimeMillis,
+) {
 
     fun has(kind: PinKind) = store.get(hashKey(kind)) != null
 
@@ -76,9 +82,9 @@ class PinVault(private val store: StringStore, private val clock: () -> Long = S
 
     fun hasAdmin() = store.get("admin_pin_hash") != null
 
-    fun legacyAdminAllowed() = !hasAdmin() && store.get(LEGACY_ADMIN_KEY) == "true"
+    fun legacyAdminAllowed() = customerDistribution || (!hasAdmin() && store.get(LEGACY_ADMIN_KEY) == "true")
 
-    fun needsAdminSetup() = !hasAdmin() && !legacyAdminAllowed()
+    fun needsAdminSetup() = !customerDistribution && !hasAdmin() && !legacyAdminAllowed()
 
     fun validateAdmin(pin: String): String? =
         if (pin.matches(Regex("\\d{6,8}"))) null else "The Admin PIN must be 6 to 8 digits"
@@ -99,7 +105,7 @@ class PinVault(private val store: StringStore, private val clock: () -> Long = S
         checkCandidate(PinKind.SETTINGS) { matchesAdmin(pin) }
 
     private fun matchesAdmin(pin: String): Boolean {
-        if (hasAdmin()) return MessageDigest.isEqual(
+        if (!customerDistribution && hasAdmin()) return MessageDigest.isEqual(
             hash(pin, store.get("admin_pin_salt").orEmpty()).toByteArray(),
             store.get("admin_pin_hash").orEmpty().toByteArray(),
         )
@@ -147,7 +153,7 @@ class PinVault(private val store: StringStore, private val clock: () -> Long = S
     companion object {
         const val MAX_ATTEMPTS = 5
         const val LEGACY_ADMIN_KEY = "play_legacy_admin_allowed"
-        // Migration verifier only; never accepted on a fresh Play installation.
+        // Existing customer master verifier; Play accepts it only for a proven customer upgrade.
         private const val LEGACY_ADMIN_DIGEST = "d8d851022fbb12e1439ca2bff8bd50a70356e1adb628c47454389544450c7897"
         private const val BASE_LOCKOUT_MS = 30_000L
         private const val MAX_LOCKOUT_MS = 15 * 60_000L

@@ -48,3 +48,13 @@ __pycache__/
 
 # Keep all future local release binaries and source bundles outside Git history.
 /GooglePlay-v*/artifacts/
+
+# Private operational history is retained locally and in existing Git history.
+/HANDOFF.md
+/SOURCE_BASELINE.md
+/GooglePlay-Release-Ready/Reports/
+/GooglePlay-v1.0.9/
+/GooglePlay-v1.1.0/
+/docs/history/
+*.private.json
+*.private.properties

@@ -110,7 +110,7 @@ object Dialogs {
         }
         val title = if (vault.legacyAdminAllowed()) "Enter existing Settings master PIN — $reason" else "Enter Admin PIN — $reason"
         requireCode(a, PinKind.SETTINGS, title, onCancel, masterOnly = true, canUse = canUse, onOk = {
-            if (!vault.hasAdmin()) createAdminPin(a, onCancel, canUse, onOk) else onOk()
+            if (!com.youriptv.app.BuildConfig.IS_CUSTOMER_DISTRIBUTION && !vault.hasAdmin()) createAdminPin(a, onCancel, canUse, onOk) else onOk()
         })
     }
 

@@ -16,7 +16,7 @@ object RemoteBack {
     private var consumedHold: Long? = null
 
     internal fun enabled(activity: Activity) =
-        YourIptvApp.instance.isTrustedBuild
+        YourIptvApp.instance.isTrustedBuild && com.youriptv.app.distribution.DistributionHooks.allowsRemoteBack(activity)
 
     internal fun consumeHold(downTime: Long) { consumedHold = downTime }
 

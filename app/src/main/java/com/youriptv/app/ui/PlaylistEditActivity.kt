@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -15,11 +16,12 @@ import com.youriptv.app.data.Playlist
 import com.youriptv.app.data.SecureTransport
 import com.youriptv.app.data.SourceType
 import com.youriptv.app.data.XtreamUrls
+import com.youriptv.app.distribution.DistributionHooks
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/** Adds or edits user-provided M3U / Xtream playlists. No provider is bundled. */
+/** Shared M3U / Xtream editor. A distribution may supply an adding-only preset. */
 class PlaylistEditActivity : RemoteActivity() {
 
     private val app get() = YourIptvApp.instance
@@ -37,6 +39,9 @@ class PlaylistEditActivity : RemoteActivity() {
     private var passwordVisible = false
     /** Set once the user has chosen to keep a get.php link with embedded login as a plain M3U playlist. */
     private var keepAsM3u = false
+    private val preset get() = DistributionHooks.playlistPreset
+    private var presetMode = false
+    private var btnPreset: Button? = null
 
     private lateinit var name: EditText
     private lateinit var url: EditText
@@ -77,6 +82,12 @@ class PlaylistEditActivity : RemoteActivity() {
         btnXtream = findViewById(R.id.type_xtream)
         btnM3u = findViewById(R.id.type_m3u)
         btnSave = findViewById(R.id.btn_save)
+        preset?.let { choice ->
+            btnPreset = Button(this, null, 0, R.style.Button_Tv).apply {
+                text = choice.title
+                setOnClickListener { setType(SourceType.XTREAM, simplified = true) }
+            }.also { (btnXtream.parent as ViewGroup).addView(it, 0) }
+        }
         listOf(name, url, user, pass, epg, ua).forEach { it.isSaveEnabled = false }
 
         btnXtream.setOnClickListener { setType(SourceType.XTREAM) }
@@ -105,7 +116,8 @@ class PlaylistEditActivity : RemoteActivity() {
             epg.setText(p.epgUrl); ua.setText(p.userAgent)
             type = p.type
         }
-        setType(type)
+        btnPreset?.visibility = if (editing == null) View.VISIBLE else View.GONE
+        setType(type, simplified = presetMode)
         btnSave.isEnabled = !busy
         editor.visibility = View.VISIBLE
         (if (editing == null) btnXtream else name).requestFocus()
@@ -154,6 +166,7 @@ class PlaylistEditActivity : RemoteActivity() {
                 listOf(name, url, user, pass, epg, ua).forEach { it.text.clear() }
                 editing = null
                 keepAsM3u = false
+                presetMode = false
                 type = SourceType.XTREAM
                 status.text = ""
                 // Close a protected visit rather than retaining an old PIN dialog underneath a new one.
@@ -187,11 +200,16 @@ class PlaylistEditActivity : RemoteActivity() {
         showPassword.contentDescription = showPassword.text
     }
 
-    private fun setType(t: SourceType) {
+    private fun setType(t: SourceType, simplified: Boolean = false) {
         setPasswordVisible(false)
         type = t
-        btnXtream.isActivated = t == SourceType.XTREAM
+        presetMode = simplified && preset != null && editing == null && t == SourceType.XTREAM
+        btnPreset?.isActivated = presetMode
+        btnXtream.isActivated = t == SourceType.XTREAM && !presetMode
         btnM3u.isActivated = t == SourceType.M3U
+        findViewById<View>(R.id.name_fields).visibility = if (presetMode) View.GONE else View.VISIBLE
+        findViewById<View>(R.id.server_fields).visibility = if (presetMode) View.GONE else View.VISIBLE
+        findViewById<View>(R.id.optional_fields).visibility = if (presetMode) View.GONE else View.VISIBLE
         xtreamFields.visibility = if (t == SourceType.XTREAM) View.VISIBLE else View.GONE
         urlLabel.text = if (t == SourceType.XTREAM) "Server URL (HTTP or HTTPS)" else "M3U / M3U Plus playlist URL (HTTP or HTTPS)"
         url.hint = if (t == SourceType.XTREAM) "http://provider.example:8080" else "http://provider.example/playlist.m3u"
@@ -200,6 +218,12 @@ class PlaylistEditActivity : RemoteActivity() {
     private fun save() {
         if (busy || isFinishing || !authorization.isAuthorized || !flow.isCurrentPolicy(visitPolicy)) return
         if (inheritedSettings && !flow.isAuthorized(this)) return
+        if (presetMode && editing == null) {
+            val playlist = preset?.newPlaylist(user.text.toString(), pass.text.toString())
+            if (playlist == null) { status.text = "Enter the username and password."; return }
+            savePlaylist(playlist)
+            return
+        }
         var t = type
         var server = url.text.toString().trim()
         var username = user.text.toString().trim()

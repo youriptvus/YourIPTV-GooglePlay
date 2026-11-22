@@ -58,6 +58,7 @@ class YourIptvApp : Application() {
             }
         }
         com.youriptv.app.ui.Scheduler.install(this)
+        com.youriptv.app.distribution.DistributionHooks.onApplicationCreated(this)
         // A restored Player/Settings screen can be the first foreground screen of a new
         // process. Background JobService-only startup must never trigger this hook.
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {

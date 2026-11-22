@@ -123,12 +123,13 @@ class PlaylistEditingTest {
     }
 
     @Test
-    fun providerEditorAlwaysExposesTheUserSuppliedConnectionFields() {
+    fun ordinaryProviderEditorKeepsTheUserSuppliedConnectionFieldsAndSeparatePresetState() {
         val editor = ui("PlaylistEditActivity.kt")
         assertFalse(editor.contains("yourIptvMode"))
         val selection = editor.substringAfter("private fun setType(").substringBefore("private fun save()")
         assertTrue(selection.contains("xtreamFields.visibility = if (t == SourceType.XTREAM) View.VISIBLE else View.GONE"))
-        assertTrue(editor.contains("setType(type)"))
+        assertTrue(editor.contains("setType(type, simplified = presetMode)"))
+        assertTrue(selection.contains("presetMode = simplified && preset != null && editing == null && t == SourceType.XTREAM"))
     }
 
     @Test

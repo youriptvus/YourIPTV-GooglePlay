@@ -2,6 +2,7 @@ package com.youriptv.app.ui
 
 import android.content.Context
 import com.youriptv.app.R
+import com.youriptv.app.BuildConfig
 
 /**
  * Centralized branding contract for YourIPTV.
@@ -70,6 +71,12 @@ object Branding {
         val name = displayName(context)
         val company = companyBlock(context)
         val companySection = if (company.isBlank()) "" else "\n$company\n"
+        val settingsNotice = if (BuildConfig.IS_CUSTOMER_DISTRIBUTION)
+            "Settings Lock is off by default unless previously set. The Settings master PIN controls changes to the lock and custom PIN. Existing security choices are preserved on compatible upgrades."
+        else "Settings Lock is off on a fresh Play installation. You can deliberately enable it after setting a local Admin PIN. Existing security choices are preserved on compatible upgrades. Admin authentication and parental controls remain separate."
+        val updateNotice = if (BuildConfig.IS_CUSTOMER_DISTRIBUTION)
+            "This distribution checks official GitHub releases, with youriptv.us as the backup, when automatic updates are enabled."
+        else "Google Play delivers updates for this distribution. No APK self-installer is included."
         return """$free
 
 FREE FOR EVERYONE
@@ -82,8 +89,8 @@ WHAT STILL APPLIES (NOT APP LICENSING)
 • Device: available codecs, resolution, frame rate, HDR, and picture-in-picture depend on your device and Android version.
 • Android: some features (such as picture-in-picture) require Android 8.0 or newer.
 • Parental PIN: if you set a PIN, locked groups require it. "Block adult categories" hides adult groups in every playlist, and playlist management can be locked too. Parental and custom Settings PINs are stored as salted hashes on this device.
-• Settings: Settings Lock is off on a fresh Play installation. You can deliberately enable it after setting a local Admin PIN. Existing security choices are preserved on compatible upgrades. Admin authentication and parental controls remain separate. About is available without a PIN from the main menu.
-• Updates: Google Play delivers updates for this distribution. No APK self-installer is included.
+• Settings: $settingsNotice About is available without a PIN from the main menu.
+• Updates: $updateNotice
 
 PRIVACY
 • Playlists, credentials, favorites, history, and guide data are stored in the app sandbox. Network requests go to configured provider, guide, stream and artwork servers. Explicit backups contain readable credentials.

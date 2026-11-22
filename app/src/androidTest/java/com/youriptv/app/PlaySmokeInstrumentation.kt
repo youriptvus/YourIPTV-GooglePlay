@@ -87,7 +87,11 @@ class PlaySmokeInstrumentation : Instrumentation() {
         waitForIdleSync()
         var previousResumeLastChannel: Boolean? = null
         try {
-            require(testScope in setOf("full", "browser-only", "browser-and-settings")) { "Unknown isolated test scope" }
+            require(testScope in setOf("full", "browser-only", "browser-and-settings", "playback-controls-only")) { "Unknown isolated test scope" }
+            if (testScope == "playback-controls-only") {
+                playbackControlsOnly()
+                return
+            }
             var safeQaData = false
             execute("existing isolated playlists contain only recognized generated test media") {
                 safeQaData = YourIptvApp.instance.repo.playlists().all { p ->
@@ -338,6 +342,69 @@ class PlaySmokeInstrumentation : Instrumentation() {
             try { action() } catch (error: Throwable) { failure = error }
         }
         failure?.let { throw it }
+    }
+
+    /** Focused regression: only generated in-memory media in the isolated package. */
+    private fun playbackControlsOnly() {
+        require(fixtureBase == "http://127.0.0.1:18765") { "Only the loopback controls fixture is allowed" }
+        val television = isTelevision() || targetContext.packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+        for (kind in listOf(ItemKind.LIVE, ItemKind.MOVIE, ItemKind.EPISODE)) {
+            execute("$kind controls and touch options auto-hide, return on input, and leave video advancing") {
+                val item = MediaItem(playlistId = 0, kind = kind, name = "Generated controls test",
+                    group = "Generated local test media", url = "$fixtureBase/controls.mp4", isLocal = true)
+                onMain { YourIptvApp.playQueue = listOf(item) }
+                val screen = launch(PlayerActivity::class.java)
+                val view = screen.findViewById<PlayerView>(R.id.player_view)
+                val options = screen.findViewById<Button>(R.id.player_touch_options)
+                val banner = screen.findViewById<View>(R.id.banner)
+                var engine: ExoPlayer? = null
+                fun decoded(): Boolean {
+                    var observed = view.player
+                    while (observed is ForwardingPlayer) observed = observed.wrappedPlayer
+                    engine = observed as? ExoPlayer
+                    engine?.videoDecoderCounters?.ensureUpdated()
+                    return engine?.let { it.isPlaying && (it.videoDecoderCounters?.renderedOutputBufferCount ?: 0) > 0 } == true
+                }
+                try {
+                    await(20_000) { decoded() }
+                    onMain {
+                        engine!!.repeatMode = Player.REPEAT_MODE_ONE
+                        if (kind == ItemKind.LIVE) {
+                            if (banner.visibility != View.VISIBLE) screen.findViewById<View>(R.id.root).performClick()
+                        } else view.showController()
+                    }
+                    await(2_000) { if (television) !options.isShown else options.isShown }
+                    capture("controls-${kind.name.lowercase()}-shown")
+                    await(9_000) { !options.isShown &&
+                        if (kind == ItemKind.LIVE) banner.visibility != View.VISIBLE else !view.isControllerFullyVisible }
+                    onMain { check(decoded()) { "Video stopped while controls hid" } }
+                    capture("controls-${kind.name.lowercase()}-hidden")
+                    if (television) {
+                        if (kind == ItemKind.LIVE) sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_CENTER)
+                        else sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN)
+                        await(3_000) { if (kind == ItemKind.LIVE) banner.isShown else view.isControllerFullyVisible }
+                        onMain { check(!options.isShown) { "Touch-only button leaked onto TV" } }
+                    } else {
+                        val root = screen.findViewById<View>(R.id.root)
+                        val location = IntArray(2)
+                        var x = 0f; var y = 0f
+                        onMain { root.getLocationOnScreen(location); x = location[0] + root.width / 2f; y = location[1] + root.height / 2f }
+                        val now = SystemClock.uptimeMillis()
+                        MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, x, y, 0).also { sendPointerSync(it); it.recycle() }
+                        MotionEvent.obtain(now, now + 80, MotionEvent.ACTION_UP, x, y, 0).also { sendPointerSync(it); it.recycle() }
+                        await(3_000) { options.isShown }
+                    }
+                    await(9_000) { !options.isShown }
+                    onMain { check(decoded()) }
+                    vodSeriesStats.put("controls-${kind.name.lowercase()}", JSONObject()
+                        .put("autoHidePassed", true).put("inputRestoresControls", true)
+                        .put("playingAfterSecondHide", true).put("television", television))
+                } finally {
+                    onMain { screen.finish(); YourIptvApp.instance.livePlayback.stop() }
+                    waitForIdleSync()
+                }
+            }
+        }
     }
 
     private fun browserDpadCheck() {
@@ -800,7 +867,7 @@ class PlaySmokeInstrumentation : Instrumentation() {
             "Refusing a screenshot outside the isolated app"
         }
         val bitmap = uiAutomation.takeScreenshot() ?: error("Raw screenshot capture failed")
-        val device = if (isTelevision()) "tv-onn" else "phone-samsung"
+        val device = if (isTelevision()) "tv-onn" else "phone"
         val directory = targetContext.filesDir.resolve("screenshots").apply { mkdirs() }
         try {
             check(uiAutomation.rootInActiveWindow?.packageName?.toString() == targetContext.packageName) {

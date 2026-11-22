@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "applicationName": "YourIPTV",
+  "applicationId": "com.youriptv.app",
+  "protectedVersionName": "1.1.1",
+  "protectedVersionCode": 52,
+  "targetSdk": 36,
+  "playMinSdk": 24,
+  "customerMinSdk": 23,
+  "playUploadCertificateSha256": "4aef8798d4038bb8b20486b96b50af0870bca9d9b244a541a8973f76cecd0539",
+  "customerCertificateSha256": "4aef8798d4038bb8b20486b96b50af0870bca9d9b244a541a8973f76cecd0539",
+  "customerPermissions": [
+    "android.permission.INTERNET",
+    "android.permission.ACCESS_NETWORK_STATE",
+    "android.permission.REQUEST_INSTALL_PACKAGES",
+    "android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION",
+    "android.permission.SYSTEM_ALERT_WINDOW",
+    "android.permission.WAKE_LOCK",
+    "com.youriptv.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+  ],
+  "toolchain": {
+    "gradle": "9.8.1",
+    "androidGradlePlugin": "9.5.0",
+    "javaBuildMajor": 21,
+    "javaBytecodeMajor": 17,
+    "buildTools": "36.0.0",
+    "compileSdk": 36
+  }
+}

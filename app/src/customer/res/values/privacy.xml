@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="privacy_distribution_label">Customer distribution</string>
+    <string name="privacy_delivery_notice">When automatic updates are enabled, this customer distribution contacts official GitHub releases, using youriptv.us as a backup. Those services receive your IP address and ordinary request headers. Downloaded updates are checked against their release metadata and official package and signing identity before installation. Playback does not require an update-server connection.</string>
+</resources>

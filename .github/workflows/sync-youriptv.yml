@@ -1,0 +1,70 @@
+name: Synchronize approved customer source
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: youriptv-customer-source-sync
+  cancel-in-progress: false
+  queue: max
+jobs:
+  validate:
+    if: github.repository == 'youriptvus/YourIPTV-GooglePlay'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SYNC_RESTRICTED_TERMS_B64: ${{ secrets.SYNC_RESTRICTED_TERMS_B64 }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Validate export policy, public content and automation
+        run: |
+          python3 -m unittest discover -s scripts/tests -p 'test_*.py'
+          python3 scripts/sync_repository.py audit --revision "$GITHUB_SHA"
+      - name: Validate both source selections without packaging a release
+        run: |
+          bash gradlew -Pdistribution=play testReleaseUnitTest lintRelease --console=plain --max-workers=2
+          bash gradlew -Pdistribution=customer testReleaseUnitTest lintRelease --console=plain --max-workers=2
+  synchronize:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the approved master revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          path: master
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Create destination-only installation token
+        id: app-token
+        if: vars.SYNC_APP_CLIENT_ID != ''
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
+        with:
+          client-id: ${{ vars.SYNC_APP_CLIENT_ID }}
+          private-key: ${{ secrets.SYNC_APP_PRIVATE_KEY }}
+          owner: youriptvus
+          repositories: YourIPTV
+          permission-contents: write
+      - name: Check out customer main without persisting credentials
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          repository: youriptvus/YourIPTV
+          ref: main
+          path: customer
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token || secrets.SYNC_DESTINATION_TOKEN }}
+          persist-credentials: false
+      - name: Apply controlled one-way synchronization
+        env:
+          SOURCE_READ_TOKEN: ${{ github.token }}
+          DESTINATION_WRITE_TOKEN: ${{ steps.app-token.outputs.token || secrets.SYNC_DESTINATION_TOKEN }}
+          SYNC_RESTRICTED_TERMS_B64: ${{ secrets.SYNC_RESTRICTED_TERMS_B64 }}
+        run: python3 master/scripts/ci_sync.py

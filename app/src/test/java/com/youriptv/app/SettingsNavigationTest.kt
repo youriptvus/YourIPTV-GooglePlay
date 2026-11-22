@@ -20,7 +20,8 @@ class SettingsNavigationTest {
         SettingsCategory.entries.forEach {
             assertTrue(it.title.isNotBlank())
             assertTrue(it.description.isNotBlank())
-            assertTrue(source.contains("SettingsCategory.${it.name} -> listOf("))
+            assertTrue(source.contains("SettingsCategory.${it.name} -> " +
+                if (it == SettingsCategory.UPDATES) "DistributionHooks.updateEntries(" else "listOf("))
         }
     }
 

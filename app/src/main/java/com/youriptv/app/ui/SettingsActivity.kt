@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.youriptv.app.BuildConfig
+import com.youriptv.app.distribution.DistributionHooks
 import com.youriptv.app.data.BackupData
 import com.youriptv.app.data.BackupException
 import com.youriptv.app.data.BackupManager
@@ -31,9 +32,9 @@ internal enum class SettingsCategory(val title: String, val description: String)
     PLAYBACK("Playback", "Buffer, video, audio, stream format, and user agent"),
     APPEARANCE("Appearance", "Channel numbers and clock format"),
     REMOTE("Remote Controls", "Channel up/down direction"),
-    SETTINGS_LOCK("Settings Lock", "Admin-controlled Settings protection and optional custom PIN"),
+    SETTINGS_LOCK("Settings Lock", if (BuildConfig.IS_CUSTOMER_DISTRIBUTION) "Master-controlled Settings protection and optional custom PIN" else "Admin-controlled Settings protection and optional custom PIN"),
     BACKUP("Backup & Restore", "Save playlists, favorites, and settings to a local file, or restore them"),
-    UPDATES("App Updates", "Updates delivered by Google Play"),
+    UPDATES("App Updates", DistributionHooks.updatesDescription),
 }
 
 /** Category pages and explicitly authorized playlist navigation share one in-memory Settings visit. */
@@ -120,7 +121,9 @@ class SettingsActivity : ListActivity() {
 
     private fun subtitle() = if (s.isSettingsLocked())
         "Unlocked for this visit only with the Settings PIN. Parental Controls under Settings uses its own parental PIN."
-    else "Settings lock is off. The Admin PIN is required to change the lock or custom PINs. Parental protection is independent."
+    else "Settings lock is off. The ${settingsAuthority()} PIN is required to change the lock or custom PINs. Parental protection is independent."
+
+    private fun settingsAuthority() = if (BuildConfig.IS_CUSTOMER_DISTRIBUTION) "Settings master" else "Admin"
 
     private fun authorizedToken(): Long? = if (isFinishing || isDestroyed || !flow.isCurrentPolicy(visitPolicy) ||
         (!pickingFile && !flow.isAuthorized(this))) null else visit.authorizedToken()
@@ -479,9 +482,9 @@ class SettingsActivity : ListActivity() {
         )
         SettingsCategory.SETTINGS_LOCK -> listOf(
             Entry("Lock Settings", {
-                if (!s.isSettingsLocked()) "Off · Admin PIN required to change the lock or custom PINs"
-                else if (s.pins.has(PinKind.SETTINGS)) "On · Admin or custom Settings PIN · Admin required to change protection"
-                else "On · Admin PIN · optional custom Settings PIN can be added"
+                if (!s.isSettingsLocked()) "Off · ${settingsAuthority()} PIN required to change the lock or custom PINs"
+                else if (s.pins.has(PinKind.SETTINGS)) "On · ${settingsAuthority()} or custom Settings PIN · ${settingsAuthority()} required to change protection"
+                else "On · ${settingsAuthority()} PIN · optional custom Settings PIN can be added"
             }, { settingsLockAction() }),
         )
         SettingsCategory.BACKUP -> listOf(
@@ -491,12 +494,9 @@ class SettingsActivity : ListActivity() {
             Entry("Save backup to another location…", { "USB drive, cloud, or Downloads" }, { exportBackup() }),
             Entry("Restore from another location…", { "Choose a YourIPTV backup file" }, { importBackup() }),
         ) else emptyList()
-        SettingsCategory.UPDATES -> listOf(
-            Entry("Google Play updates", { "Version ${BuildConfig.VERSION_NAME} · updates are delivered by Google Play" }, {
-                Dialogs.message(this, "Google Play updates",
-                    "Manage automatic updates in Google Play on this device. Playback works without a Play Store connection. YourIPTV does not download or install APK updates.")
-            }),
-        )
+        SettingsCategory.UPDATES -> DistributionHooks.updateEntries(this, s,
+            canUse = { authorizedToken() != null }, refresh = { refresh() })
+            .map { update -> Entry(update.title, update.value, { update.action() }) }
     }
 
     /** Every policy/custom-PIN change needs a fresh Admin check, even while access is unlocked. */
@@ -504,7 +504,7 @@ class SettingsActivity : ListActivity() {
         val token = authorizedToken() ?: return
         val locked = s.isSettingsLocked()
         val toggle = if (locked) "Turn off Settings lock" else "Turn on Settings lock"
-        val options = listOf(toggle) + (if (s.pins.has(PinKind.SETTINGS)) listOf("Change custom Settings PIN", "Remove custom Settings PIN") else listOf("Add custom Settings PIN")) + (if (s.pins.hasAdmin()) listOf("Change Admin PIN") else emptyList())
+        val options = listOf(toggle) + (if (s.pins.has(PinKind.SETTINGS)) listOf("Change custom Settings PIN", "Remove custom Settings PIN") else listOf("Add custom Settings PIN")) + (if (!BuildConfig.IS_CUSTOMER_DISTRIBUTION && s.pins.hasAdmin()) listOf("Change Admin PIN") else emptyList())
         Dialogs.choose(this, "Settings protection", options) { i ->
             if (!hasAuthorization(token)) return@choose
             val reason = if (i == 0) if (locked) "turn Settings lock off" else "turn Settings lock on"

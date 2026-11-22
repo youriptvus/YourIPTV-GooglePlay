@@ -19,7 +19,7 @@ class SettingsPinPolicyTest {
 
     private val store = MapStore()
     private var now = 1_000_000L
-    private val vault = PinVault(store) { now }
+    private val vault = PinVault(store, customerDistribution = false) { now }
     private val master = "846275" // Synthetic local Admin PIN used only by tests.
     private val custom = "13579"
     private val parental = "2468"
@@ -95,7 +95,7 @@ class SettingsPinPolicyTest {
     @Test
     fun sharedLockoutSurvivesRestartAndGrowsUntilSuccessfulAuthentication() {
         repeat(PinVault.MAX_ATTEMPTS) { vault.checkSettingsAccess("0000") }
-        val restarted = PinVault(store) { now }
+        val restarted = PinVault(store, customerDistribution = false) { now }
         assertTrue(restarted.checkSettingsMaster(master) is PinCheck.LockedOut)
         now += PinVault.lockoutMs(PinVault.MAX_ATTEMPTS)
         val next = restarted.checkSettingsMaster("0000")
@@ -183,7 +183,7 @@ class SettingsPinPolicyTest {
     }
 
     @Test fun freshVaultRequiresDeliberateAdminSetupAndHasNoSharedDefault() {
-        val fresh = PinVault(MapStore())
+        val fresh = PinVault(MapStore(), customerDistribution = false)
         assertTrue(fresh.needsAdminSetup())
         assertFalse(fresh.hasAdmin())
         assertFalse(fresh.legacyAdminAllowed())
@@ -194,7 +194,7 @@ class SettingsPinPolicyTest {
     @Test fun migratedCustomSettingsPinCannotEnrollOrBecomeAdmin() {
         val migratedStore = MapStore()
         migratedStore.put(mapOf(PinVault.LEGACY_ADMIN_KEY to "true"))
-        val migrated = PinVault(migratedStore) { now }
+        val migrated = PinVault(migratedStore, customerDistribution = false) { now }
         migrated.set(PinKind.SETTINGS, custom)
         assertFalse(migrated.needsAdminSetup())
         assertTrue(migrated.legacyAdminAllowed())
@@ -206,11 +206,11 @@ class SettingsPinPolicyTest {
     @Test fun localAdminEnrollmentDisablesLegacyVerifierAndSurvivesRestart() {
         val migratedStore = MapStore()
         migratedStore.put(mapOf(PinVault.LEGACY_ADMIN_KEY to "true"))
-        val migrated = PinVault(migratedStore) { now }
+        val migrated = PinVault(migratedStore, customerDistribution = false) { now }
         migrated.setAdmin(master)
         assertFalse(migratedStore.values.containsKey(PinVault.LEGACY_ADMIN_KEY))
         assertFalse(migratedStore.values.values.contains(master))
-        val restarted = PinVault(migratedStore) { now }
+        val restarted = PinVault(migratedStore, customerDistribution = false) { now }
         assertFalse(restarted.legacyAdminAllowed())
         assertEquals(PinCheck.Ok, restarted.checkSettingsMaster(master))
         assertNotNull(restarted.validateAdmin("12345"))

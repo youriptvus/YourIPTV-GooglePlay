@@ -40,7 +40,7 @@ It supplies all TV results and the Moto Settings/native/navigation results. The 
 
 That harness waits for the Player to be RESUMED, window-focused and shown before user pause/seek actions. Before-ready diagnostics captured an unfocused/buffering transition; before-seek diagnostics confirmed a focused READY player and a valid watch-session revision. The cross-season deadline remained 20 seconds and all playback outcomes remained asserted. The background case likewise waits for actual STOP/player disposal before checking restored end choices. No separate production autoplay/background correction is claimed from those harness adjustments.
 
-The authoritative private index is `D:\APK\work\YourIPTV-history-device-qa-20261121T163606Z\watch-guard-final\final-summary.json`. It records per-suite provenance, installed-byte checks, unchanged production identities, representative settled captures and superseded failure paths. Successful Moto VOD captures come from `ui-foreground-final/moto/captures`; navigation and TV captures come from `watch-guard-final`. Earlier diagnostic/failure files remain preserved and are not fresh passing results.
+The authoritative private index is `private local evidence`. It records per-suite provenance, installed-byte checks, unchanged production identities, representative settled captures and superseded failure paths. Successful Moto VOD captures come from `ui-foreground-final/moto/captures`; navigation and TV captures come from `watch-guard-final`. Earlier diagnostic/failure files remain preserved and are not fresh passing results.
 
 ## Limits and historical evidence
 

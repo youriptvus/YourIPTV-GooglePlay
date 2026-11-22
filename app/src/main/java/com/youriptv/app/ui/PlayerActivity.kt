@@ -80,6 +80,8 @@ class PlayerActivity : RemoteActivity() {
     private val handler = Handler(Looper.getMainLooper())
 
     private lateinit var playerView: PlayerView
+    private lateinit var touchOptions: Button
+    private var vodControlsVisible = false
     private lateinit var message: TextView
     private lateinit var numberEntry: TextView
     private lateinit var banner: View
@@ -96,7 +98,10 @@ class PlayerActivity : RemoteActivity() {
     private val observedRefreshGenerations = HashMap<Long, RefreshGeneration>()
     private val isLive get() = current?.kind == ItemKind.LIVE
 
-    private val hideBanner = Runnable { banner.visibility = View.GONE }
+    private val hideBanner = Runnable {
+        banner.visibility = View.GONE
+        updateTouchOptionsVisibility()
+    }
     private val recoveryObserver: () -> Unit = {
         val text = app.livePlayback.recoveryMessage
         if (text != null) showMessage(text, error = app.livePlayback.recoveryFailed)
@@ -173,11 +178,14 @@ class PlayerActivity : RemoteActivity() {
             if (width > 0 && overlay.layoutParams.width != width)
                 overlay.layoutParams = overlay.layoutParams.apply { this.width = width }
         }
-        findViewById<Button>(R.id.player_touch_options).apply {
-            visibility = if ((resources.configuration.uiMode and Configuration.UI_MODE_TYPE_MASK) ==
-                Configuration.UI_MODE_TYPE_TELEVISION) View.GONE else View.VISIBLE
+        touchOptions = findViewById<Button>(R.id.player_touch_options).apply {
+            visibility = View.GONE
             setOnClickListener { showOptions() }
         }
+        playerView.setControllerVisibilityListener(PlayerView.ControllerVisibilityListener { visibility ->
+            vodControlsVisible = visibility == View.VISIBLE
+            updateTouchOptionsVisibility()
+        })
         overlayList = findViewById(R.id.overlay_list)
         overlayAdapter = ItemAdapter(
             { _, pos -> hideOverlay(); if (pos != index) switchTo(pos) },
@@ -429,6 +437,7 @@ class PlayerActivity : RemoteActivity() {
 
     override fun onStop() {
         super.onStop()
+        touchOptions.visibility = View.GONE
         // HOME (not BACK) while a live channel plays: lets MainActivity restart it if a launcher clears this player.
         val inPip = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode
         setLeftWhileWatchingLive(this, !isFinishing && !isChangingConfigurations && !inPip && isLive)
@@ -966,6 +975,7 @@ class PlayerActivity : RemoteActivity() {
         progress.visibility = View.GONE
         updateBadges()
         banner.visibility = View.VISIBLE
+        updateTouchOptionsVisibility()
         handler.postDelayed(hideBanner, if (item.kind == ItemKind.LIVE) 6000 else 3500)
         if (item.kind != ItemKind.LIVE) return
         lifecycleScope.launch {
@@ -991,6 +1001,18 @@ class PlayerActivity : RemoteActivity() {
 
     private fun toggleBanner() {
         if (banner.visibility == View.VISIBLE) { handler.removeCallbacks(hideBanner); banner.visibility = View.GONE } else showBanner()
+        updateTouchOptionsVisibility()
+    }
+
+    private fun updateTouchOptionsVisibility() {
+        if (!::touchOptions.isInitialized || !::banner.isInitialized || !::overlay.isInitialized) return
+        val television = (resources.configuration.uiMode and Configuration.UI_MODE_TYPE_MASK) ==
+            Configuration.UI_MODE_TYPE_TELEVISION || packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+        val inPip = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode
+        touchOptions.visibility = if (PlayerControlsVisibility.touchOptionsVisible(
+                television, inPip, isLive, banner.visibility == View.VISIBLE, vodControlsVisible,
+                overlay.visibility == View.VISIBLE))
+            View.VISIBLE else View.GONE
     }
 
     private fun updateBadges() {
@@ -1017,6 +1039,7 @@ class PlayerActivity : RemoteActivity() {
     private fun showOverlay() {
         val item = current ?: return
         banner.visibility = View.GONE
+        touchOptions.visibility = View.GONE
         findViewById<TextView>(R.id.overlay_title).text = if (queue.size > 1) item.group else item.name
         lifecycleScope.launch {
             val favs = withContext(Dispatchers.IO) { app.repo.favorites(item.playlistId).map { it.url }.toHashSet() }
@@ -1049,6 +1072,7 @@ class PlayerActivity : RemoteActivity() {
         banner.visibility = View.GONE
         hideOverlay()
         playerView.hideController()
+        touchOptions.visibility = View.GONE
         if (lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED)) {
             refreshAuthorization()
             current?.let { allowedOrPrompt(it) }
@@ -1060,6 +1084,10 @@ class PlayerActivity : RemoteActivity() {
     private fun showOptions() {
         val item = current ?: return
         val p = player ?: return
+        handler.removeCallbacks(hideBanner)
+        banner.visibility = View.GONE
+        playerView.hideController()
+        touchOptions.visibility = View.GONE
         val opts = ArrayList<Pair<String, () -> Unit>>()
         if (canStepEpisode(1)) opts.add("Next episode: ${queue[index + 1].name}" to { stepEpisode(1) })
         if (canStepEpisode(-1)) opts.add("Previous episode: ${queue[index - 1].name}" to { stepEpisode(-1) })
@@ -1229,6 +1257,7 @@ class PlayerActivity : RemoteActivity() {
         banner.visibility = View.GONE
         hideOverlay()
         playerView.hideController()
+        touchOptions.visibility = View.GONE
         try {
             enterPictureInPictureMode(PictureInPictureParams.Builder().setAspectRatio(Rational(16, 9)).build())
         } catch (e: IllegalStateException) {
@@ -1238,11 +1267,13 @@ class PlayerActivity : RemoteActivity() {
 
     private fun setControllerEnabled(enabled: Boolean) {
         playerView.useController = enabled
-        // VOD's PlayerView owns the full-screen accessibility action. Keep its controls
-        // and the Options button exposed without a second identical container target.
+        // VOD's PlayerView owns the full-screen accessibility action. Its visibility
+        // listener also hides the touch-only Options button when the controls disappear.
         // Live playback still exposes the root's banner action. Touch listeners stay intact.
         findViewById<View>(R.id.root).importantForAccessibility =
             if (enabled) View.IMPORTANT_FOR_ACCESSIBILITY_NO else View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
+        if (!enabled) vodControlsVisible = false
+        updateTouchOptionsVisibility()
     }
 
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
@@ -1253,6 +1284,7 @@ class PlayerActivity : RemoteActivity() {
         } else {
             setControllerEnabled(!isLive)
         }
+        updateTouchOptionsVisibility()
     }
 
     // ---------------- Number entry ----------------
@@ -1305,6 +1337,7 @@ class PlayerActivity : RemoteActivity() {
             banner.visibility == View.VISIBLE && isLive && !intent.getBooleanExtra(EXTRA_FROM_PREVIEW, false) -> {
                 handler.removeCallbacks(hideBanner)
                 banner.visibility = View.GONE
+                updateTouchOptionsVisibility()
             }
             !isLive && playerView.isControllerFullyVisible -> playerView.hideController()
             else -> finish()

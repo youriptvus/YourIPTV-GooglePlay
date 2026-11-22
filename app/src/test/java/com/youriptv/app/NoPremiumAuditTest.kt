@@ -13,9 +13,10 @@ class NoPremiumAuditTest {
     private val moduleDir = listOf(File("."), File("app")).first { File(it, "src/main/AndroidManifest.xml").exists() }
     private val mainDir = File(moduleDir, "src/main")
 
-    private fun sources() = mainDir.walkTopDown()
-        .filter { it.isFile && it.extension in setOf("kt", "java", "xml") }
-        .toList()
+    private fun sources() = listOf(mainDir,
+        File(moduleDir, if (BuildConfig.IS_CUSTOMER_DISTRIBUTION) "src/customer" else "src/play"))
+        .flatMap { root -> root.walkTopDown()
+            .filter { it.isFile && it.extension in setOf("kt", "java", "xml") }.toList() }
 
     /** Mechanisms (identifiers, APIs, UI phrases) that would implement a paid tier or feature lock. */
     private val forbidden = listOf(
@@ -34,7 +35,7 @@ class NoPremiumAuditTest {
     fun sourcesContainNoPremiumGatingOrBilling() {
         val hits = sources().flatMap { f ->
             f.readLines().mapIndexedNotNull { i, line ->
-                forbidden.firstOrNull { it.containsMatchIn(line) }?.let { "${f.relativeTo(mainDir)}:${i + 1}: ${line.trim()}" }
+                forbidden.firstOrNull { it.containsMatchIn(line) }?.let { "${f.relativeTo(moduleDir)}:${i + 1}: ${line.trim()}" }
             }
         }
         assertTrue("Premium/billing/licensing mechanisms found:\n" + hits.joinToString("\n"), hits.isEmpty())

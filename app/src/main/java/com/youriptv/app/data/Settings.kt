@@ -1,6 +1,7 @@
 package com.youriptv.app.data
 
 import android.content.Context
+import com.youriptv.app.BuildConfig
 
 /** All user settings. Every option is available to every user; there are no gated features. */
 class Settings(context: Context) {
@@ -10,7 +11,7 @@ class Settings(context: Context) {
         // Capture provenance before any initialization writes. Customer builds always persisted
         // settings on startup. Admin provenance remains independent of the ordinary Settings default.
         synchronized(SettingsLockPolicy) {
-            if (!sp.getBoolean(SettingsLockPolicy.PLAY_INITIALIZED_KEY, false)) {
+            if (!BuildConfig.IS_CUSTOMER_DISTRIBUTION && !sp.getBoolean(SettingsLockPolicy.PLAY_INITIALIZED_KEY, false)) {
                 val existingInstallation = sp.all.isNotEmpty()
                 val saved = if (sp.contains(SettingsLockPolicy.LOCAL_KEY)) sp.getBoolean(SettingsLockPolicy.LOCAL_KEY, true) else null
                 check(sp.edit()
@@ -25,6 +26,9 @@ class Settings(context: Context) {
                 }
             }
         }
+        if (BuildConfig.IS_CUSTOMER_DISTRIBUTION && !sp.contains("auto_updates_forced_on")) {
+            sp.edit().putBoolean("automatic_app_updates", true).putBoolean("auto_updates_forced_on", true).apply()
+        }
         // Apply the approved seven-day minimum once; later explicit shorter choices remain valid.
         synchronized(EpgRetentionPolicy.preferenceLock) {
             if (!sp.getBoolean("epg_window_v7_migrated", false)) {
@@ -35,6 +39,19 @@ class Settings(context: Context) {
             }
         }
     }
+
+    /** Customer updater preferences are local and never exported in a portable backup. */
+    var automaticAppUpdates: Boolean
+        get() = sp.getBoolean("automatic_app_updates", true)
+        set(v) = sp.edit().putBoolean("automatic_app_updates", v).apply()
+
+    var lastUpdateInfo: String?
+        get() = sp.getString("last_update_info", null)
+        set(v) = sp.edit().putString("last_update_info", v).apply()
+
+    var pendingUpdateCode: Long
+        get() = sp.getLong("pending_update_code", 0L)
+        set(v) { sp.edit().putLong("pending_update_code", v).commit() }
 
     var activePlaylistId: Long
         get() = sp.getLong("active_playlist", 0)

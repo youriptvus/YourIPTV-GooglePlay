@@ -1,5 +1,16 @@
 # YourIPTV release notes
 
+## Unreleased development
+
+- Establish one shared phone/TV source with selected Play and customer delivery hooks, controlled one-way source export and explicitly authorized local dual release preparation.
+- These source changes have not been packaged or published; the existing 1.1.1/code52 release and closed test remain unchanged.
+
+## 1.1.2 (version code 53)
+
+- Hide the Playback options touch button when the Live information banner or movie/episode controls auto-hide. Tapping the video restores the controls and options together on phones.
+- Keep the touch-only button hidden on Android TV, in picture-in-picture and while the channel list is open. Remote playback options remain accessible.
+- Preserve the same package, signing identity, playlists, saved settings and watch progress. This is an update to the existing closed-testing track; testers, groups and opt-in links stay unchanged.
+
 ## 1.1.1 (version code 52)
 
 - Group episode history under one parent-series entry while retaining every episode resume point; movie history remains individual.

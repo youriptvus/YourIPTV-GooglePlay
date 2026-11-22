@@ -16,7 +16,7 @@ All185 recorded scoped checks passed. They ran in `com.youriptv.app.playtest` wi
 
 Coverage includes grouped parent-series versus individual movie history, last/unfinished resume selection, per-episode green bars, completion, explicit replay, finite/cross-season autoplay, saved OFF/manual Next, manual watched/unwatched/clear races, stale/signed-URL/session/account identity, observation ordering and restart persistence. Navigation checks cover cold requested source A versus active source B sharing a URL, current-time reopening, active past/future refresh preservation, actual stable row focus on phone/TV, normal Back and held fullscreen return. Existing Settings choices/defaults and source restrictions remain guarded.
 
-The final device evidence is `D:\APK\work\YourIPTV-history-device-qa-20261121T163606Z\watch-guard-final\final-summary.json`, with its referenced raw results/captures. Preserve these private paths/files outside published source archives; this document carries only the non-secret scope/results. See [VOD_VALIDATION.md](VOD_VALIDATION.md) and matching public release sidecars for the maintained release report.
+The final device evidence is `private local evidence`, with its referenced raw results/captures. Preserve these private paths/files outside published source archives; this document carries only the non-secret scope/results. See [VOD_VALIDATION.md](VOD_VALIDATION.md) and matching public release sidecars for the maintained release report.
 
 ## Preservation and limits
 

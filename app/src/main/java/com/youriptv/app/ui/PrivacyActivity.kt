@@ -11,8 +11,8 @@ class PrivacyActivity : RemoteActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
         findViewById<TextView>(R.id.about_title).text = "Privacy policy"
-        findViewById<TextView>(R.id.about_version).text = "Google Play distribution · November 16, 2026"
-        findViewById<TextView>(R.id.about_body).text = getString(R.string.play_privacy_policy)
+        findViewById<TextView>(R.id.about_version).text = getString(R.string.privacy_distribution_label)
+        findViewById<TextView>(R.id.about_body).text = getString(R.string.play_privacy_policy, getString(R.string.privacy_delivery_notice))
         findViewById<android.view.View>(R.id.about_privacy).visibility = android.view.View.GONE
         findViewById<ScrollView>(R.id.about_scroll).requestFocus()
     }

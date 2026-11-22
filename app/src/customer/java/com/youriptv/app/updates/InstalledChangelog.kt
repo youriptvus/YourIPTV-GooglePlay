@@ -1,0 +1,103 @@
+package com.youriptv.app.updates
+
+/** Bundled release notes, selected by the installed APK rather than a remote update manifest. */
+internal object InstalledChangelog {
+    private data class Release(val name: String, val changes: List<String>, val credit: String? = null)
+
+    // Add each release here when its version code/name changes. Keep older entries for reference.
+    private val releases = mapOf(
+        51L to Release("1.1.0", listOf(
+            "Resume movies and exact series episodes with locally saved watch progress.",
+            "Use Continue Watching, watched/unwatched indicators and individual progress reset.",
+            "Choose seasons and move between episodes across season boundaries.",
+            "Optionally play the next episode after a cancellable countdown; stopping in credits stays resumable.",
+            "Use the same player with remote or touch navigation and phone rotation.",
+        )),
+        44L to Release("1.0.9", listOf(
+            "Reconnect sooner after a fullscreen live TS stream ends.",
+            "Keep later retry delays and existing playback, parental and connection-limit protections.",
+            "Press Right during fullscreen live TV to return to the last channel watched.",
+        )),
+        43L to Release("1.0.9", listOf(
+            "Reconnect sooner after a fullscreen live TS stream ends.",
+            "Keep later retry delays and existing playback, parental and connection-limit protections.",
+            "Press Right during fullscreen live TV to return to the last channel watched.",
+        )),
+        42L to Release("1.0.9", listOf(
+            "Reconnect sooner after a fullscreen live TS stream ends.",
+            "Keep later retry delays and existing playback, parental and connection-limit protections.",
+        )),
+        39L to Release("1.0.8", listOf(
+            "Maintenance release based on 1.0.7.",
+        )),
+        38L to Release("1.0.7", listOf(
+            "Refresh the guide in the background on a fresh app start while the cached guide stays available.",
+            "Refresh playlists every 16 hours by default; keep explicitly saved refresh intervals.",
+            "Use Update Playlist and Update EPG under Settings → Playlist Settings without entering either PIN.",
+            "Keep valid playlist and guide data when a download fails, and show real update status and successful times.",
+            "Update the visible guide automatically while keeping the current channel, guide position and playback.",
+            "Keep Settings lock on by default; only the master PIN can turn it off or back on and manage custom PINs.",
+            "Combine all settings under Settings when its lock is off; keep parental controls independent.",
+            "Keep 7 days of past guide data and up to 7 days ahead by default, with adjustable coverage and existing parental PIN policies.",
+            "Merge valid partial guide updates with useful cached listings and browse the full selected time window.",
+            "Show the bundled official logo in the main menu header on TV and portrait screens.",
+        ), credit = "Thanks to Dylan B. for the suggestions for the current build."),
+        36L to Release("1.0.5", listOf(
+            "Manage playlists from Settings without another Settings PIN during the same protected visit.",
+            "Use Delete playlist to choose a playlist and confirm its removal.",
+            "Show or hide the playlist password; it starts masked and is hidden again when leaving.",
+            "Keep parental playlist protection, the YourIPTV login shortcut and all playback features free.",
+        ), credit = "Thanks to Dylan B. for the suggestions for the current build."),
+        35L to Release("1.0.4", listOf(
+            "Add a YourIPTV playlist option after M3U and Xtream Codes.",
+            "Sign in to YourIPTV with only your provider username and password.",
+            "Use the preset YourIPTV server and playlist name while keeping normal Xtream editing.",
+            "Keep all playback features free and preserve existing playlists, Settings and parental protections.",
+        ), credit = "Thanks to Dylan B. for the suggestions for the current build."),
+        34L to Release("1.0.3", listOf(
+            "Fit complete movie and show posters and captions on short phone screens.",
+            "Use a compact browsing header on short phone screens while retaining the full TV layout.",
+            "Restore the selected series episode and focus after playback with touch or remote controls.",
+            "Keep playback features free, subtitles off by default, and existing Settings and parental protections.",
+        ), credit = "Thanks to Dylan B. for the suggestions for the current build."),
+        33L to Release("1.0.2", listOf(
+            "Larger movie and show posters for easier browsing.",
+            "Movie details before playback.",
+            "Browse seasons up/down and episodes left/right, with your selection remembered.",
+            "Provider episode pictures, with series artwork when episode pictures are unavailable.",
+            "Improved artwork loading while browsing large libraries.",
+            "About remains accessible without a PIN. Its duplicate entry inside locked Settings has been removed.",
+            "All player features remain free. Settings and parental protections remain enabled.",
+            "Subtitles start off by default; you can turn them on in the player.",
+        ), credit = "Thanks to Dylan B. for the suggestions for the current build."),
+        32L to Release("1.0.1", listOf(
+            "Settings protection stays on for new and existing installations, with a permanent Settings master PIN.",
+            "Existing custom Settings PINs still open Settings; the master is required to add, change or remove a custom PIN.",
+            "Open About directly from the main menu without entering a PIN.",
+            "Editing an existing playlist asks for authorization before showing connection details.",
+        )),
+        31L to Release("1.0.0", listOf(
+            "Stable release of the accepted 0.5.6 player; no new playback changes.",
+            "All player features remain free. Existing playlists and settings are retained during a normal update.",
+        )),
+        30L to Release("0.5.6", listOf(
+            "Use the official youriptv.us backup update server when GitHub update checks or APK downloads fail.",
+            "Verify backup downloads with the same checksum, package, version and signing checks before installation.",
+        )),
+        28L to Release("0.5.4", listOf(
+            "Version-only release of the 0.5.3 features, with a new Android version code.",
+            "Hold Back in the app or TV guide to return to the current stream in full screen; a short Back press keeps its usual action.",
+            "After an in-app update, show the installed version and its changelog until acknowledged.",
+        )),
+        27L to Release("0.5.3", listOf(
+            "Hold Back in the app or TV guide to return to the current stream in full screen; a short Back press keeps its usual action.",
+            "After an in-app update, show the installed version and its changelog until acknowledged.",
+        )),
+    )
+
+    fun changes(versionCode: Long, versionName: String): List<String> =
+        releases[versionCode]?.takeIf { it.name == versionName }?.changes.orEmpty()
+
+    fun credit(versionCode: Long, versionName: String): String? =
+        releases[versionCode]?.takeIf { it.name == versionName }?.credit
+}
