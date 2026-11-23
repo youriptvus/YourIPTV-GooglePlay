@@ -348,6 +348,22 @@ class PlaySmokeInstrumentation : Instrumentation() {
     private fun playbackControlsOnly() {
         require(fixtureBase == "http://127.0.0.1:18765") { "Only the loopback controls fixture is allowed" }
         val television = isTelevision() || targetContext.packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+        execute("compiled launcher artwork and TV banner render with intact proportions") {
+            val directory = targetContext.filesDir.resolve("native-artwork").apply { mkdirs() }
+            val icon = targetContext.packageManager.getApplicationIcon(targetContext.packageName)
+            val banner = targetContext.getDrawable(R.drawable.banner) ?: error("Missing compiled TV banner")
+            check(kotlin.math.abs(banner.intrinsicWidth.toDouble() / banner.intrinsicHeight - 16.0 / 9.0) < 0.02)
+            for ((name, drawable, dimensions) in listOf(
+                Triple("launcher", icon, 512 to 512), Triple("tv-banner", banner, 1280 to 720))) {
+                val bitmap = Bitmap.createBitmap(dimensions.first, dimensions.second, Bitmap.Config.ARGB_8888)
+                drawable.setBounds(0, 0, bitmap.width, bitmap.height)
+                drawable.draw(android.graphics.Canvas(bitmap))
+                directory.resolve("$name.png").outputStream().use {
+                    check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it))
+                }
+                bitmap.recycle()
+            }
+        }
         for (kind in listOf(ItemKind.LIVE, ItemKind.MOVIE, ItemKind.EPISODE)) {
             execute("$kind controls and touch options auto-hide, return on input, and leave video advancing") {
                 val item = MediaItem(playlistId = 0, kind = kind, name = "Generated controls test",

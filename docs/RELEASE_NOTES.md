@@ -5,7 +5,9 @@
 - Establish one shared phone/TV source with selected Play and customer delivery hooks, controlled one-way source export and explicitly authorized local dual release preparation.
 - Repository automation has not been activated remotely. The existing 1.1.1/code52 release and closed test remain active while the separately authorized 1.1.2 hotfix proceeds through submission.
 
-## 1.1.2 (version code 53)
+## 1.1.2 (version code 54)
+
+- Apply the owner-provided launcher icons, Android TV banner and Play artwork with proportional fitting and adaptive-icon safe areas. Code53 is a preserved superseded draft; the corrected artwork candidate uses code54.
 
 - Hide the Playback options touch button when the Live information banner or movie/episode controls auto-hide. Tapping the video restores the controls and options together on phones.
 - Keep the touch-only button hidden on Android TV, in picture-in-picture and while the channel list is open. Remote playback options remain accessible.

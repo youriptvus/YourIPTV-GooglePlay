@@ -1,6 +1,6 @@
 # YourIPTV
 
-One Android player for phones and Android TV. The current source is **1.1.2 / code53**, including the playback-options auto-hide correction. The last independently confirmed published Play baseline is **1.1.1 / code52**; the hotfix submission status is recorded separately. This checkout also contains unpublished development and workflow changes; changing the source does not replace an installed release.
+One Android player for phones and Android TV. The current source is **1.1.2 / code54**, including the playback-options auto-hide correction. The last independently confirmed published Play baseline is **1.1.1 / code52**; the hotfix submission status is recorded separately. This checkout also contains unpublished development and workflow changes; changing the source does not replace an installed release.
 
 YourIPTV-GooglePlay is the permanent development master. Approved owner pushes to main activate a controlled one-way export to the YourIPTV customer repository. The first export is prepared on a review branch; later exports update only managed application files. The owner publishes application releases manually.
 

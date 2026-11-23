@@ -1,37 +1,12 @@
-# Branding in the 0.5.6 player release
+# Official artwork and proportional exports
 
-This release uses the official YourIPTV name, package, icons, signing identity and About
-information. It does not include the pending company-companion implementation, importer,
-public issuer pin or company-branding Settings controls. The separate RebrandTool project
-and its unfinished integration are preserved outside this release for planned 0.5.7 work.
+Current owner-supplied masters are in branding/current. AI was used, as confirmed by the owner. scripts/prepare_brand_artwork.py exports the Android launcher resources, Android TV banners and Play graphics from these unchanged inputs. Pillow is needed only for this local asset-export operation.
 
-## Business rules
+- The square masters supply the launcher icons. Legacy round icons use the platform round shape; adaptive foregrounds place the complete image inside the central66dp safe area of a108dp canvas, keeping the title inside common masks.
+- The supplied wallpaper fills the16:9 TV banner using uniform scaling and centered padding at most a rounding pixel wide.
+- The supplied3:1 banner fits the1024x500 Play feature graphic with centered padding, preserving the whole artwork without stretching or cropping the title.
+- The512px Play icon is copied byte-for-byte from the supplied512px icon.
 
-All playback, playlist, M3U, Xtream Codes, EPG, catch-up, recording, favorites and settings
-features remain free. Custom rebranding is the only paid offering. No billing, trials,
-subscription checks or playback feature locks are part of this release. Parental and
-Settings PINs, provider limits and Android restrictions remain effective.
+Package identity, official signing, About notices, player behavior and saved settings are independent of these assets. The same compiled resources serve phone and TV in both distributions. Replacing installed artwork requires a signed bundle/APK with a new unused versionCode. The earlier code53 candidate is preserved; the corrected1.1.2 artwork candidate uses code54.
 
-## Existing resource structure
-
-| Surface | Source |
-|---|---|
-| Official app display name | res/values/branding.xml, @string/app_name |
-| Company/contact strings | res/values/branding.xml, brand_* |
-| Phone launcher icons | res/mipmap-*/ic_launcher*.png and adaptive-icon XML |
-| Android TV banner | res/drawable-*/banner.png |
-| About body and required notices | ui/Branding.kt |
-
-Branding.displayName() resolves the compiled app-name resource. Branding.aboutBody()
-appends mandatory free-use, privacy, provider/Android limitation and third-party notices.
-BrandingCentralizationTest guards the resource/name and required-notice contracts.
-
-These compiled resource locations document the existing structure; they are not an
-active runtime branding import mechanism. BrandAssets' remote endpoint remains empty.
-Changing compiled resources invalidates an existing APK signature and requires an
-explicitly authorized source build with appropriate versioning and signing. Never patch
-or bypass BrandIntegrity/OfficialSigning, embed signing secrets in profiles, repurpose the
-official signing key, or remove required notices. This release changes none of those pins.
-
-The website updater fallback is independent of branding. It retains the official package,
-compiled app label, signing certificate and permission checks for every downloaded APK.
+Artwork-Provenance.json in GooglePlay-Release-Ready/Graphics records source/export hashes, dimensions and fitting method. Existing source history preserves earlier designs. Use current exports for uploads; do not reuse the old draft assets.
