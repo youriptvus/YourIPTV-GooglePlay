@@ -3,7 +3,7 @@
 ## Unreleased development
 
 - Establish one shared phone/TV source with selected Play and customer delivery hooks, controlled one-way source export and explicitly authorized local dual release preparation.
-- These source changes have not been packaged or published; the existing 1.1.1/code52 release and closed test remain unchanged.
+- Repository automation has not been activated remotely. The existing 1.1.1/code52 release and closed test remain active while the separately authorized 1.1.2 hotfix proceeds through submission.
 
 ## 1.1.2 (version code 53)
 
